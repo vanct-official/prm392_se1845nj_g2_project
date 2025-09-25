@@ -2,10 +2,10 @@
 ---
 ## Group Members:
 
-- **Group: ** 6
-- **Subject: ** PRM392 - Mobile Programming (Android)
-- **Instructor: ** Nguyễn Văn Sang (SangNV)
-- **Members: **
+- **Group:** 6
+- **Subject:** PRM392 - Mobile Programming (Android)
+- **Instructor:** Nguyễn Văn Sang (SangNV)
+- **Members:**
 
     | Name               | Student ID | Role                |
     |--------------------|------------|---------------------|
