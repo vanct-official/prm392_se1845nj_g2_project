@@ -2,18 +2,18 @@
 ---
 ## Group Members:
 
-    - **Group: ** 6
-    - **Subject: ** PRM392 - Mobile Programming (Android)
-    - **Instructor: ** Nguyễn Văn Sang (SangNV)
-    - **Members: **
+- **Group: ** 6
+- **Subject: ** PRM392 - Mobile Programming (Android)
+- **Instructor: ** Nguyễn Văn Sang (SangNV)
+- **Members: **
 
-        | Name               | Student ID | Role                |
-        |--------------------|------------|---------------------|
-        | Chu Thế Văn   | HE170807   | Team Leader         |
-        | Nguyễn Xuân Đại   | HE171340   | Member              |
-        | Hoàng Đăng Kiên  | HE171349   | Member              |
-        | Hoàng Danh Hào | HE171439   | Member              |
-        | Trần Văn Tuấn | HE173048   | Member              |
+    | Name               | Student ID | Role                |
+    |--------------------|------------|---------------------|
+    | Chu Thế Văn   | HE170807   | Team Leader         |
+    | Nguyễn Xuân Đại   | HE171340   | Member              |
+    | Hoàng Đăng Kiên  | HE171349   | Member              |
+    | Hoàng Danh Hào | HE171439   | Member              |
+    | Trần Văn Tuấn | HE173048   | Member              |
 
 ---
 ## Project Overview
