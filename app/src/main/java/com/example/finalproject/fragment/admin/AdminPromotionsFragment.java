@@ -60,22 +60,6 @@ public class AdminPromotionsFragment extends Fragment {
         recyclerPromotions.setLayoutManager(new LinearLayoutManager(getContext()));
         db = FirebaseFirestore.getInstance();
 
-//        adapter = new PromotionAdapter(getContext(), promotions, new PromotionAdapter.OnPromotionActionListener() {
-//            @Override
-//            public void onView(DocumentSnapshot doc) {
-//                Toast.makeText(getContext(), "Xem: " + doc.getString("name"), Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onEdit(DocumentSnapshot doc) {
-//                Toast.makeText(getContext(), "Sửa: " + doc.getString("name"), Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onDelete(DocumentSnapshot doc) {
-//                confirmDelete(doc);
-//            }
-//        });
         adapter = new PromotionAdapter(getContext(), promotions, new PromotionAdapter.OnPromotionActionListener() {
             @Override
             public void onView(DocumentSnapshot doc) {
@@ -85,10 +69,28 @@ public class AdminPromotionsFragment extends Fragment {
             }
 
             @Override
+//            public void onEdit(DocumentSnapshot doc) {
+//                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
+//                intent.putExtra("promotionId", doc.getId());
+//                startActivity(intent);
+//            }
             public void onEdit(DocumentSnapshot doc) {
-                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
-                intent.putExtra("promotionId", doc.getId());
-                startActivity(intent);
+                if (doc == null || doc.getId() == null) {
+                    Toast.makeText(getContext(), "Không thể mở khuyến mãi này!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String promoId = doc.getId();
+                android.util.Log.d("PROMO_DEBUG", "Đang mở sửa cho ID: " + promoId);
+
+                try {
+                    Intent intent = new Intent(getActivity(), com.example.finalproject.activity.EditPromotionActivity.class);
+                    intent.putExtra("promotionId", promoId);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Lỗi khi mở trang sửa!", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -128,21 +130,44 @@ public class AdminPromotionsFragment extends Fragment {
     // ===========================================================
     // 🔥 LOAD DANH SÁCH KHUYẾN MÃI
     // ===========================================================
+//    private void loadPromotions() {
+//        loadingProgress.setVisibility(View.VISIBLE);
+//
+//        db.collection("promotions")
+//                .orderBy("name", Query.Direction.ASCENDING)
+//                .get()
+//                .addOnSuccessListener(querySnapshot -> {
+//                    promotions.clear();
+//                    promotions.addAll(querySnapshot.getDocuments());
+//                    adapter.notifyDataSetChanged();
+//                    loadingProgress.setVisibility(View.GONE);
+//                })
+//                .addOnFailureListener(e -> {
+//                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                    loadingProgress.setVisibility(View.GONE);
+//                });
+//    }
+
     private void loadPromotions() {
-        loadingProgress.setVisibility(View.VISIBLE);
+        if (loadingProgress != null)
+            loadingProgress.setVisibility(View.VISIBLE);
 
         db.collection("promotions")
-                .orderBy("name", Query.Direction.ASCENDING)
+                .orderBy("name", com.google.firebase.firestore.Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     promotions.clear();
                     promotions.addAll(querySnapshot.getDocuments());
                     adapter.notifyDataSetChanged();
-                    loadingProgress.setVisibility(View.GONE);
+
+                    if (loadingProgress != null)
+                        loadingProgress.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    loadingProgress.setVisibility(View.GONE);
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (loadingProgress != null)
+                        loadingProgress.setVisibility(View.GONE);
                 });
     }
 

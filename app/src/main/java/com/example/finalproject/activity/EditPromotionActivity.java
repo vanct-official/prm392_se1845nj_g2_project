@@ -2,9 +2,9 @@ package com.example.finalproject.activity;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.widget.Toast;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
@@ -38,7 +38,15 @@ public class EditPromotionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_promotion);
 
-        // 🔹 Ánh xạ view
+        docId = getIntent().getStringExtra("promotionId");
+        android.util.Log.d("PROMO_DEBUG", "Nhận promotionId = " + docId);
+
+        if (docId == null || docId.trim().isEmpty()) {
+            Toast.makeText(this, "Không tìm thấy ID khuyến mãi!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+        // Ánh xạ view
         etPromotionCode = findViewById(R.id.etPromotionCode);
         etDescription = findViewById(R.id.etDescription);
         etDiscountPercent = findViewById(R.id.etDiscountPercent);
@@ -52,36 +60,36 @@ public class EditPromotionActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         docId = getIntent().getStringExtra("promotionId");
 
-        if (docId == null || docId.isEmpty()) {
+        // Kiểm tra ID
+        if (docId == null || docId.trim().isEmpty()) {
             Toast.makeText(this, "Không tìm thấy ID khuyến mãi!", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // 🔹 Chọn ngày
+        // Sự kiện chọn ngày
         etFromDate.setOnClickListener(v -> showDatePicker(etFromDate));
         etToDate.setOnClickListener(v -> showDatePicker(etToDate));
 
-        // 🔹 Nút Hủy
+        // Nút Hủy
         btnCancel.setOnClickListener(v -> finish());
 
-        // 🔹 Tải dữ liệu Firestore
-        loadPromotionData();
+        // Tải dữ liệu Firestore
+        loadPromotion();
 
-        // 🔹 Nút Lưu
-        btnSave.setOnClickListener(v -> savePromotion());
+        // Nút Lưu thay đổi
+        btnSave.setOnClickListener(v -> saveChanges());
     }
 
-    // ======================================================
-    // 🔥 Lấy dữ liệu từ Firestore
-    // ======================================================
-    private void loadPromotionData() {
+    // ============================================================
+    // 🔥 LOAD DỮ LIỆU FIRESTORE
+    // ============================================================
+    private void loadPromotion() {
         db.collection("promotions").document(docId)
                 .get()
                 .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        bindData(doc);
-                    } else {
+                    if (doc.exists()) bindData(doc);
+                    else {
                         Toast.makeText(this, "Không tìm thấy dữ liệu!", Toast.LENGTH_SHORT).show();
                         finish();
                     }
@@ -94,21 +102,26 @@ public class EditPromotionActivity extends AppCompatActivity {
 
     private void bindData(DocumentSnapshot doc) {
         etPromotionCode.setText(doc.getString("name"));
-        etDescription.setText(doc.getString("description"));
-        etDiscountPercent.setText(String.valueOf(doc.getLong("discountPercent")));
-        etMinValue.setText(String.valueOf(doc.getDouble("minimumValue")));
+        etDescription.setText(doc.getString("description") != null ? doc.getString("description") : "");
+        etDiscountPercent.setText(doc.getLong("discountPercent") != null
+                ? String.valueOf(doc.getLong("discountPercent"))
+                : "");
+        etMinValue.setText(doc.getDouble("minimumValue") != null
+                ? String.valueOf(doc.getDouble("minimumValue"))
+                : "");
         switchActive.setChecked(Boolean.TRUE.equals(doc.getBoolean("isActive")));
 
         Timestamp from = doc.getTimestamp("validFrom");
         Timestamp to = doc.getTimestamp("validTo");
+
         if (from != null) etFromDate.setText(sdf.format(from.toDate()));
         if (to != null) etToDate.setText(sdf.format(to.toDate()));
     }
 
-    // ======================================================
-    // 💾 Lưu thay đổi
-    // ======================================================
-    private void savePromotion() {
+    // ============================================================
+    // 💾 LƯU THAY ĐỔI
+    // ============================================================
+    private void saveChanges() {
         String desc = etDescription.getText().toString().trim();
         String discountStr = etDiscountPercent.getText().toString().trim();
         String minValueStr = etMinValue.getText().toString().trim();
@@ -121,11 +134,19 @@ public class EditPromotionActivity extends AppCompatActivity {
             return;
         }
 
-        int discount = Integer.parseInt(discountStr);
-        double minValue = Double.parseDouble(minValueStr);
+        int discount;
+        double minValue;
+
+        try {
+            discount = Integer.parseInt(discountStr);
+            minValue = Double.parseDouble(minValueStr);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Giá trị nhập không hợp lệ!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (discount <= 0 || discount >= 100) {
-            Toast.makeText(this, "Phần trăm giảm giá phải từ 1 đến 99!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Phần trăm giảm phải từ 1 đến 99!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -154,7 +175,7 @@ public class EditPromotionActivity extends AppCompatActivity {
             db.collection("promotions").document(docId)
                     .update(update)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Cập nhật khuyến mãi thành công!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
                         finish();
                     })
                     .addOnFailureListener(e ->
@@ -164,19 +185,20 @@ public class EditPromotionActivity extends AppCompatActivity {
         }
     }
 
-    // ======================================================
-    // 📅 DatePicker
-    // ======================================================
+    // ============================================================
+    // 📅 DATE PICKER
+    // ============================================================
     private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();
-        DatePickerDialog datePicker = new DatePickerDialog(this,
+        new DatePickerDialog(this,
                 (view, year, month, dayOfMonth) -> {
-                    String dateStr = String.format(Locale.getDefault(), "%02d/%02d/%d", dayOfMonth, month + 1, year);
+                    String dateStr = String.format(Locale.getDefault(),
+                            "%02d/%02d/%d", dayOfMonth, month + 1, year);
                     target.setText(dateStr);
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
-        datePicker.show();
+                calendar.get(Calendar.DAY_OF_MONTH))
+                .show();
     }
 }
