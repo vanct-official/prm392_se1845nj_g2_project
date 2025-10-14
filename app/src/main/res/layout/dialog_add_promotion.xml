@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 🔹 Mã khuyến mãi -->
+        <EditText
+            android:id="@+id/etCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mã khuyến mãi (VD: SALE_HL10)"
+            android:inputType="text"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 🔹 Mô tả -->
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mô tả khuyến mãi"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 🔹 Phần trăm giảm -->
+        <EditText
+            android:id="@+id/etDiscount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phần trăm giảm (%)"
+            android:inputType="number"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 🔹 Giá trị tối thiểu -->
+        <EditText
+            android:id="@+id/etMinValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Giá trị đơn hàng tối thiểu"
+            android:inputType="number"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 🔹 Ngày bắt đầu -->
+        <EditText
+            android:id="@+id/etFromDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Từ ngày (dd/MM/yyyy)"
+            android:focusable="false"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 🔹 Ngày kết thúc -->
+        <EditText
+            android:id="@+id/etToDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Đến ngày (dd/MM/yyyy)"
+            android:focusable="false"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 🔹 Trạng thái -->
+        <CheckBox
+            android:id="@+id/cbActive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kích hoạt khuyến mãi"/>
+
+        <!-- 🔹 Nút tạo -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="12dp">
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hủy"/>
+
+            <Button
+                android:id="@+id/btnCreate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tạo mới"
+                android:layout_marginStart="12dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

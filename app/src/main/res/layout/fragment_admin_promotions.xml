@@ -7,7 +7,7 @@
     android:background="@android:color/white"
     android:padding="12dp">
 
-    <!-- 🔹 Thanh tiêu đề -->
+    <!-- Thanh tiêu đề -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,9 +16,8 @@
         android:paddingBottom="8dp">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="QUẢN LÝ KHUYẾN MÃI"
             android:textStyle="bold"
             android:textSize="18sp"
@@ -35,14 +34,13 @@
             android:focusable="true" />
     </LinearLayout>
 
-    <!-- 🔍 Ô tìm kiếm -->
+    <!-- Ô tìm kiếm -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@drawable/bg_search_box"
-        android:padding="8dp"
-        android:layout_marginBottom="8dp">
+        android:padding="8dp">
 
         <ImageView
             android:layout_width="24dp"
@@ -63,12 +61,20 @@
             android:textSize="14sp"/>
     </LinearLayout>
 
-    <!-- 🔹 Danh sách khuyến mãi (RecyclerView để phân trang + lazy load) -->
+    <!-- Danh sách khuyến mãi -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerPromotions"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:clipToPadding="false"
-        android:paddingBottom="12dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"/>
+
+    <!-- ProgressBar hiển thị khi đang tải thêm -->
+    <ProgressBar
+        android:id="@+id/loadingMoreProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleSmall"/>
 </LinearLayout>
