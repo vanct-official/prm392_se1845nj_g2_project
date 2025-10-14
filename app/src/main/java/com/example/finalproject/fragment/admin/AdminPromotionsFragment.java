@@ -7,19 +7,23 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.firebase.firestore.FirebaseFirestore;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.example.finalproject.R;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AdminPromotionsFragment extends Fragment {
 
     private LinearLayout promotionListContainer;
 
-    public AdminPromotionsFragment() { }
+    public AdminPromotionsFragment() {
+        // Required empty public constructor
+    }
 
     @Nullable
     @Override
@@ -37,19 +41,26 @@ public class AdminPromotionsFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
-                        for (var doc : queryDocumentSnapshots.getDocuments()) {
-                            String id = doc.getId();
+                        promotionListContainer.removeAllViews(); // Xóa cũ, load mới
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            String name = doc.getString("name"); // ✅ Lấy tên khuyến mãi
                             String description = doc.getString("description");
-                            int discount = doc.getLong("discountPercent").intValue();
+                            Long discountLong = doc.getLong("discountPercent");
+                            int discount = (discountLong != null) ? discountLong.intValue() : 0;
                             boolean isActive = Boolean.TRUE.equals(doc.getBoolean("isActive"));
-                            double minValue = doc.getDouble("minimumValue");
-                            String validFrom = doc.getTimestamp("validFrom").toDate().toString();
-                            String validTo = doc.getTimestamp("validTo").toDate().toString();
+                            Double minValueDouble = doc.getDouble("minimumValue");
+                            double minValue = (minValueDouble != null) ? minValueDouble : 0;
 
-                            String condition = "% Giảm " + discount + "% • Tối thiểu " + (int)minValue + "đ";
+                            Timestamp from = doc.getTimestamp("validFrom");
+                            Timestamp to = doc.getTimestamp("validTo");
+                            String validFrom = (from != null) ? from.toDate().toString() : "-";
+                            String validTo = (to != null) ? to.toDate().toString() : "-";
+
+                            String condition = "% Giảm " + discount + "% • Tối thiểu " + (int) minValue + "đ";
                             String status = isActive ? "Hoạt động" : "Tạm ngưng";
 
-                            addPromotionCard(inflater, id, status, description, condition);
+                            // ✅ Gọi hàm hiển thị thẻ
+                            addPromotionCard(inflater, name != null ? name : doc.getId(), status, description, condition);
                         }
                     } else {
                         Toast.makeText(getContext(), "Không có khuyến mãi nào!", Toast.LENGTH_SHORT).show();
@@ -62,15 +73,17 @@ public class AdminPromotionsFragment extends Fragment {
         return view;
     }
 
-
+    // ✅ Hàm thêm từng thẻ khuyến mãi vào giao diện
     private void addPromotionCard(LayoutInflater inflater, String code, String status, String desc, String condition) {
         View itemView = inflater.inflate(R.layout.item_promotion_card, promotionListContainer, false);
 
+        // Gán dữ liệu vào layout item_promotion_card.xml
         ((TextView) itemView.findViewById(R.id.tvCode)).setText(code);
         ((TextView) itemView.findViewById(R.id.tvStatus)).setText(status);
         ((TextView) itemView.findViewById(R.id.tvDescription)).setText(desc);
         ((TextView) itemView.findViewById(R.id.tvCondition)).setText(condition);
 
+        // Sự kiện các nút
         itemView.findViewById(R.id.btnEdit).setOnClickListener(v ->
                 Toast.makeText(getContext(), "Sửa " + code, Toast.LENGTH_SHORT).show());
         itemView.findViewById(R.id.btnView).setOnClickListener(v ->
