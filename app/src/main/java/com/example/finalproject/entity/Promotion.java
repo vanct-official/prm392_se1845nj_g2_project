@@ -2,8 +2,9 @@ package com.example.finalproject.entity;
 
 public class Promotion {
     private String id;
-    private String description;
     private int discountPercent;
+    private String description;
+    private String name;
     private boolean isActive;
     private double minimumValue;
     private String validFrom;
@@ -11,7 +12,7 @@ public class Promotion {
 
     public Promotion() {} // Bắt buộc cho Firestore
 
-    public Promotion(String id, String description, int discountPercent, boolean isActive,
+    public Promotion(String id, String name, String description, int discountPercent, boolean isActive,
                      double minimumValue, String validFrom, String validTo) {
         this.id = id;
         this.description = description;
@@ -20,11 +21,14 @@ public class Promotion {
         this.minimumValue = minimumValue;
         this.validFrom = validFrom;
         this.validTo = validTo;
+        this.name = name;
     }
 
     // Getter
     public String getId() { return id; }
     public String getDescription() { return description; }
+
+    public String getName() { return name; }
     public int getDiscountPercent() { return discountPercent; }
     public boolean isActive() { return isActive; }
     public double getMinimumValue() { return minimumValue; }
