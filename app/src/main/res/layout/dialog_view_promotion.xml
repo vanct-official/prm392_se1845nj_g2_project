@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView android:text="Tên khuyến mãi:" style="@style/TextAppearance.AppCompat.Medium"/>
+        <TextView android:id="@+id/tvName" android:textColor="@color/black"/>
+
+        <TextView android:text="Mô tả:" style="@style/TextAppearance.AppCompat.Medium" android:layout_marginTop="8dp"/>
+        <TextView android:id="@+id/tvDescription" android:textColor="@color/black"/>
+
+        <TextView android:text="Giảm giá:" style="@style/TextAppearance.AppCompat.Medium" android:layout_marginTop="8dp"/>
+        <TextView android:id="@+id/tvDiscount" android:textColor="@color/black"/>
+
+        <TextView android:text="Giá trị tối thiểu:" style="@style/TextAppearance.AppCompat.Medium" android:layout_marginTop="8dp"/>
+        <TextView android:id="@+id/tvMinValue" android:textColor="@color/black"/>
+
+        <TextView android:text="Hiệu lực từ:" style="@style/TextAppearance.AppCompat.Medium" android:layout_marginTop="8dp"/>
+        <TextView android:id="@+id/tvFrom" android:textColor="@color/black"/>
+
+        <TextView android:text="Đến ngày:" style="@style/TextAppearance.AppCompat.Medium" android:layout_marginTop="8dp"/>
+        <TextView android:id="@+id/tvTo" android:textColor="@color/black"/>
+
+        <TextView android:text="Trạng thái:" style="@style/TextAppearance.AppCompat.Medium" android:layout_marginTop="8dp"/>
+        <TextView android:id="@+id/tvStatus" android:textColor="@color/black"/>
+
+        <Button
+            android:id="@+id/btnClose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đóng"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>
