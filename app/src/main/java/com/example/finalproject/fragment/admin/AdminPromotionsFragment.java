@@ -60,15 +60,35 @@ public class AdminPromotionsFragment extends Fragment {
         recyclerPromotions.setLayoutManager(new LinearLayoutManager(getContext()));
         db = FirebaseFirestore.getInstance();
 
+//        adapter = new PromotionAdapter(getContext(), promotions, new PromotionAdapter.OnPromotionActionListener() {
+//            @Override
+//            public void onView(DocumentSnapshot doc) {
+//                Toast.makeText(getContext(), "Xem: " + doc.getString("name"), Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onEdit(DocumentSnapshot doc) {
+//                Toast.makeText(getContext(), "Sửa: " + doc.getString("name"), Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onDelete(DocumentSnapshot doc) {
+//                confirmDelete(doc);
+//            }
+//        });
         adapter = new PromotionAdapter(getContext(), promotions, new PromotionAdapter.OnPromotionActionListener() {
             @Override
             public void onView(DocumentSnapshot doc) {
-                Toast.makeText(getContext(), "Xem: " + doc.getString("name"), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.ViewPromotionActivity.class);
+                intent.putExtra("promotionId", doc.getId());
+                startActivity(intent);
             }
 
             @Override
             public void onEdit(DocumentSnapshot doc) {
-                Toast.makeText(getContext(), "Sửa: " + doc.getString("name"), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
+                intent.putExtra("promotionId", doc.getId());
+                startActivity(intent);
             }
 
             @Override
@@ -76,6 +96,7 @@ public class AdminPromotionsFragment extends Fragment {
                 confirmDelete(doc);
             }
         });
+
         recyclerPromotions.setAdapter(adapter);
 
         // 🔹 Load toàn bộ khuyến mãi ban đầu
@@ -147,6 +168,7 @@ public class AdminPromotionsFragment extends Fragment {
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Lỗi tìm kiếm: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
 
     // ===========================================================
     // ❌ XÓA KHUYẾN MÃI

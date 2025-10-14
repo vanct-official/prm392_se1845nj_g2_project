@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ====== STYLE CHUNG CHO DỰ ÁN ====== -->
+    <style name="TextStyle.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#1E293B</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <style name="TextStyle.Content">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#475569</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <!-- =============================================== -->
+    <!-- 🔹 Style mặc định TextStyle tránh lỗi not found -->
+    <!-- =============================================== -->
+    <style name="TextStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#475569</item>
+<!--        <item name="android:fontFamily">@font/poppins_regular</item>-->
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+</resources>

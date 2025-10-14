@@ -33,6 +33,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.AddPromotionActivity" />
+        <activity android:name=".activity.ViewPromotionActivity" />
+        <activity android:name=".activity.EditPromotionActivity" />
 
     </application>
 

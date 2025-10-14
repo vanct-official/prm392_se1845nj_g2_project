@@ -1,129 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardPromotion"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="4dp"
-    android:foreground="?attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
+    android:layout_margin="10dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp"
+    app:strokeColor="#E2E8F0"
+    app:strokeWidth="1dp"
+    app:cardBackgroundColor="#FFFFFF"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
-        <!-- Hàng trên cùng: Mã + Trạng thái -->
+        <!-- 🔹 Mã & Trạng thái -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="4dp">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tvCode"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="SALE_HL10"
+                android:text="SUMMER2025"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@color/black" />
+                android:textSize="17sp"
+                android:textColor="#1E293B" />
 
             <TextView
                 android:id="@+id/tvStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hoạt động"
-                android:textColor="@color/purple_500"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#16A34A"
+                android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Mô tả -->
+        <!-- 🔹 Mô tả -->
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Giảm 10% cho tour Hạ Long"
-            android:layout_marginTop="2dp"
+            android:text="Giảm 20% cho tất cả tour mùa hè 2025"
+            android:textColor="#475569"
             android:textSize="15sp"
-            android:textColor="@android:color/black" />
+            android:layout_marginTop="6dp" />
 
-        <!-- Điều kiện -->
+        <!-- 🔹 Điều kiện -->
         <TextView
             android:id="@+id/tvCondition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="% Giảm 10%  •  Tối thiểu 1.000.000đ"
+            android:text="Giảm 20% • Tối thiểu 1.000.000đ"
+            android:textColor="#64748B"
             android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
-        <!-- 3 nút hành động -->
+        <!-- 🔹 Dòng phân cách -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
+            android:background="#E2E8F0" />
+
+        <!-- 🔹 Các nút hành động -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="3">
 
-            <!-- Nút Sửa -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEdit"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="44dp"
                 android:layout_weight="1"
                 android:text="Sửa"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                app:icon="@android:drawable/ic_menu_edit"
-                app:iconTint="@android:color/white"
+                app:icon="@drawable/ic_search"
                 app:iconGravity="textStart"
                 app:iconPadding="6dp"
-                app:cornerRadius="20dp"
-                app:backgroundTint="@color/purple_500"
+                app:iconTint="@android:color/white"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#6366F1"
                 android:layout_marginEnd="6dp" />
 
-            <!-- Nút Xem -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnView"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="44dp"
                 android:layout_weight="1"
                 android:text="Xem"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                app:icon="@android:drawable/ic_menu_view"
-                app:iconTint="@android:color/white"
+                app:icon="@drawable/ic_search"
                 app:iconGravity="textStart"
                 app:iconPadding="6dp"
-                app:cornerRadius="20dp"
-                app:backgroundTint="@color/purple_500"
+                app:iconTint="@android:color/white"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#4F46E5"
                 android:layout_marginEnd="6dp" />
 
-            <!-- Nút Xóa -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="44dp"
                 android:layout_weight="1"
                 android:text="Xóa"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                app:icon="@android:drawable/ic_menu_delete"
-                app:iconTint="@android:color/white"
+                app:icon="@drawable/ic_search"
                 app:iconGravity="textStart"
                 app:iconPadding="6dp"
-                app:cornerRadius="20dp"
-                app:backgroundTint="@color/purple_500" />
+                app:iconTint="@android:color/white"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#DC2626" />
         </LinearLayout>
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
