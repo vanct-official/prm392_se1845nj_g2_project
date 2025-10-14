@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_admin_home"
+        android:icon="@drawable/ic_home"
+        android:title="Trang chủ" />
+
+    <item
+        android:id="@+id/nav_admin_users"
+        android:icon="@drawable/ic_group"
+        android:title="Người dùng" />
+
+    <item
+        android:id="@+id/nav_admin_tours"
+        android:icon="@drawable/ic_map"
+        android:title="Tours" />
+
+    <item
+        android:id="@+id/nav_admin_bookings"
+        android:icon="@drawable/ic_home"
+        android:title="Đặt tour" />
+
+    <item
+        android:id="@+id/nav_admin_promotions"
+        android:icon="@drawable/ic_home"
+        android:title="Mã khuyến mãi" />
+
+    <item
+        android:id="@+id/nav_admin_chat"
+        android:icon="@drawable/ic_chat"
+        android:title="Trò chuyện" />
+
+    <item
+        android:id="@+id/nav_admin_feedback"
+        android:icon="@drawable/ic_feedback"
+        android:title="Phản hồi" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_account"
+        android:title="Hồ sơ" />
+</menu>

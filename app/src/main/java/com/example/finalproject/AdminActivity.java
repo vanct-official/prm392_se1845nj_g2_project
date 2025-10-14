@@ -1,60 +1,122 @@
 package com.example.finalproject;
-
 import android.os.Bundle;
-
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.finalproject.fragment.admin.AdminFeedbackFragment;
 import com.example.finalproject.fragment.admin.AdminHomeFragment;
-import com.example.finalproject.fragment.admin.AdminManageUsersFragment;
-import com.example.finalproject.fragment.admin.AdminSettingFragment;
 import com.example.finalproject.fragment.admin.AdminToursFragment;
+import com.example.finalproject.fragment.admin.AdminManageUsersFragment;
+//import com.example.finalproject.fragment.admin.AdminBookingsFragment;
+import com.example.finalproject.fragment.admin.AdminPromotionsFragment;
+//import com.example.finalproject.fragment.admin.AdminChatFragment;
+import com.example.finalproject.fragment.admin.AdminFeedbackFragment;
 import com.example.finalproject.fragment.ProfileFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class AdminActivity extends AppCompatActivity {
+import com.google.android.material.navigation.NavigationView;
+import android.view.MenuItem;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+public class AdminActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_admin);
+        // Toolbar setup
+        toolbar = findViewById(R.id.toolbar_admin);
+        setSupportActionBar(toolbar);
 
-        // Mặc định hiển thị HomeFragment
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container_admin, new AdminHomeFragment())
-                    .commit();
-        }
+        // Drawer + Navigation setup
+        drawerLayout = findViewById(R.id.drawer_layout_admin);
+        navigationView = findViewById(R.id.nav_view_admin);
+        navigationView.setNavigationItemSelectedListener(this);
 
-        bottomNav.setOnItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
-            int itemId = item.getItemId();
+        // Drawer toggle (hamburger icon)
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
-            if (itemId == R.id.nav_admin_home) {
-                selectedFragment = new AdminHomeFragment();
-            } else if (itemId == R.id.nav_admin_tours) {
-                selectedFragment = new AdminToursFragment();
-            } else if (itemId == R.id.nav_admin_users) {
-                selectedFragment = new AdminManageUsersFragment();
-            } else if (itemId == R.id.nav_feedback) {
-                selectedFragment = new AdminFeedbackFragment();
-            } else if (itemId == R.id.nav_settings) {
-                selectedFragment = new AdminSettingFragment();
-            } else if (itemId == R.id.nav_profile) {
-                selectedFragment = new ProfileFragment();
+        // ✅ Sử dụng OnBackPressedDispatcher thay cho onBackPressed()
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(navigationView)) {
+                    drawerLayout.closeDrawers();
+                } else {
+                    // Hành vi back mặc định
+                    setEnabled(false);
+                    AdminActivity.super.onBackPressed();
+                }
             }
-
-            if (selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container_admin, selectedFragment)
-                        .commit();
-            }
-
-            return true;
         });
 
+        // Fragment mặc định khi khởi động
+        if (savedInstanceState == null) {
+            replaceFragment(new AdminHomeFragment());
+            navigationView.setCheckedItem(R.id.nav_admin_home);
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment selectedFragment = null;
+
+        int id = item.getItemId();
+
+        if (id == R.id.nav_admin_home) {
+            selectedFragment = new AdminHomeFragment();
+
+        } else if (id == R.id.nav_admin_users) {
+            selectedFragment = new AdminManageUsersFragment();
+
+        } else if (id == R.id.nav_admin_tours) {
+            selectedFragment = new AdminToursFragment();
+//
+//        } else if (id == R.id.nav_admin_bookings) {
+//            selectedFragment = new AdminBookingsFragment();
+//
+        } else if (id == R.id.nav_admin_promotions) {
+            selectedFragment = new AdminPromotionsFragment();
+//
+//        } else if (id == R.id.nav_admin_chat) {
+//            selectedFragment = new AdminChatFragment();
+
+        } else if (id == R.id.nav_admin_feedback) {
+            selectedFragment = new AdminFeedbackFragment();
+
+        } else if (id == R.id.nav_profile) {
+            selectedFragment = new ProfileFragment();
+        }
+
+        if (selectedFragment != null) {
+            replaceFragment(selectedFragment);
+        }
+
+        drawerLayout.closeDrawers();
+        return true;
+    }
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container_admin, fragment);
+        transaction.commit();
     }
 }

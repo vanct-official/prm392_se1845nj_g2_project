@@ -1,16 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("com.google.gms.google-services")
+    id("com.google.gms.google-services") // 🔥 Cần cho Firebase
 }
 
 android {
     namespace = "com.example.finalproject"
-    compileSdk = 36
+    compileSdk = 36 // ⚠️ Dùng SDK chính thức hiện có
 
     defaultConfig {
         applicationId = "com.example.finalproject"
-        minSdk = 27
-        targetSdk = 36
+        minSdk = 24 // đủ để chạy Firebase ổn định
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -26,28 +26,37 @@ android {
             )
         }
     }
+
     compileOptions {
+        // 🔹 Vì bạn dùng Java nên giữ version 11 (hoặc 17 nếu đã nâng cấp)
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
 dependencies {
-
+    // AndroidX cơ bản
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(libs.firebase.firestore)
     implementation(libs.coordinatorlayout)
+
+    // Firebase BOM (bom = Bill of Materials -> quản lý version đồng bộ)
+    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+
+    // Firebase modules bạn cần
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore") // 🔥 thêm dòng này, vì bạn dùng Java
+
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+
+    // BCrypt (mã hóa mật khẩu)
+    implementation("org.mindrot:jbcrypt:0.4")
+
+    // Unit tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("org.mindrot:jbcrypt:0.4")
-    // Google Sign In SDK
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
 }
