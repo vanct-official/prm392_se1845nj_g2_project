@@ -352,9 +352,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            app:thumbTint="#FFFFFF"
-                            app:trackTint="#6366F1"
+                            app:thumbTint="@color/switch_thumb_tint"
+                            app:trackTint="@color/switch_track_tint"
                             app:trackTintMode="src_in" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
