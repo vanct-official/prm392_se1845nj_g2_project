@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F8FAFC"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <!-- Header -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:layout_marginBottom="8dp">
 
         <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Danh sách Tour du lịch"
+            android:text="QUẢN LÝ TOUR DU LỊCH"
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="#1E293B" />
@@ -27,16 +27,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+ Thêm mới"
-            android:textColor="#6366F1"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:textStyle="bold"
+            android:textColor="#4F46E5"
+            android:textSize="16sp"
+            android:layout_alignParentEnd="true"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true" />
+    </RelativeLayout>
 
     <!-- Danh sách Tour -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerTours"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:focusable="false"
+        android:clickable="false"
+        android:descendantFocusability="afterDescendants" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
 </LinearLayout>

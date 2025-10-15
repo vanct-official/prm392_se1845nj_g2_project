@@ -66,7 +66,6 @@ dependencies {
 
     // Thư viện slide ảnh tự động
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
-
-
+    implementation("com.google.firebase:firebase-firestore:25.1.1")
 
 }

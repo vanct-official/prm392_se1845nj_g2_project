@@ -9,6 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -17,10 +20,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import com.denzcoskun.imageslider.ImageSlider;
-import com.denzcoskun.imageslider.models.SlideModel;
-import com.denzcoskun.imageslider.constants.ScaleTypes;
 
 public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder> {
 
@@ -64,14 +63,14 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
                 ? "Giá: " + NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price)
                 : "");
 
-        // ✅ Hiển thị slideshow ảnh
+        // Hiển thị ảnh
         List<SlideModel> slideModels = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
             for (String url : images) {
                 slideModels.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
             }
         } else {
-            slideModels.add(new SlideModel(R.drawable.ic_search, ScaleTypes.CENTER_CROP));
+            slideModels.add(new SlideModel(R.drawable.ic_image_placeholder, ScaleTypes.CENTER_CROP));
         }
 
         holder.imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
@@ -86,7 +85,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         return tours.size();
     }
 
-    static class TourViewHolder extends RecyclerView.ViewHolder {
+    public static class TourViewHolder extends RecyclerView.ViewHolder {
         ImageSlider imageSlider;
         TextView tvTourName, tvDescription, tvLocation, tvPrice;
         MaterialButton btnEdit, btnView, btnDelete;
