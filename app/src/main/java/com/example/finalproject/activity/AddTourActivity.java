@@ -5,11 +5,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.example.finalproject.R;
 import com.example.finalproject.utils.CloudinaryManager;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
@@ -40,9 +42,12 @@ public class AddTourActivity extends AppCompatActivity {
     private Button btnChooseImages, btnCancel, btnSave;
     private TextView tvImageCount;
     private ProgressBar progressBar;
+    private Spinner spinnerGuide;
 
-    private final int PICK_IMAGES_REQUEST = 100;
+    private static final int PICK_IMAGES_REQUEST = 100;
     private List<Uri> selectedImageUris = new ArrayList<>();
+    private List<String> guideIds = new ArrayList<>();
+    private List<String> guideNames = new ArrayList<>();
 
     private FirebaseFirestore db;
 
@@ -53,6 +58,7 @@ public class AddTourActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
+        // 🔹 Ánh xạ view
         etTourName = findViewById(R.id.etTourName);
         etDescription = findViewById(R.id.etDescription);
         etLocation = findViewById(R.id.etLocation);
@@ -66,15 +72,55 @@ public class AddTourActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         tvImageCount = findViewById(R.id.tvImageCount);
         progressBar = findViewById(R.id.progressBar);
+        spinnerGuide = findViewById(R.id.spinnerGuide);
 
+        // 🔹 Load danh sách hướng dẫn viên
+        loadGuides();
+
+        // 🔹 Ngày tháng
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
+        // 🔹 Chọn ảnh
         btnChooseImages.setOnClickListener(v -> openGallery());
+
+        // 🔹 Hủy
         btnCancel.setOnClickListener(v -> finish());
+
+        // 🔹 Lưu tour
         btnSave.setOnClickListener(v -> saveTour());
     }
 
+    // ===========================================================
+    // 🧭 LOAD DANH SÁCH HƯỚNG DẪN VIÊN
+    // ===========================================================
+    private void loadGuides() {
+        db.collection("guides")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    guideIds.clear();
+                    guideNames.clear();
+
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        guideIds.add(doc.getId());
+                        String name = doc.getString("name");
+                        guideNames.add(name != null ? name : doc.getId());
+                    }
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                            this,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            guideNames
+                    );
+                    spinnerGuide.setAdapter(adapter);
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // ===========================================================
+    // 📅 CHỌN NGÀY
+    // ===========================================================
     private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
@@ -83,6 +129,9 @@ public class AddTourActivity extends AppCompatActivity {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
+    // ===========================================================
+    // 🖼️ CHỌN ẢNH TỪ THƯ VIỆN
+    // ===========================================================
     private void openGallery() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -110,6 +159,9 @@ public class AddTourActivity extends AppCompatActivity {
         }
     }
 
+    // ===========================================================
+    // 💾 LƯU TOUR VÀO FIRESTORE
+    // ===========================================================
     private void saveTour() {
         String name = etTourName.getText().toString().trim();
         String desc = etDescription.getText().toString().trim();
@@ -133,6 +185,7 @@ public class AddTourActivity extends AppCompatActivity {
                 double price = Double.parseDouble(priceStr);
                 int seats = Integer.parseInt(seatStr);
                 int deposit = Integer.parseInt(depositStr);
+                String selectedGuideId = guideIds.get(spinnerGuide.getSelectedItemPosition());
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Date startDate = sdf.parse(startStr);
@@ -146,8 +199,9 @@ public class AddTourActivity extends AppCompatActivity {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
                     byte[] data = baos.toByteArray();
 
-                    // 🔥 Upload to Cloudinary
-                    Map uploadResult = CloudinaryManager.getInstance().uploader().upload(data, ObjectUtils.emptyMap());
+                    Map uploadResult = CloudinaryManager.getInstance()
+                            .uploader()
+                            .upload(data, ObjectUtils.emptyMap());
                     String url = (String) uploadResult.get("secure_url");
                     imageUrls.add(url);
                 }
@@ -162,6 +216,7 @@ public class AddTourActivity extends AppCompatActivity {
                 tour.put("startDate", new Timestamp(startDate));
                 tour.put("endDate", new Timestamp(endDate));
                 tour.put("images", imageUrls);
+                tour.put("guideIds", List.of(selectedGuideId));
                 tour.put("createAt", new Timestamp(new Date()));
                 tour.put("updateAt", new Timestamp(new Date()));
 

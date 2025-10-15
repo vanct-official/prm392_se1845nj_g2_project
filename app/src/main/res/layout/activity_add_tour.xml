@@ -82,6 +82,15 @@
             android:focusable="false"
             android:layout_marginTop="8dp" />
 
+        <Spinner
+            android:id="@+id/spinnerGuide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#4F46E5"
+            android:spinnerMode="dropdown" />
+
+
         <Button
             android:id="@+id/btnChooseImages"
             android:layout_width="match_parent"
