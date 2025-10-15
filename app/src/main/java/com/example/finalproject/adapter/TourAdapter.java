@@ -4,20 +4,23 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.finalproject.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.models.SlideModel;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
 
 public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder> {
 
@@ -61,11 +64,17 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
                 ? "Giá: " + NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price)
                 : "");
 
+        // ✅ Hiển thị slideshow ảnh
+        List<SlideModel> slideModels = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
-            Glide.with(context).load(images.get(0)).into(holder.imgTour);
+            for (String url : images) {
+                slideModels.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
+            }
         } else {
-            holder.imgTour.setImageResource(R.drawable.ic_search);
+            slideModels.add(new SlideModel(R.drawable.ic_search, ScaleTypes.CENTER_CROP));
         }
+
+        holder.imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
 
         holder.btnEdit.setOnClickListener(v -> listener.onEdit(doc));
         holder.btnView.setOnClickListener(v -> listener.onView(doc));
@@ -78,13 +87,13 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
     }
 
     static class TourViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgTour;
+        ImageSlider imageSlider;
         TextView tvTourName, tvDescription, tvLocation, tvPrice;
         MaterialButton btnEdit, btnView, btnDelete;
 
         public TourViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgTour = itemView.findViewById(R.id.imgTour);
+            imageSlider = itemView.findViewById(R.id.imageSlider);
             tvTourName = itemView.findViewById(R.id.tvTourName);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvLocation = itemView.findViewById(R.id.tvLocation);

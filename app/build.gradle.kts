@@ -64,4 +64,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
+    // Thư viện slide ảnh tự động
+    implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
+
+
+
 }

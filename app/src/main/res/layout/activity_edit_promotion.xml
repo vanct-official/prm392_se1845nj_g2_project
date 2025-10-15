@@ -12,7 +12,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Header -->
+        <!-- 🔹 Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 android:layout_marginTop="4dp" />
         </LinearLayout>
 
-        <!-- Card nội dung -->
+        <!-- 🔹 Card nội dung -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -192,8 +192,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        app:thumbTint="#FFFFFF"
-                        app:trackTint="#6366F1"
+                        app:thumbTint="@color/switch_thumb_tint"
+                        app:trackTint="@color/switch_track_tint"
                         app:trackTintMode="src_in" />
                 </LinearLayout>
 

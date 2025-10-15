@@ -9,16 +9,18 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven(url = "https://jitpack.io") // ✅ cú pháp Kotlin DSL
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+        maven(url = "https://jitpack.io") // ✅ cú pháp Kotlin DSL
     }
 }
 
 rootProject.name = "FinalProject"
 include(":app")
- 
