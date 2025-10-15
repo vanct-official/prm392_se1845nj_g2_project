@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "576134791237",
+    "project_id": "online-tour-booking-5690c",
+    "storage_bucket": "online-tour-booking-5690c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576134791237:android:300b9db62af3ff55b8232c",
+        "android_client_info": {
+          "package_name": "com.example.finalproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "576134791237-vfbpnir1mjv4slq28d0183etm664mk56.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finalproject",
+            "certificate_hash": "2fe0565642a19415a3df2be1b3c23c56bd8143fc"
+          }
+        },
+        {
+          "client_id": "576134791237-23m5230qoe7uq9i5ebvsbs18189f911q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgcKL7KljXeZfPjXE8qBua9t70sjL6Qz8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "576134791237-23m5230qoe7uq9i5ebvsbs18189f911q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
