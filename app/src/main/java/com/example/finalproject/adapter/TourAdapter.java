@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+import com.example.finalproject.activity.TourDetailActivity;
+import android.content.Intent;
 
 public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder> {
 
@@ -99,7 +100,14 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         holder.imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
 
         holder.btnEdit.setOnClickListener(v -> listener.onEdit(doc));
-        holder.btnView.setOnClickListener(v -> listener.onView(doc));
+        holder.btnView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, TourDetailActivity.class);
+            intent.putExtra("tourId", doc.getId());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // 👉 thêm dòng này
+            context.startActivity(intent);
+        });
+
+
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
     }
 
