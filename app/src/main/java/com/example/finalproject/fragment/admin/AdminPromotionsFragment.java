@@ -191,8 +191,13 @@ public class AdminPromotionsFragment extends Fragment {
                     db.collection("promotions").document(doc.getId())
                             .delete()
                             .addOnSuccessListener(aVoid -> {
-                                promotions.remove(doc);
-                                adapter.notifyDataSetChanged();
+                                // ✅ Xóa đúng cách dựa vào id
+                                String deletedId = doc.getId();
+                                promotions.removeIf(p -> p.getId().equals(deletedId));
+                                allPromotions.removeIf(p -> p.getId().equals(deletedId));
+
+                                adapter.updateData(promotions);
+
                                 Toast.makeText(getContext(), "Đã xóa!", Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e ->
@@ -201,6 +206,7 @@ public class AdminPromotionsFragment extends Fragment {
                 .setNegativeButton("Hủy", null)
                 .show();
     }
+
 
     // ===========================================================
     // ⏪ NHẬN KẾT QUẢ SAU KHI THÊM MỚI
