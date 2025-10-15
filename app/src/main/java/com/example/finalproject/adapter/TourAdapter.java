@@ -20,6 +20,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 
 public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder> {
 
@@ -63,6 +65,27 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
                 ? "Giá: " + NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price)
                 : "");
 
+        // ⚡ Thêm phần hiển thị tên hướng dẫn viên
+        List<String> guideIds = (List<String>) doc.get("guideIds");
+        if (guideIds != null && !guideIds.isEmpty()) {
+            String guideId = guideIds.get(0);
+            FirebaseFirestore.getInstance()
+                    .collection("guides")
+                    .document(guideId)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (snapshot.exists()) {
+                            String guideName = snapshot.getString("name");
+                            holder.tvGuideName.setText("Hướng dẫn viên: " + (guideName != null ? guideName : "(Không rõ)"));
+                        } else {
+                            holder.tvGuideName.setText("Hướng dẫn viên: (Không tồn tại)");
+                        }
+                    })
+                    .addOnFailureListener(e -> holder.tvGuideName.setText("Hướng dẫn viên: (Lỗi tải)"));
+        } else {
+            holder.tvGuideName.setText("Hướng dẫn viên: (Chưa gán)");
+        }
+
         // Hiển thị ảnh
         List<SlideModel> slideModels = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
@@ -80,6 +103,8 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
     }
 
+
+
     @Override
     public int getItemCount() {
         return tours.size();
@@ -87,7 +112,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
 
     public static class TourViewHolder extends RecyclerView.ViewHolder {
         ImageSlider imageSlider;
-        TextView tvTourName, tvDescription, tvLocation, tvPrice;
+        TextView tvTourName, tvDescription, tvLocation, tvGuideName, tvPrice;
         MaterialButton btnEdit, btnView, btnDelete;
 
         public TourViewHolder(@NonNull View itemView) {
@@ -96,6 +121,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
             tvTourName = itemView.findViewById(R.id.tvTourName);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvLocation = itemView.findViewById(R.id.tvLocation);
+            tvGuideName = itemView.findViewById(R.id.tvGuideName); // 👈 Thêm dòng này
             tvPrice = itemView.findViewById(R.id.tvPrice);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnView = itemView.findViewById(R.id.btnView);

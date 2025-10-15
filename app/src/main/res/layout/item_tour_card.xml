@@ -47,6 +47,17 @@
             android:layout_marginTop="2dp" />
 
         <TextView
+            android:id="@+id/tvGuideName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#475569"
+            android:textSize="13sp"
+            android:textStyle="italic"
+            android:layout_marginTop="2dp"
+            android:text="Hướng dẫn viên: (Chưa có)" />
+
+
+        <TextView
             android:id="@+id/tvPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

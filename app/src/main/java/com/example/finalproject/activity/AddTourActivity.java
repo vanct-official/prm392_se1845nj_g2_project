@@ -172,73 +172,119 @@ public class AddTourActivity extends AppCompatActivity {
         String startStr = etStartDate.getText().toString().trim();
         String endStr = etEndDate.getText().toString().trim();
 
-        if (name.isEmpty() || desc.isEmpty() || loc.isEmpty() || priceStr.isEmpty()
-                || seatStr.isEmpty() || depositStr.isEmpty() || startStr.isEmpty() || endStr.isEmpty()) {
+        // 🔹 1. Kiểm tra rỗng
+        if (name.isEmpty() || desc.isEmpty() || loc.isEmpty() ||
+                priceStr.isEmpty() || seatStr.isEmpty() || depositStr.isEmpty() ||
+                startStr.isEmpty() || endStr.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        double price;
+        int seats, deposit;
+        Date startDate, endDate;
+
+        try {
+            price = Double.parseDouble(priceStr);
+            seats = Integer.parseInt(seatStr);
+            deposit = Integer.parseInt(depositStr);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            startDate = sdf.parse(startStr);
+            endDate = sdf.parse(endStr);
+        } catch (Exception e) {
+            Toast.makeText(this, "Dữ liệu nhập không hợp lệ!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 🔹 2. Validate logic giá & đặt cọc
+        if (price <= 0) {
+            Toast.makeText(this, "Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (deposit < 1 || deposit > 99) {
+            Toast.makeText(this, "% đặt cọc phải từ 1 đến 99!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 🔹 3. Validate ngày
+        if (endDate.before(startDate) || endDate.equals(startDate)) {
+            Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         progressBar.setVisibility(android.view.View.VISIBLE);
 
-        new Thread(() -> {
-            try {
-                double price = Double.parseDouble(priceStr);
-                int seats = Integer.parseInt(seatStr);
-                int deposit = Integer.parseInt(depositStr);
-                String selectedGuideId = guideIds.get(spinnerGuide.getSelectedItemPosition());
+        // 🔹 4. Kiểm tra trùng tên tour trên Firestore
+        db.collection("tours")
+                .whereEqualTo("tourName", name)
+                .get()
+                .addOnSuccessListener(query -> {
+                    if (!query.isEmpty()) {
+                        progressBar.setVisibility(android.view.View.GONE);
+                        Toast.makeText(this, "Tên tour đã tồn tại, vui lòng nhập tên khác!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                Date startDate = sdf.parse(startStr);
-                Date endDate = sdf.parse(endStr);
+                    // 🔹 Nếu hợp lệ → bắt đầu upload & lưu
+                    new Thread(() -> {
+                        try {
+                            String selectedGuideId = guideIds.get(spinnerGuide.getSelectedItemPosition());
 
-                List<String> imageUrls = new ArrayList<>();
-                for (Uri uri : selectedImageUris) {
-                    InputStream is = getContentResolver().openInputStream(uri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(is);
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
-                    byte[] data = baos.toByteArray();
+                            List<String> imageUrls = new ArrayList<>();
+                            for (Uri uri : selectedImageUris) {
+                                InputStream is = getContentResolver().openInputStream(uri);
+                                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                                byte[] data = baos.toByteArray();
 
-                    Map uploadResult = CloudinaryManager.getInstance()
-                            .uploader()
-                            .upload(data, ObjectUtils.emptyMap());
-                    String url = (String) uploadResult.get("secure_url");
-                    imageUrls.add(url);
-                }
+                                Map uploadResult = CloudinaryManager.getInstance()
+                                        .uploader()
+                                        .upload(data, ObjectUtils.emptyMap());
+                                String url = (String) uploadResult.get("secure_url");
+                                imageUrls.add(url);
+                            }
 
-                Map<String, Object> tour = new HashMap<>();
-                tour.put("tourName", name);
-                tour.put("description", desc);
-                tour.put("location", loc);
-                tour.put("price", price);
-                tour.put("availableSeats", seats);
-                tour.put("depositPercent", deposit);
-                tour.put("startDate", new Timestamp(startDate));
-                tour.put("endDate", new Timestamp(endDate));
-                tour.put("images", imageUrls);
-                tour.put("guideIds", List.of(selectedGuideId));
-                tour.put("createAt", new Timestamp(new Date()));
-                tour.put("updateAt", new Timestamp(new Date()));
+                            Map<String, Object> tour = new HashMap<>();
+                            tour.put("tourName", name);
+                            tour.put("description", desc);
+                            tour.put("location", loc);
+                            tour.put("price", price);
+                            tour.put("availableSeats", seats);
+                            tour.put("depositPercent", deposit);
+                            tour.put("startDate", new Timestamp(startDate));
+                            tour.put("endDate", new Timestamp(endDate));
+                            tour.put("images", imageUrls);
+                            tour.put("guideIds", List.of(selectedGuideId));
+                            tour.put("createAt", new Timestamp(new Date()));
+                            tour.put("updateAt", new Timestamp(new Date()));
 
-                db.collection("tours")
-                        .add(tour)
-                        .addOnSuccessListener(doc -> runOnUiThread(() -> {
-                            progressBar.setVisibility(android.view.View.GONE);
-                            Toast.makeText(this, "Thêm tour thành công!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }))
-                        .addOnFailureListener(e -> runOnUiThread(() -> {
-                            progressBar.setVisibility(android.view.View.GONE);
-                            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }));
+                            db.collection("tours")
+                                    .add(tour)
+                                    .addOnSuccessListener(doc -> runOnUiThread(() -> {
+                                        progressBar.setVisibility(android.view.View.GONE);
+                                        Toast.makeText(this, "Thêm tour thành công!", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }))
+                                    .addOnFailureListener(e -> runOnUiThread(() -> {
+                                        progressBar.setVisibility(android.view.View.GONE);
+                                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }));
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                runOnUiThread(() -> {
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            runOnUiThread(() -> {
+                                progressBar.setVisibility(android.view.View.GONE);
+                                Toast.makeText(this, "Lỗi tải ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }).start();
+                })
+                .addOnFailureListener(e -> {
                     progressBar.setVisibility(android.view.View.GONE);
-                    Toast.makeText(this, "Lỗi tải ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Lỗi khi kiểm tra tên tour: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
-            }
-        }).start();
     }
+
 }
