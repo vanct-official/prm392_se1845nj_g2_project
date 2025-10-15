@@ -129,8 +129,8 @@ public class TourDetailActivity extends AppCompatActivity {
         // --- Dates: startDate / endDate (handle Timestamp / Date / String) ---
         Object startObj = doc.get("startDate");
         Object endObj = doc.get("endDate");
-        tvStartDate.setText("Ngày bắt đầu: " + safeFormatDate(startObj));
-        tvEndDate.setText("Ngày kết thúc: " + safeFormatDate(endObj));
+        tvStartDate.setText(safeFormatDate(startObj));
+        tvEndDate.setText(safeFormatDate(endObj));
 
         // --- Images: prefer list field 'images', fallback 'imageUrl' or 'image' ---
         List<String> imageList = null;
