@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.admin.AdminToursFragment">
+    android:orientation="vertical"
+    android:background="#F8FAFC"
+    android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Đây là Tours Fragment (cho Admin)"
-        android:textSize="20sp"
-        android:layout_gravity="center"
-        android:textStyle="bold" />
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Danh sách Tour du lịch"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#1E293B" />
+
+        <TextView
+            android:id="@+id/tvAddTour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Thêm mới"
+            android:textColor="#6366F1"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Danh sách Tour -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerTours"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp" />
+
+</LinearLayout>
