@@ -109,12 +109,18 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         });
 
         // 🟩 Nút Sửa (thêm đoạn này)
+//        holder.btnEdit.setOnClickListener(v -> {
+//            Intent intent = new Intent(context, com.example.finalproject.activity.EditTourActivity.class);
+//            intent.putExtra("tourId", doc.getId());
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            context.startActivity(intent);
+//        });
         holder.btnEdit.setOnClickListener(v -> {
-            Intent intent = new Intent(context, com.example.finalproject.activity.EditTourActivity.class);
+            Intent intent = new Intent(v.getContext(), EditTourActivity.class);
             intent.putExtra("tourId", doc.getId());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            v.getContext().startActivity(intent);
         });
+
 
         // 🔻 Nút Xóa (giữ nguyên)
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
