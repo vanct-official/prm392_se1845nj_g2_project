@@ -15,6 +15,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.PromoViewHolder> {
@@ -26,12 +27,12 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Prom
     }
 
     private final Context context;
-    private final List<DocumentSnapshot> promotions;
     private final OnPromotionActionListener listener;
+    private List<DocumentSnapshot> promotions = new ArrayList<>();
 
     public PromotionAdapter(Context context, List<DocumentSnapshot> promotions, OnPromotionActionListener listener) {
         this.context = context;
-        this.promotions = promotions;
+        this.promotions = new ArrayList<>(promotions);
         this.listener = listener;
     }
 
@@ -44,39 +45,38 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Prom
 
     @Override
     public void onBindViewHolder(@NonNull PromoViewHolder holder, int position) {
-        try {
-            DocumentSnapshot doc = promotions.get(position);
+        if (promotions == null || promotions.isEmpty()) return;
 
-            String id = doc.getId();
-            String name = doc.getString("name");
-            String desc = doc.getString("description");
-            boolean active = Boolean.TRUE.equals(doc.getBoolean("isActive"));
-            Long discountObj = doc.getLong("discountPercent");
-            Double minValueObj = doc.getDouble("minimumValue");
+        DocumentSnapshot doc = promotions.get(position);
+        if (doc == null) return;
 
-            int discount = (discountObj != null) ? discountObj.intValue() : 0;
-            double minValue = (minValueObj != null) ? minValueObj : 0;
+        String id = doc.getId();
+        String name = doc.getString("name");
+        String desc = doc.getString("description");
+        boolean active = Boolean.TRUE.equals(doc.getBoolean("isActive"));
+        Long discountObj = doc.getLong("discountPercent");
+        Double minValueObj = doc.getDouble("minimumValue");
 
-            String condition = "Giảm " + discount + "% • Tối thiểu " + (int) minValue + "đ";
-            String status = active ? "Hoạt động" : "Tạm ngưng";
+        int discount = (discountObj != null) ? discountObj.intValue() : 0;
+        double minValue = (minValueObj != null) ? minValueObj : 0;
 
-            holder.tvCode.setText(name != null ? name : id);
-            holder.tvDescription.setText(desc != null ? desc : "Không có mô tả");
-            holder.tvCondition.setText(condition);
-            holder.tvStatus.setText(status);
-            holder.tvStatus.setTextColor(active ? Color.parseColor("#16A34A") : Color.parseColor("#DC2626"));
+        String condition = "Giảm " + discount + "% • Tối thiểu " + (int) minValue + "đ";
+        String status = active ? "Hoạt động" : "Tạm ngưng";
 
-            holder.btnView.setOnClickListener(v -> listener.onView(doc));
-            holder.btnEdit.setOnClickListener(v -> listener.onEdit(doc));
-            holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        holder.tvCode.setText(name != null ? name : id);
+        holder.tvDescription.setText(desc != null ? desc : "Không có mô tả");
+        holder.tvCondition.setText(condition);
+        holder.tvStatus.setText(status);
+        holder.tvStatus.setTextColor(active ? Color.parseColor("#16A34A") : Color.parseColor("#DC2626"));
+
+        holder.btnView.setOnClickListener(v -> listener.onView(doc));
+        holder.btnEdit.setOnClickListener(v -> listener.onEdit(doc));
+        holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
     }
 
     @Override
     public int getItemCount() {
-        return promotions.size();
+        return promotions != null ? promotions.size() : 0;
     }
 
     static class PromoViewHolder extends RecyclerView.ViewHolder {
@@ -95,5 +95,12 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Prom
             btnDelete = itemView.findViewById(R.id.btnDelete);
             cardView = itemView.findViewById(R.id.cardPromotion);
         }
+    }
+
+    // ✅ Cập nhật dữ liệu mới
+    public void updateData(List<DocumentSnapshot> newList) {
+        this.promotions = new ArrayList<>(newList);
+        android.util.Log.d("PROMO_DEBUG", "🔁 Adapter cập nhật " + promotions.size() + " item");
+        notifyDataSetChanged();
     }
 }

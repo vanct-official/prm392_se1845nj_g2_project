@@ -40,7 +40,9 @@ public class AdminPromotionsFragment extends Fragment {
 
     private FirebaseFirestore db;
     private PromotionAdapter adapter;
+    private List<DocumentSnapshot> allPromotions = new ArrayList<>();
     private List<DocumentSnapshot> promotions = new ArrayList<>();
+
 
     public AdminPromotionsFragment() {}
 
@@ -70,23 +72,11 @@ public class AdminPromotionsFragment extends Fragment {
 
             @Override
             public void onEdit(DocumentSnapshot doc) {
-                if (doc == null || doc.getId() == null) {
-                    Toast.makeText(getContext(), "Không thể mở khuyến mãi này!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                String promoId = doc.getId();
-                android.util.Log.d("PROMO_DEBUG", "Đang mở sửa cho ID: " + promoId);
-
-                try {
-                    Intent intent = new Intent(getActivity(), com.example.finalproject.activity.EditPromotionActivity.class);
-                    intent.putExtra("promotionId", promoId);
-                    startActivity(intent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Lỗi khi mở trang sửa!", Toast.LENGTH_SHORT).show();
-                }
+                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
+                intent.putExtra("promotionId", doc.getId());
+                startActivity(intent);
             }
+
 
             @Override
             public void onDelete(DocumentSnapshot doc) {
@@ -96,72 +86,83 @@ public class AdminPromotionsFragment extends Fragment {
 
         recyclerPromotions.setAdapter(adapter);
 
-        // 🔹 Load toàn bộ khuyến mãi ban đầu
+        // 🔥 Gọi load dữ liệu ngay khi tạo view
         loadPromotions();
 
-        // 🔹 Nút thêm mới
+        // ✅ Nút "+ Thêm mới"
         tvAddPromotion.setOnClickListener(v -> {
-            Intent intent = new Intent(requireActivity(), AddPromotionActivity.class);
-            startActivityForResult(intent, 100); // mở trang thêm mới
+            android.util.Log.d("PROMO_DEBUG", "👉 Nút 'Thêm mới' được bấm!");
+            Intent intent = new Intent(getContext(), AddPromotionActivity.class);
+            startActivityForResult(intent, 100);
         });
 
         // 🔹 Tìm kiếm realtime
         etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(Editable s) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchPromotions(s.toString().trim());
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
         });
 
         return view;
     }
 
+
     // ===========================================================
     // 🔥 LOAD DANH SÁCH KHUYẾN MÃI
     // ===========================================================
-
     private void loadPromotions() {
         if (loadingProgress != null)
             loadingProgress.setVisibility(View.VISIBLE);
 
         db.collection("promotions")
-                .orderBy("name", com.google.firebase.firestore.Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
+                    int count = querySnapshot.size();
+                    android.util.Log.d("PROMO_DEBUG", "🔥 Tổng số khuyến mãi trong Firestore: " + count);
+
+                    allPromotions.clear();
                     promotions.clear();
-                    promotions.addAll(querySnapshot.getDocuments());
-                    adapter.notifyDataSetChanged();
+
+                    if (count > 0) {
+                        allPromotions.addAll(querySnapshot.getDocuments());
+                        promotions.addAll(allPromotions);
+                        adapter.updateData(promotions);
+                    } else {
+                        Toast.makeText(getContext(), "Không có dữ liệu khuyến mãi trong Firestore!", Toast.LENGTH_SHORT).show();
+                    }
 
                     if (loadingProgress != null)
                         loadingProgress.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> {
-                    if (getContext() != null)
-                        Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    android.util.Log.e("PROMO_DEBUG", "❌ Lỗi Firestore: " + e.getMessage());
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
                     if (loadingProgress != null)
                         loadingProgress.setVisibility(View.GONE);
                 });
     }
+
 
     // ===========================================================
     // 🔍 TÌM KIẾM KHUYẾN MÃI
     // ===========================================================
     private void searchPromotions(String keyword) {
         if (keyword.isEmpty()) {
-            loadPromotions();
+            promotions.clear();
+            promotions.addAll(allPromotions);
+            adapter.updateData(promotions);
             return;
         }
 
         String lowerKeyword = keyword.toLowerCase();
         List<DocumentSnapshot> filteredList = new ArrayList<>();
 
-        for (DocumentSnapshot doc : promotions) {
+        for (DocumentSnapshot doc : allPromotions) {
             String name = doc.getString("name");
             String desc = doc.getString("description");
 
@@ -171,28 +172,9 @@ public class AdminPromotionsFragment extends Fragment {
             }
         }
 
-        adapter = new PromotionAdapter(getContext(), filteredList, new PromotionAdapter.OnPromotionActionListener() {
-            @Override
-            public void onView(DocumentSnapshot doc) {
-                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.ViewPromotionActivity.class);
-                intent.putExtra("promotionId", doc.getId());
-                startActivity(intent);
-            }
-
-            @Override
-            public void onEdit(DocumentSnapshot doc) {
-                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
-                intent.putExtra("promotionId", doc.getId());
-                startActivity(intent);
-            }
-
-            @Override
-            public void onDelete(DocumentSnapshot doc) {
-                confirmDelete(doc);
-            }
-        });
-
-        recyclerPromotions.setAdapter(adapter);
+        promotions.clear();
+        promotions.addAll(filteredList);
+        adapter.updateData(promotions);
     }
 
 
