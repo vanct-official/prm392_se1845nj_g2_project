@@ -22,6 +22,7 @@ public class TourDetailActivity extends AppCompatActivity {
 
     private ImageSlider imageSlider;
     private TextView tvTourName, tvDescription, tvLocation, tvPrice, tvGuideName;
+    private TextView tvStartDate, tvEndDate, tvSeats, tvDepositPercent;
     private FirebaseFirestore db;
 
     @Override
@@ -35,6 +36,10 @@ public class TourDetailActivity extends AppCompatActivity {
         tvLocation = findViewById(R.id.tvLocation);
         tvPrice = findViewById(R.id.tvPrice);
         tvGuideName = findViewById(R.id.tvGuideName);
+        tvStartDate = findViewById(R.id.tvStartDate);
+        tvEndDate = findViewById(R.id.tvEndDate);
+        tvSeats = findViewById(R.id.tvSeats);
+        tvDepositPercent = findViewById(R.id.tvDepositPercent);
 
         db = FirebaseFirestore.getInstance();
 
@@ -79,6 +84,22 @@ public class TourDetailActivity extends AppCompatActivity {
                 ? "Giá: " + NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price)
                 : "");
 
+        // Ngày bắt đầu và kết thúc
+        Object startObj = doc.get("startDate");
+        Object endObj = doc.get("endDate");
+        if (startObj != null) tvStartDate.setText("Ngày bắt đầu: " + startObj.toString());
+        else tvStartDate.setText("Ngày bắt đầu: Không có");
+
+        if (endObj != null) tvEndDate.setText("Ngày kết thúc: " + endObj.toString());
+        else tvEndDate.setText("Ngày kết thúc: Không có");
+
+// Ghế trống
+        Long availableSeats = doc.getLong("availableSeats");
+        tvSeats.setText("Ghế còn trống: " + (availableSeats != null ? availableSeats : 0));
+
+// Phần trăm đặt cọc
+        Long depositPercent = doc.getLong("depositPercent");
+        tvDepositPercent.setText("Đặt cọc: " + (depositPercent != null ? depositPercent + "%" : "Không có"));
         // ✅ Load danh sách ảnh (list<String>)
         List<SlideModel> slideModels = new ArrayList<>();
         List<String> images = (List<String>) doc.get("images");

@@ -229,6 +229,62 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
+                <!-- Thông tin chi tiết khác -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chi tiết tour"
+                        android:textSize="13sp"
+                        android:textColor="#64748B"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="6dp" />
+
+                    <!-- Ngày bắt đầu -->
+                    <TextView
+                        android:id="@+id/tvStartDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ngày bắt đầu: --/--/----"
+                        android:textColor="#1E293B"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="4dp" />
+
+                    <!-- Ngày kết thúc -->
+                    <TextView
+                        android:id="@+id/tvEndDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ngày kết thúc: --/--/----"
+                        android:textColor="#1E293B"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="4dp" />
+
+                    <!-- Số ghế trống -->
+                    <TextView
+                        android:id="@+id/tvSeats"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ghế còn trống: --"
+                        android:textColor="#1E293B"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="4dp" />
+
+                    <!-- Phần trăm đặt cọc -->
+                    <TextView
+                        android:id="@+id/tvDepositPercent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Đặt cọc: --%"
+                        android:textColor="#1E293B"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
                 <!-- Trạng thái -->
                 <LinearLayout
                     android:layout_width="match_parent"
