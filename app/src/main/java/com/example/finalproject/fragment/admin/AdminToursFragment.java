@@ -76,6 +76,7 @@ public class AdminToursFragment extends Fragment {
             startActivity(intent);
         });
 
+
         return view;
     }
 

@@ -1,0 +1,29 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:spacing="8dp">
+
+        <EditText android:id="@+id/etDescription" android:hint="Mô tả" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etLocation" android:hint="Địa điểm" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etSeats" android:hint="Số ghế trống" android:inputType="number" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etPrice" android:hint="Giá" android:inputType="numberDecimal" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etDeposit" android:hint="Đặt cọc" android:inputType="numberDecimal" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etStartDate" android:hint="Ngày bắt đầu" android:focusable="false" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etEndDate" android:hint="Ngày kết thúc" android:focusable="false" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etGuideId" android:hint="ID hướng dẫn viên" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:text="Lưu thay đổi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/bg_light_gray"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+</ScrollView>

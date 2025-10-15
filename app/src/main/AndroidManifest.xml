@@ -37,6 +37,7 @@
         <activity android:name=".activity.EditPromotionActivity" />
         <activity android:name=".activity.AddTourActivity" />
         <activity android:name=".activity.TourDetailActivity" />
+        <activity android:name=".activity.EditTourActivity" />
 
     </application>
 

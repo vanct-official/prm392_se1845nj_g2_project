@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
+
 import com.example.finalproject.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,6 +24,7 @@ import java.util.Locale;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.example.finalproject.activity.TourDetailActivity;
 import android.content.Intent;
+import com.example.finalproject.activity.EditTourActivity;
 
 public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder> {
 
@@ -66,7 +68,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
                 ? "Giá: " + NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price)
                 : "");
 
-        // ⚡ Thêm phần hiển thị tên hướng dẫn viên
+        // 🔹 Hiển thị hướng dẫn viên
         List<String> guideIds = (List<String>) doc.get("guideIds");
         if (guideIds != null && !guideIds.isEmpty()) {
             String guideId = guideIds.get(0);
@@ -87,7 +89,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
             holder.tvGuideName.setText("Hướng dẫn viên: (Chưa gán)");
         }
 
-        // Hiển thị ảnh
+        // 🔹 Hiển thị ảnh
         List<SlideModel> slideModels = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
             for (String url : images) {
@@ -96,20 +98,28 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         } else {
             slideModels.add(new SlideModel(R.drawable.ic_image_placeholder, ScaleTypes.CENTER_CROP));
         }
-
         holder.imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
 
-        holder.btnEdit.setOnClickListener(v -> listener.onEdit(doc));
+        // 🔸 Nút Xem chi tiết
         holder.btnView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TourDetailActivity.class);
             intent.putExtra("tourId", doc.getId());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // 👉 thêm dòng này
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });
 
+        // 🟩 Nút Sửa (thêm đoạn này)
+        holder.btnEdit.setOnClickListener(v -> {
+            Intent intent = new Intent(context, com.example.finalproject.activity.EditTourActivity.class);
+            intent.putExtra("tourId", doc.getId());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        });
 
+        // 🔻 Nút Xóa (giữ nguyên)
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
     }
+
 
 
 
