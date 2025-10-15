@@ -97,10 +97,10 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Prom
         }
     }
 
-    // ✅ Cập nhật dữ liệu mới
+    // Cập nhật dữ liệu mới
     public void updateData(List<DocumentSnapshot> newList) {
         this.promotions = new ArrayList<>(newList);
-        android.util.Log.d("PROMO_DEBUG", "🔁 Adapter cập nhật " + promotions.size() + " item");
+        android.util.Log.d("PROMO_DEBUG", "Adapter cập nhật " + promotions.size() + " item");
         notifyDataSetChanged();
     }
 }

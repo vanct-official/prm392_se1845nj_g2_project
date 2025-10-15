@@ -31,17 +31,17 @@ public class TourImageSliderAdapter {
                 slideModels.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
             }
         } else {
-            // 🔹 Nếu không có ảnh, hiển thị ảnh mặc định
+            // Nếu không có ảnh, hiển thị ảnh mặc định
             slideModels.add(new SlideModel(R.drawable.ic_image_placeholder, ScaleTypes.CENTER_CROP));
         }
 
-        // 🔹 Set danh sách ảnh vào slider
+        // Set danh sách ảnh vào slider
         imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
 
-        // 🔹 Thiết lập auto slide 3 giây/lần
+        // Thiết lập auto slide 3 giây/lần
         imageSlider.startSliding(3000);
 
-        // 🔹 Bắt sự kiện click vào từng ảnh
+        // Bắt sự kiện click vào từng ảnh
         imageSlider.setItemClickListener(new ItemClickListener() {
             @Override
             public void onItemSelected(int i) {

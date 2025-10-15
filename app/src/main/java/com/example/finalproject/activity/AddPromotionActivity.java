@@ -48,19 +48,19 @@ public class AddPromotionActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        // 🗓️ Chọn ngày
+        // 🗓Chọn ngày
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
-        // ❌ Hủy
+        // Hủy
         btnCancel.setOnClickListener(v -> finish());
 
-        // ✅ Tạo khuyến mãi
+        // Tạo khuyến mãi
         btnCreate.setOnClickListener(v -> validateAndCreate());
     }
 
     // ===========================================================
-    // 🔍 HIỂN THỊ DATE PICKER
+    // HIỂN THỊ DATE PICKER
     // ===========================================================
     private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();
@@ -76,7 +76,7 @@ public class AddPromotionActivity extends AppCompatActivity {
     }
 
     // ===========================================================
-    // 🧾 KIỂM TRA VÀ TẠO KHUYẾN MÃI
+    // KIỂM TRA VÀ TẠO KHUYẾN MÃI
     // ===========================================================
     private void validateAndCreate() {
         String code = etPromotionCode.getText().toString().trim();
@@ -121,14 +121,14 @@ public class AddPromotionActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔎 Kiểm tra trùng tên khuyến mãi
+        // Kiểm tra trùng tên khuyến mãi
         db.collection("promotions").document(code)
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
                         Toast.makeText(this, "Tên mã khuyến mãi đã tồn tại!", Toast.LENGTH_SHORT).show();
                     } else {
-                        // 🔥 Thêm khuyến mãi
+                        // Thêm khuyến mãi
                         Map<String, Object> promo = new HashMap<>();
                         promo.put("name", code);
                         promo.put("description", desc);
@@ -143,7 +143,7 @@ public class AddPromotionActivity extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(this, "Thêm khuyến mãi thành công!", Toast.LENGTH_SHORT).show();
                                     setResult(RESULT_OK);
-                                    finish(); // 🔙 Quay lại danh sách
+                                    finish(); // Quay lại danh sách
                                 })
                                 .addOnFailureListener(e ->
                                         Toast.makeText(this, "Lỗi khi thêm: " + e.getMessage(), Toast.LENGTH_SHORT).show());

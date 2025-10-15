@@ -26,7 +26,7 @@ import java.util.Map;
 public class EditPromotionActivity extends AppCompatActivity {
 
     private EditText etPromotionCode, etDescription, etDiscountPercent, etMinValue, etFromDate, etToDate;
-    private SwitchMaterial switchActive;  // ✅ Đổi thành SwitchMaterial
+    private SwitchMaterial switchActive;  // Đổi thành SwitchMaterial
     private Button btnSave, btnCancel;
     private FirebaseFirestore db;
     private String docId;
@@ -38,7 +38,7 @@ public class EditPromotionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_promotion);
 
-        // ✅ Chỉ lấy docId MỘT LẦN ngay đầu
+        // Chỉ lấy docId MỘT LẦN ngay đầu
         docId = getIntent().getStringExtra("promotionId");
         android.util.Log.d("PROMO_DEBUG", "Nhận promotionId = " + docId);
 
@@ -61,7 +61,7 @@ public class EditPromotionActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        // ✅ XÓA dòng trùng lặp này đi
+        // XÓA dòng trùng lặp này đi
         // docId = getIntent().getStringExtra("promotionId");
 
         // Sự kiện chọn ngày
@@ -79,7 +79,7 @@ public class EditPromotionActivity extends AppCompatActivity {
     }
 
     // ============================================================
-    // 🔥 LOAD DỮ LIỆU FIRESTORE
+    // LOAD DỮ LIỆU FIRESTORE
     // ============================================================
     private void loadPromotion() {
         db.collection("promotions").document(docId)
@@ -117,7 +117,7 @@ public class EditPromotionActivity extends AppCompatActivity {
     }
 
     // ============================================================
-    // 💾 LƯU THAY ĐỔI
+    // LƯU THAY ĐỔI
     // ============================================================
     private void saveChanges() {
         String desc = etDescription.getText().toString().trim();
@@ -174,7 +174,7 @@ public class EditPromotionActivity extends AppCompatActivity {
                     .update(update)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-                        setResult(RESULT_OK);  // ✅ Thêm dòng này
+                        setResult(RESULT_OK);
                         finish();
                     })
                     .addOnFailureListener(e -> {
@@ -187,7 +187,7 @@ public class EditPromotionActivity extends AppCompatActivity {
     }
 
     // ============================================================
-    // 📅 DATE PICKER
+    // DATE PICKER
     // ============================================================
     private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();

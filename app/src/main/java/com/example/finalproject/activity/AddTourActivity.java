@@ -58,7 +58,7 @@ public class AddTourActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        // 🔹 Ánh xạ view
+        // Ánh xạ view
         etTourName = findViewById(R.id.etTourName);
         etDescription = findViewById(R.id.etDescription);
         etLocation = findViewById(R.id.etLocation);
@@ -74,25 +74,25 @@ public class AddTourActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         spinnerGuide = findViewById(R.id.spinnerGuide);
 
-        // 🔹 Load danh sách hướng dẫn viên
+        // Load danh sách hướng dẫn viên
         loadGuides();
 
-        // 🔹 Ngày tháng
+        // Ngày tháng
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
-        // 🔹 Chọn ảnh
+        // Chọn ảnh
         btnChooseImages.setOnClickListener(v -> openGallery());
 
-        // 🔹 Hủy
+        // Hủy
         btnCancel.setOnClickListener(v -> finish());
 
-        // 🔹 Lưu tour
+        // Lưu tour
         btnSave.setOnClickListener(v -> saveTour());
     }
 
     // ===========================================================
-    // 🧭 LOAD DANH SÁCH HƯỚNG DẪN VIÊN
+    // LOAD DANH SÁCH HƯỚNG DẪN VIÊN
     // ===========================================================
     private void loadGuides() {
         db.collection("guides")
@@ -119,7 +119,7 @@ public class AddTourActivity extends AppCompatActivity {
     }
 
     // ===========================================================
-    // 📅 CHỌN NGÀY
+    // CHỌN NGÀY
     // ===========================================================
     private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();
@@ -130,7 +130,7 @@ public class AddTourActivity extends AppCompatActivity {
     }
 
     // ===========================================================
-    // 🖼️ CHỌN ẢNH TỪ THƯ VIỆN
+    // CHỌN ẢNH TỪ THƯ VIỆN
     // ===========================================================
     private void openGallery() {
         Intent intent = new Intent();
@@ -160,7 +160,7 @@ public class AddTourActivity extends AppCompatActivity {
     }
 
     // ===========================================================
-    // 💾 LƯU TOUR VÀO FIRESTORE
+    // LƯU TOUR VÀO FIRESTORE
     // ===========================================================
     private void saveTour() {
         String name = etTourName.getText().toString().trim();
@@ -172,7 +172,7 @@ public class AddTourActivity extends AppCompatActivity {
         String startStr = etStartDate.getText().toString().trim();
         String endStr = etEndDate.getText().toString().trim();
 
-        // 🔹 1. Kiểm tra rỗng
+        // 1. Kiểm tra rỗng
         if (name.isEmpty() || desc.isEmpty() || loc.isEmpty() ||
                 priceStr.isEmpty() || seatStr.isEmpty() || depositStr.isEmpty() ||
                 startStr.isEmpty() || endStr.isEmpty()) {
@@ -197,7 +197,7 @@ public class AddTourActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔹 2. Validate logic giá & đặt cọc
+        // 2. Validate logic giá & đặt cọc
         if (price <= 0) {
             Toast.makeText(this, "Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
             return;
@@ -207,7 +207,7 @@ public class AddTourActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔹 3. Validate ngày
+        // 3. Validate ngày
         if (endDate.before(startDate) || endDate.equals(startDate)) {
             Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
             return;
@@ -215,7 +215,7 @@ public class AddTourActivity extends AppCompatActivity {
 
         progressBar.setVisibility(android.view.View.VISIBLE);
 
-        // 🔹 4. Kiểm tra trùng tên tour trên Firestore
+        // 4. Kiểm tra trùng tên tour trên Firestore
         db.collection("tours")
                 .whereEqualTo("tourName", name)
                 .get()
@@ -226,7 +226,7 @@ public class AddTourActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // 🔹 Nếu hợp lệ → bắt đầu upload & lưu
+                    // Nếu hợp lệ → bắt đầu upload & lưu
                     new Thread(() -> {
                         try {
                             String selectedGuideId = guideIds.get(spinnerGuide.getSelectedItemPosition());

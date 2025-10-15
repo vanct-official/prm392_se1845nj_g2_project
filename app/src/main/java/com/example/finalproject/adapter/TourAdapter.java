@@ -68,7 +68,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
                 ? "Giá: " + NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price)
                 : "");
 
-        // 🔹 Hiển thị hướng dẫn viên
+        // Hiển thị hướng dẫn viên
         List<String> guideIds = (List<String>) doc.get("guideIds");
         if (guideIds != null && !guideIds.isEmpty()) {
             String guideId = guideIds.get(0);
@@ -89,7 +89,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
             holder.tvGuideName.setText("Hướng dẫn viên: (Chưa gán)");
         }
 
-        // 🔹 Hiển thị ảnh
+        // Hiển thị ảnh
         List<SlideModel> slideModels = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
             for (String url : images) {
@@ -100,7 +100,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         }
         holder.imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
 
-        // 🔸 Nút Xem chi tiết
+        // Nút Xem chi tiết
         holder.btnView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TourDetailActivity.class);
             intent.putExtra("tourId", doc.getId());
@@ -108,13 +108,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
             context.startActivity(intent);
         });
 
-        // 🟩 Nút Sửa (thêm đoạn này)
-//        holder.btnEdit.setOnClickListener(v -> {
-//            Intent intent = new Intent(context, com.example.finalproject.activity.EditTourActivity.class);
-//            intent.putExtra("tourId", doc.getId());
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            context.startActivity(intent);
-//        });
+        // Nút Sửa (thêm đoạn này)
         holder.btnEdit.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EditTourActivity.class);
             intent.putExtra("tourId", doc.getId());
@@ -122,7 +116,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         });
 
 
-        // 🔻 Nút Xóa (giữ nguyên)
+        // Nút Xóa (giữ nguyên)
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
     }
 
@@ -145,7 +139,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
             tvTourName = itemView.findViewById(R.id.tvTourName);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvLocation = itemView.findViewById(R.id.tvLocation);
-            tvGuideName = itemView.findViewById(R.id.tvGuideName); // 👈 Thêm dòng này
+            tvGuideName = itemView.findViewById(R.id.tvGuideName);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnView = itemView.findViewById(R.id.btnView);

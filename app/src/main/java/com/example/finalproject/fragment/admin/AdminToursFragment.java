@@ -67,10 +67,10 @@ public class AdminToursFragment extends Fragment {
 
         recyclerTours.setAdapter(adapter);
 
-        // 🔥 Load dữ liệu ban đầu
+        // Load dữ liệu ban đầu
         loadTours();
 
-        // ✅ Khi bấm “+ Thêm mới”
+        // Khi bấm “+ Thêm mới”
         tvAddTour.setOnClickListener(v -> {
             Intent intent = new Intent(requireActivity(), AddTourActivity.class);
             startActivity(intent);
@@ -81,7 +81,7 @@ public class AdminToursFragment extends Fragment {
     }
 
     // ===========================================================
-    // 🔥 LOAD DANH SÁCH TOUR
+    // LOAD DANH SÁCH TOUR
     // ===========================================================
     private void loadTours() {
         progressBar.setVisibility(View.VISIBLE);
@@ -101,7 +101,7 @@ public class AdminToursFragment extends Fragment {
     }
 
     // ===========================================================
-    // ❌ XÓA TOUR
+    // XÓA TOUR
     // ===========================================================
     private void confirmDelete(DocumentSnapshot doc) {
         new AlertDialog.Builder(getContext())
