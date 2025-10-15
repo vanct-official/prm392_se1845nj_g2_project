@@ -23,8 +23,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sửa khuyến mãi"
-                android:textSize="28sp"
                 android:textColor="#1E293B"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <TextView

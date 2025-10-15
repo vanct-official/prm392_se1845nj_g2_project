@@ -22,11 +22,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
                 android:text="Thêm tour mới"
-                android:textSize="28sp"
                 android:textColor="#1E293B"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
