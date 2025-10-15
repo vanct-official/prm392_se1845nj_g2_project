@@ -2,15 +2,15 @@ package com.example.finalproject.activity;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.Switch;
-import android.widget.Toast;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finalproject.R;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class EditPromotionActivity extends AppCompatActivity {
 
     private EditText etPromotionCode, etDescription, etDiscountPercent, etMinValue, etFromDate, etToDate;
-    private Switch switchActive;
+    private SwitchMaterial switchActive;  // ✅ Đổi thành SwitchMaterial
     private Button btnSave, btnCancel;
     private FirebaseFirestore db;
     private String docId;
@@ -38,6 +38,7 @@ public class EditPromotionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_promotion);
 
+        // ✅ Chỉ lấy docId MỘT LẦN ngay đầu
         docId = getIntent().getStringExtra("promotionId");
         android.util.Log.d("PROMO_DEBUG", "Nhận promotionId = " + docId);
 
@@ -46,6 +47,7 @@ public class EditPromotionActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         // Ánh xạ view
         etPromotionCode = findViewById(R.id.etPromotionCode);
         etDescription = findViewById(R.id.etDescription);
@@ -58,14 +60,9 @@ public class EditPromotionActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.btnCancel);
 
         db = FirebaseFirestore.getInstance();
-        docId = getIntent().getStringExtra("promotionId");
 
-        // Kiểm tra ID
-        if (docId == null || docId.trim().isEmpty()) {
-            Toast.makeText(this, "Không tìm thấy ID khuyến mãi!", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+        // ✅ XÓA dòng trùng lặp này đi
+        // docId = getIntent().getStringExtra("promotionId");
 
         // Sự kiện chọn ngày
         etFromDate.setOnClickListener(v -> showDatePicker(etFromDate));
@@ -96,6 +93,7 @@ public class EditPromotionActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    android.util.Log.e("PROMO_DEBUG", "Load error", e);
                     finish();
                 });
     }
@@ -176,10 +174,13 @@ public class EditPromotionActivity extends AppCompatActivity {
                     .update(update)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);  // ✅ Thêm dòng này
                         finish();
                     })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        android.util.Log.e("PROMO_DEBUG", "Update error", e);
+                    });
         } catch (ParseException e) {
             Toast.makeText(this, "Định dạng ngày không hợp lệ!", Toast.LENGTH_SHORT).show();
         }

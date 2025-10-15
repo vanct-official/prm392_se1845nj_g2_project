@@ -69,11 +69,6 @@ public class AdminPromotionsFragment extends Fragment {
             }
 
             @Override
-//            public void onEdit(DocumentSnapshot doc) {
-//                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
-//                intent.putExtra("promotionId", doc.getId());
-//                startActivity(intent);
-//            }
             public void onEdit(DocumentSnapshot doc) {
                 if (doc == null || doc.getId() == null) {
                     Toast.makeText(getContext(), "Không thể mở khuyến mãi này!", Toast.LENGTH_SHORT).show();
