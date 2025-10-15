@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1F5F9"
+    android:background="#F8FAFC"
     android:fillViewport="true">
 
     <LinearLayout
@@ -11,14 +11,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header -->
+        <!-- Header với gradient hiện đại -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/purple_500"
-            android:padding="24dp"
-            android:paddingBottom="40dp">
+
+            android:padding="28dp"
+            android:paddingBottom="48dp"
+            android:elevation="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -26,312 +27,417 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="Chi tiết tour du lịch"
                 android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thông tin tour cụ thể"
-                android:textSize="15sp"
+                android:text="Khám phá hành trình tuyệt vời"
+                android:textSize="16sp"
                 android:textColor="#E0E7FF"
-                android:layout_marginTop="6dp" />
+                android:layout_marginTop="8dp"
+                android:alpha="0.95" />
         </LinearLayout>
 
-        <!-- Nội dung chính -->
+        <!-- Card chính với shadow đẹp hơn -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="8dp">
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="-32dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:padding="0dp">
 
-                <!-- Tên tour -->
-                <com.google.android.material.card.MaterialCardView
+                <!-- Image Slider với corners -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardBackgroundColor="#EEF2FF"
-                    app:cardElevation="0dp"
-                    android:layout_marginBottom="24dp">
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp">
 
+                    <com.denzcoskun.imageslider.ImageSlider
+                        android:id="@+id/imageSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="240dp"
+                        android:scaleType="centerCrop" />
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <!-- Tên tour với badge -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="20dp"
-                        android:gravity="center">
+                        android:layout_marginBottom="20dp">
 
-                        <TextView
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TÊN TOUR"
-                            android:textSize="12sp"
-                            android:textColor="#6366F1"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.1" />
+                            app:cardCornerRadius="8dp"
+                            app:cardBackgroundColor="#EEF2FF"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="⭐ TOUR ĐẶC BIỆT"
+                                android:textSize="11sp"
+                                android:textColor="#6366F1"
+                                android:textStyle="bold"
+                                android:letterSpacing="0.08"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:paddingTop="6dp"
+                                android:paddingBottom="6dp" />
+                        </com.google.android.material.card.MaterialCardView>
 
                         <TextView
                             android:id="@+id/tvTourName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:lineSpacingExtra="4dp"
                             android:text="Tour Đà Nẵng 3 ngày 2 đêm"
-                            android:textColor="#4338CA"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Hình ảnh (Image Slider) -->
-                <com.denzcoskun.imageslider.ImageSlider
-                    android:id="@+id/imageSlider"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="#E2E8F0" />
-
-                <!-- Mô tả -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mô tả"
-                        android:textSize="13sp"
-                        android:textColor="#64748B"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="6dp" />
-
-                    <TextView
-                        android:id="@+id/tvDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:lineSpacingExtra="4dp"
-                        android:text="Tham quan Bà Nà Hills, Ngũ Hành Sơn và Hội An cổ kính."
-                        android:textColor="#1E293B"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Địa điểm & Giá -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="20dp">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardBackgroundColor="#DBEAFE"
-                        app:cardElevation="0dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="16dp"
-                            android:gravity="center">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Địa điểm"
-                                android:textSize="12sp"
-                                android:textColor="#1E3A8A"
-                                android:layout_marginBottom="4dp" />
-
-                            <TextView
-                                android:id="@+id/tvLocation"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Đà Nẵng"
-                                android:textColor="#1E40AF"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardBackgroundColor="#FEF3C7"
-                        app:cardElevation="0dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="16dp"
-                            android:gravity="center">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Giá tour"
-                                android:textSize="12sp"
-                                android:textColor="#92400E"
-                                android:layout_marginBottom="4dp" />
-
-                            <TextView
-                                android:id="@+id/tvPrice"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="3.500.000₫"
-                                android:textColor="#B45309"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
-
-                <!-- Hướng dẫn viên -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Hướng dẫn viên"
-                        android:textSize="13sp"
-                        android:textColor="#64748B"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="6dp" />
-
-                    <TextView
-                        android:id="@+id/tvGuideName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nguyễn Văn A"
-                        android:textColor="#1E293B"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <!-- Thông tin chi tiết khác -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Chi tiết tour"
-                        android:textSize="13sp"
-                        android:textColor="#64748B"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="6dp" />
-
-                    <!-- Ngày bắt đầu -->
-                    <TextView
-                        android:id="@+id/tvStartDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Ngày bắt đầu: --/--/----"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="4dp" />
-
-                    <!-- Ngày kết thúc -->
-                    <TextView
-                        android:id="@+id/tvEndDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Ngày kết thúc: --/--/----"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="4dp" />
-
-                    <!-- Số ghế trống -->
-                    <TextView
-                        android:id="@+id/tvSeats"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Ghế còn trống: --"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="4dp" />
-
-                    <!-- Phần trăm đặt cọc -->
-                    <TextView
-                        android:id="@+id/tvDepositPercent"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Đặt cọc: --%"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Trạng thái -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="24dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Trạng thái"
-                        android:textSize="13sp"
-                        android:textColor="#64748B"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="20dp"
-                        app:cardBackgroundColor="#DCFCE7"
-                        app:cardElevation="0dp">
-
-                        <TextView
-                            android:id="@+id/tvStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="10dp"
-                            android:text="Đang hoạt động"
-                            android:textColor="#166534"
+                            android:textColor="#0F172A"
                             android:textSize="14sp"
                             android:textStyle="bold" />
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
+                    </LinearLayout>
 
-                <!-- Nút quay lại -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnBack"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="Quay lại"
-                    android:textSize="16sp"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    app:cornerRadius="14dp"
-                    app:backgroundTint="#6366F1"
-                    style="@style/Widget.Material3.Button" />
+                    <!-- Địa điểm & Giá với icon -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="24dp"
+                        android:weightSum="2">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardBackgroundColor="#DBEAFE"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="18dp"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📍"
+                                    android:textSize="24sp"
+                                    android:layout_marginBottom="6dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="4dp"
+                                    android:letterSpacing="0.05"
+                                    android:text="Địa điểm"
+                                    android:textColor="#1E3A8A"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvLocation"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đà Nẵng"
+                                    android:textColor="#1E40AF"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardBackgroundColor="#FEF3C7"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="18dp"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="💰"
+                                    android:textSize="24sp"
+                                    android:layout_marginBottom="6dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="4dp"
+                                    android:letterSpacing="0.05"
+                                    android:text="Giá tour"
+                                    android:textColor="#92400E"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvPrice"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="3.500.000₫"
+                                    android:textColor="#B45309"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E2E8F0"
+                        android:layout_marginBottom="24dp" />
+
+                    <!-- Mô tả -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="24dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📝 Mô tả"
+                            android:textSize="14sp"
+                            android:textColor="#475569"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="10dp" />
+
+                        <TextView
+                            android:id="@+id/tvDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.9"
+                            android:lineSpacingExtra="6dp"
+                            android:text="Tham quan Bà Nà Hills, Ngũ Hành Sơn và Hội An cổ kính. Trải nghiệm văn hóa độc đáo và ẩm thực đặc sắc của miền Trung."
+                            android:textColor="#334155"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Hướng dẫn viên -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="16dp"
+                        app:cardBackgroundColor="#F1F5F9"
+                        app:cardElevation="0dp"
+                        android:layout_marginBottom="24dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="18dp"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:text="👤"
+                                android:textSize="24sp" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hướng dẫn viên"
+                                    android:textSize="12sp"
+                                    android:textColor="#64748B"
+                                    android:textStyle="bold"
+                                    android:layout_marginBottom="4dp" />
+
+                                <TextView
+                                    android:id="@+id/tvGuideName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Nguyễn Văn A"
+                                    android:textColor="#0F172A"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Chi tiết tour -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="24dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ℹ️ Chi tiết tour"
+                            android:textSize="14sp"
+                            android:textColor="#475569"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="16dp" />
+
+                        <!-- Grid layout cho thông tin -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="📅 Ngày bắt đầu"
+                                    android:textColor="#64748B"
+                                    android:textSize="13sp" />
+
+                                <TextView
+                                    android:id="@+id/tvStartDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--/--/----"
+                                    android:textColor="#0F172A"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="📅 Ngày kết thúc"
+                                    android:textColor="#64748B"
+                                    android:textSize="13sp" />
+
+                                <TextView
+                                    android:id="@+id/tvEndDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--/--/----"
+                                    android:textColor="#0F172A"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="💺 Ghế còn trống"
+                                    android:textColor="#64748B"
+                                    android:textSize="13sp" />
+
+                                <TextView
+                                    android:id="@+id/tvSeats"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textColor="#0F172A"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="💳 Đặt cọc"
+                                    android:textColor="#64748B"
+                                    android:textSize="13sp" />
+
+                                <TextView
+                                    android:id="@+id/tvDepositPercent"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--%"
+                                    android:textColor="#0F172A"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <!-- Nút quay lại -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBack"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:text="Quay lại"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textAllCaps="false"
+                        app:cornerRadius="16dp"
+                        app:backgroundTint="#6366F1"
+                        app:elevation="4dp"
+                        style="@style/Widget.Material3.Button" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
