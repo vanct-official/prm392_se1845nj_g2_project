@@ -93,13 +93,24 @@
             android:padding="12dp"
             android:drawableEnd="@android:drawable/ic_menu_my_calendar"/>
 
+        <TextView
+            android:text="Hướng dẫn viên"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"/>
+
         <EditText
             android:id="@+id/etGuideId"
             android:hint="ID hướng dẫn viên"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:padding="12dp"/>
+            android:padding="12dp"
+            android:textSize="13sp"
+            android:enabled="true"/>
 
         <Button
             android:id="@+id/btnSave"

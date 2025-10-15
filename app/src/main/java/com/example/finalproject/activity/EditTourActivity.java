@@ -2,6 +2,7 @@ package com.example.finalproject.activity;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +40,7 @@ public class EditTourActivity extends AppCompatActivity {
 
         Log.d(TAG, "Tour ID received: " + tourId);
 
-        // ✅ Kiểm tra tourId
-        if (tourId == null || tourId.isEmpty()) {
+        if (TextUtils.isEmpty(tourId)) {
             Toast.makeText(this, "Lỗi: Không tìm thấy ID tour!", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -66,11 +67,12 @@ public class EditTourActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveChanges());
     }
 
+    // Hiển thị DatePicker
     private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog dialog = new DatePickerDialog(this,
                 (view, year, month, dayOfMonth) -> {
-                    String date = dayOfMonth + " " + getMonthName(month) + " " + year + " at 00:00:00 UTC+7";
+                    String date = dayOfMonth + "/" + (month + 1) + "/" + year;
                     target.setText(date);
                 },
                 calendar.get(Calendar.YEAR),
@@ -79,100 +81,92 @@ public class EditTourActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private String getMonthName(int month) {
-        String[] months = {"January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"};
-        return months[month];
-    }
-
+    // Load dữ liệu tour từ Firestore
     private void loadTourData() {
-        Log.d(TAG, "Loading tour data for: " + tourId);
-
         DocumentReference docRef = db.collection("tours").document(tourId);
         docRef.get().addOnSuccessListener(doc -> {
-            if (doc.exists()) {
-                Log.d(TAG, "Document exists, data: " + doc.getData());
-
-                try {
-                    // ✅ Load tourName
-                    String tourName = doc.getString("tourName");
-                    etTourName.setText(tourName != null ? tourName : "");
-
-                    // ✅ Load description
-                    String description = doc.getString("description");
-                    etDescription.setText(description != null ? description : "");
-
-                    // ✅ Load location
-                    String location = doc.getString("location");
-                    etLocation.setText(location != null ? location : "");
-
-                    // ✅ Load availableSeats
-                    Long seats = doc.getLong("availableSeats");
-                    etSeats.setText(seats != null ? String.valueOf(seats) : "0");
-
-                    // ✅ Load price
-                    Long price = doc.getLong("price");
-                    etPrice.setText(price != null ? String.valueOf(price) : "0");
-
-                    // ✅ Load depositPercent (KHÔNG PHẢI deposit)
-                    Long depositPercent = doc.getLong("depositPercent");
-                    etDepositPercent.setText(depositPercent != null ? String.valueOf(depositPercent) : "0");
-
-                    // ✅ Load startDate
-                    String startDate = doc.getString("startDate");
-                    etStartDate.setText(startDate != null ? startDate : "");
-
-                    // ✅ Load endDate
-                    String endDate = doc.getString("endDate");
-                    etEndDate.setText(endDate != null ? endDate : "");
-
-                    // ✅ Load guideIds (FIX CHÍNH)
-                    Object guideIdsObj = doc.get("guideIds");
-                    if (guideIdsObj instanceof List) {
-                        List<?> guideIdsList = (List<?>) guideIdsObj;
-                        if (!guideIdsList.isEmpty() && guideIdsList.get(0) != null) {
-                            etGuideId.setText(guideIdsList.get(0).toString());
-                        } else {
-                            etGuideId.setText("");
-                        }
-                    } else {
-                        etGuideId.setText("");
-                    }
-
-                    Log.d(TAG, "Data loaded successfully");
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Error parsing document data", e);
-                    Toast.makeText(this, "Lỗi đọc dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-            } else {
-                Log.e(TAG, "Document does not exist");
+            if (!doc.exists()) {
                 Toast.makeText(this, "Tour không tồn tại!", Toast.LENGTH_SHORT).show();
                 finish();
+                return;
+            }
+
+            try {
+                etTourName.setText(getStringSafe(doc.getString("tourName")));
+                etDescription.setText(getStringSafe(doc.getString("description")));
+                etLocation.setText(getStringSafe(doc.getString("location")));
+
+                Object seatsObj = doc.get("availableSeats");
+                etSeats.setText(seatsObj != null ? String.valueOf(seatsObj) : "0");
+
+                Object priceObj = doc.get("price");
+                etPrice.setText(priceObj != null ? String.valueOf(priceObj) : "0");
+
+                Object depositObj = doc.get("depositPercent");
+                etDepositPercent.setText(depositObj != null ? String.valueOf(depositObj) : "0");
+
+                Object startDateObj = doc.get("startDate");
+                etStartDate.setText(startDateObj != null ? startDateObj.toString() : "");
+
+                Object endDateObj = doc.get("endDate");
+                etEndDate.setText(endDateObj != null ? endDateObj.toString() : "");
+
+                Object guideIdsObj = doc.get("guideIds");
+                if (guideIdsObj instanceof List) {
+                    List<?> guideList = (List<?>) guideIdsObj;
+                    if (!guideList.isEmpty() && guideList.get(0) != null) {
+                        String guideId = guideList.get(0).toString();
+                        etGuideId.setText(guideId);
+                        loadGuideName(guideId);
+                    }
+                }
+
+            } catch (Exception e) {
+                Log.e(TAG, "Lỗi đọc dữ liệu tour", e);
+                Toast.makeText(this, "Lỗi đọc dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }).addOnFailureListener(e -> {
-            Log.e(TAG, "Failed to load tour data", e);
+            Log.e(TAG, "Lỗi tải dữ liệu tour", e);
             Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
             finish();
         });
     }
 
+    // Load tên hướng dẫn viên
+    private void loadGuideName(String guideId) {
+        db.collection("guides").document(guideId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        String guideName = doc.getString("name");
+                        if (guideName != null && !guideName.isEmpty()) {
+                            etGuideId.setHint("Hướng dẫn viên: " + guideName);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Lỗi tải tên hướng dẫn viên", e));
+    }
+
+    // Hàm an toàn lấy String
+    private String getStringSafe(String value) {
+        return value != null ? value : "";
+    }
+
+    // Lưu thay đổi
     private void saveChanges() {
-        // ✅ Validation
         String tourName = etTourName.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
         String location = etLocation.getText().toString().trim();
         String seatsStr = etSeats.getText().toString().trim();
         String priceStr = etPrice.getText().toString().trim();
-        String depositPercentStr = etDepositPercent.getText().toString().trim();
+        String depositStr = etDepositPercent.getText().toString().trim();
         String startDate = etStartDate.getText().toString().trim();
         String endDate = etEndDate.getText().toString().trim();
         String guideId = etGuideId.getText().toString().trim();
 
-        if (tourName.isEmpty() || description.isEmpty() || location.isEmpty() ||
-                seatsStr.isEmpty() || priceStr.isEmpty() || depositPercentStr.isEmpty() ||
-                startDate.isEmpty() || endDate.isEmpty() || guideId.isEmpty()) {
+        if (TextUtils.isEmpty(tourName) || TextUtils.isEmpty(description) || TextUtils.isEmpty(location) ||
+                TextUtils.isEmpty(seatsStr) || TextUtils.isEmpty(priceStr) || TextUtils.isEmpty(depositStr) ||
+                TextUtils.isEmpty(startDate) || TextUtils.isEmpty(endDate) || TextUtils.isEmpty(guideId)) {
             Toast.makeText(this, "Vui lòng điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -180,7 +174,7 @@ public class EditTourActivity extends AppCompatActivity {
         try {
             int seats = Integer.parseInt(seatsStr);
             long price = Long.parseLong(priceStr);
-            int depositPercent = Integer.parseInt(depositPercentStr);
+            int depositPercent = Integer.parseInt(depositStr);
 
             if (depositPercent < 0 || depositPercent > 100) {
                 Toast.makeText(this, "Phần trăm đặt cọc phải từ 0-100!", Toast.LENGTH_SHORT).show();
@@ -196,21 +190,16 @@ public class EditTourActivity extends AppCompatActivity {
             updates.put("depositPercent", depositPercent);
             updates.put("startDate", startDate);
             updates.put("endDate", endDate);
-            updates.put("guideIds", java.util.Collections.singletonList(guideId));
-
-            Log.d(TAG, "Updating tour with data: " + updates);
+            updates.put("guideIds", Collections.singletonList(guideId));
 
             db.collection("tours").document(tourId)
                     .update(updates)
                     .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Tour updated successfully");
                         Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
                         finish();
                     })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to update tour", e);
-                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_LONG).show());
 
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Dữ liệu số không hợp lệ!", Toast.LENGTH_SHORT).show();
