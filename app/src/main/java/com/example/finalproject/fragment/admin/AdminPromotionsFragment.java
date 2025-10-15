@@ -125,23 +125,6 @@ public class AdminPromotionsFragment extends Fragment {
     // ===========================================================
     // 🔥 LOAD DANH SÁCH KHUYẾN MÃI
     // ===========================================================
-//    private void loadPromotions() {
-//        loadingProgress.setVisibility(View.VISIBLE);
-//
-//        db.collection("promotions")
-//                .orderBy("name", Query.Direction.ASCENDING)
-//                .get()
-//                .addOnSuccessListener(querySnapshot -> {
-//                    promotions.clear();
-//                    promotions.addAll(querySnapshot.getDocuments());
-//                    adapter.notifyDataSetChanged();
-//                    loadingProgress.setVisibility(View.GONE);
-//                })
-//                .addOnFailureListener(e -> {
-//                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    loadingProgress.setVisibility(View.GONE);
-//                });
-//    }
 
     private void loadPromotions() {
         if (loadingProgress != null)
@@ -175,18 +158,41 @@ public class AdminPromotionsFragment extends Fragment {
             return;
         }
 
-        db.collection("promotions")
-                .orderBy("name")
-                .startAt(keyword)
-                .endAt(keyword + "\uf8ff")
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    promotions.clear();
-                    promotions.addAll(querySnapshot.getDocuments());
-                    adapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Lỗi tìm kiếm: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        String lowerKeyword = keyword.toLowerCase();
+        List<DocumentSnapshot> filteredList = new ArrayList<>();
+
+        for (DocumentSnapshot doc : promotions) {
+            String name = doc.getString("name");
+            String desc = doc.getString("description");
+
+            if ((name != null && name.toLowerCase().contains(lowerKeyword)) ||
+                    (desc != null && desc.toLowerCase().contains(lowerKeyword))) {
+                filteredList.add(doc);
+            }
+        }
+
+        adapter = new PromotionAdapter(getContext(), filteredList, new PromotionAdapter.OnPromotionActionListener() {
+            @Override
+            public void onView(DocumentSnapshot doc) {
+                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.ViewPromotionActivity.class);
+                intent.putExtra("promotionId", doc.getId());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onEdit(DocumentSnapshot doc) {
+                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
+                intent.putExtra("promotionId", doc.getId());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onDelete(DocumentSnapshot doc) {
+                confirmDelete(doc);
+            }
+        });
+
+        recyclerPromotions.setAdapter(adapter);
     }
 
 
