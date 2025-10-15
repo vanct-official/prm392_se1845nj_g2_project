@@ -114,7 +114,7 @@ public class TourDetailActivity extends AppCompatActivity {
             Object sObj = doc.get("seats");
             if (sObj instanceof Number) seats = ((Number) sObj).longValue();
         }
-        tvSeats.setText("" + (seats != null ? seats : 0));
+        tvSeats.setText("" + (seats != null ? seats : 0) + "ghế");
 
         // --- Deposit percent ---
         Long depositPercent = doc.getLong("depositPercent");
