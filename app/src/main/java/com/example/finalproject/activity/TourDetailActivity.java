@@ -114,7 +114,7 @@ public class TourDetailActivity extends AppCompatActivity {
             Object sObj = doc.get("seats");
             if (sObj instanceof Number) seats = ((Number) sObj).longValue();
         }
-        tvSeats.setText("Ghế còn trống: " + (seats != null ? seats : 0));
+        tvSeats.setText("" + (seats != null ? seats : 0));
 
         // --- Deposit percent ---
         Long depositPercent = doc.getLong("depositPercent");
@@ -122,7 +122,7 @@ public class TourDetailActivity extends AppCompatActivity {
             Object dp = doc.get("deposit");
             if (dp instanceof Number) depositPercent = ((Number) dp).longValue();
         }
-        tvDepositPercent.setText("Đặt cọc: " + (depositPercent != null ? depositPercent + "%" : "--%"));
+        tvDepositPercent.setText((depositPercent != null ? depositPercent + "%" : "--%"));
 
         // --- Status (try a few keys) ---
         String status = firstNonNullString(doc, "status", "state", "tourStatus");
