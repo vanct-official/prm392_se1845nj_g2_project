@@ -1,127 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="#FAFAFA"
+    tools:context=".activity.EditTourActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
+        <!-- Ảnh tour -->
+        <ImageView
+            android:id="@+id/imgTour"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_image_placeholder"
+            android:background="@drawable/bg_image_border"
+            android:contentDescription="@string/tour_image" />
+
+        <!-- Tên hướng dẫn viên -->
         <TextView
-            android:text="Chỉnh sửa thông tin Tour"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:id="@+id/tvGuideName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"/>
+            android:text="Hướng dẫn viên: (Chưa tải)"
+            android:textColor="#555555"
+            android:textStyle="italic"
+            android:gravity="center_horizontal"
+            android:textSize="15sp"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Tên tour -->
         <EditText
             android:id="@+id/etTourName"
-            android:hint="Tên tour"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="12dp"/>
+            android:hint="Tên tour"
+            android:inputType="textCapWords"
+            android:padding="12dp"
+            android:background="@drawable/bg_edittext" />
 
+        <!-- Mô tả -->
         <EditText
             android:id="@+id/etDescription"
-            android:hint="Mô tả"
-            android:minLines="3"
-            android:gravity="top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="12dp"/>
+            android:hint="Mô tả"
+            android:inputType="textMultiLine"
+            android:gravity="top|start"
+            android:minLines="3"
+            android:padding="12dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edittext" />
 
+        <!-- Địa điểm -->
         <EditText
             android:id="@+id/etLocation"
-            android:hint="Địa điểm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="12dp"/>
+            android:hint="Địa điểm"
+            android:inputType="textCapWords"
+            android:padding="12dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edittext" />
 
+        <!-- Số chỗ -->
         <EditText
             android:id="@+id/etSeats"
-            android:hint="Số ghế trống"
-            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="12dp"/>
+            android:hint="Số chỗ"
+            android:inputType="number"
+            android:padding="12dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edittext" />
 
+        <!-- Giá tour -->
         <EditText
             android:id="@+id/etPrice"
-            android:hint="Giá (VND)"
-            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="12dp"/>
+            android:hint="Giá (VND)"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edittext" />
 
+        <!-- Phần trăm đặt cọc -->
         <EditText
             android:id="@+id/etDepositPercent"
-            android:hint="Phần trăm đặt cọc (%)"
-            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="12dp"/>
+            android:hint="Phần trăm đặt cọc (%)"
+            android:inputType="number"
+            android:padding="12dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edittext" />
 
+        <!-- Ngày bắt đầu -->
         <EditText
             android:id="@+id/etStartDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="Ngày bắt đầu"
             android:focusable="false"
             android:clickable="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:padding="12dp"
-            android:drawableEnd="@android:drawable/ic_menu_my_calendar"/>
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edittext" />
 
+        <!-- Ngày kết thúc -->
         <EditText
             android:id="@+id/etEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="Ngày kết thúc"
             android:focusable="false"
             android:clickable="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:padding="12dp"
-            android:drawableEnd="@android:drawable/ic_menu_my_calendar"/>
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edittext" />
 
-        <TextView
-            android:text="Hướng dẫn viên"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"/>
-
+        <!-- ID hướng dẫn viên -->
         <EditText
             android:id="@+id/etGuideId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="ID hướng dẫn viên"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:inputType="text"
             android:padding="12dp"
-            android:textSize="13sp"
-            android:enabled="true"/>
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edittext" />
 
-        <Button
-            android:id="@+id/btnSave"
-            android:text="💾 Lưu thay đổi"
+        <!-- Nút hành động -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/bg_light_gray"
-            android:textColor="@android:color/white"
-            android:padding="16dp"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="20dp">
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Quay lại"
+                android:backgroundTint="#9E9E9E"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="10dp" />
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Lưu thay đổi"
+                android:backgroundTint="#2196F3"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

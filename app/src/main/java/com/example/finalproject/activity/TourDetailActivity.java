@@ -1,7 +1,6 @@
 package com.example.finalproject.activity;
 
 import android.os.Bundle;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,13 +39,13 @@ public class TourDetailActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         String tourId = getIntent().getStringExtra("tourId");
-        if (tourId != null) {
+        if (tourId != null && !tourId.isEmpty()) {
             loadTourDetail(tourId);
         } else {
             Toast.makeText(this, "Không tìm thấy thông tin tour", Toast.LENGTH_SHORT).show();
             finish();
         }
-        // Nút quay lại
+
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 
@@ -67,9 +66,11 @@ public class TourDetailActivity extends AppCompatActivity {
         String name = doc.getString("tourName");
         String desc = doc.getString("description");
         String location = doc.getString("location");
-        Double price = doc.getDouble("price");
-        String guideId = doc.getString("guideId");
-        List<String> images = (List<String>) doc.get("images");
+        Double price = null;
+        try {
+            Object priceObj = doc.get("price");
+            if (priceObj instanceof Number) price = ((Number) priceObj).doubleValue();
+        } catch (Exception ignored) {}
 
         tvTourName.setText(name != null ? name : "Không rõ tên");
         tvDescription.setText(desc != null ? desc : "");
@@ -78,19 +79,25 @@ public class TourDetailActivity extends AppCompatActivity {
                 ? "Giá: " + NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price)
                 : "");
 
-        // Ảnh
+        // ✅ Load danh sách ảnh (list<String>)
         List<SlideModel> slideModels = new ArrayList<>();
+        List<String> images = (List<String>) doc.get("images");
         if (images != null && !images.isEmpty()) {
             for (String url : images) {
-                slideModels.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
+                if (url != null && !url.trim().isEmpty()) {
+                    slideModels.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
+                }
             }
-        } else {
+        }
+        if (slideModels.isEmpty()) {
             slideModels.add(new SlideModel(R.drawable.ic_image_placeholder, ScaleTypes.CENTER_CROP));
         }
         imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
 
-        // Lấy tên hướng dẫn viên
-        if (guideId != null && !guideId.isEmpty()) {
+        // ✅ Hiển thị tên hướng dẫn viên đầu tiên
+        List<String> guideIds = (List<String>) doc.get("guideIds");
+        if (guideIds != null && !guideIds.isEmpty()) {
+            String guideId = guideIds.get(0);
             db.collection("guides").document(guideId).get()
                     .addOnSuccessListener(guideDoc -> {
                         String guideName = guideDoc.getString("name");
@@ -102,6 +109,4 @@ public class TourDetailActivity extends AppCompatActivity {
             tvGuideName.setText("Hướng dẫn viên: Không có");
         }
     }
-
-
 }

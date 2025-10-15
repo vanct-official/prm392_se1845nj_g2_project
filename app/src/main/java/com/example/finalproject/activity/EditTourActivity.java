@@ -2,24 +2,23 @@ package com.example.finalproject.activity;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.finalproject.R;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,27 +31,26 @@ public class EditTourActivity extends AppCompatActivity {
 
     private EditText etTourName, etDescription, etLocation, etSeats, etPrice, etDepositPercent, etStartDate, etEndDate, etGuideId;
     private TextView tvGuideName;
-    private Button btnSave;
+    private ImageView imgTour;
+    private Button btnSave, btnBack;
     private FirebaseFirestore db;
     private String tourId;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_tour);
 
         db = FirebaseFirestore.getInstance();
         tourId = getIntent().getStringExtra("tourId");
 
-        Log.d(TAG, "Tour ID received: " + tourId);
-
         if (tourId == null || tourId.isEmpty()) {
-            Toast.makeText(this, "Lỗi: Không tìm thấy ID tour!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Không tìm thấy tour ID!", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // Khởi tạo views
+        // Ánh xạ view
         etTourName = findViewById(R.id.etTourName);
         etDescription = findViewById(R.id.etDescription);
         etLocation = findViewById(R.id.etLocation);
@@ -63,290 +61,142 @@ public class EditTourActivity extends AppCompatActivity {
         etEndDate = findViewById(R.id.etEndDate);
         etGuideId = findViewById(R.id.etGuideId);
         tvGuideName = findViewById(R.id.tvGuideName);
+        imgTour = findViewById(R.id.imgTour);
         btnSave = findViewById(R.id.btnSave);
+        btnBack = findViewById(R.id.btnBack);
 
-        loadTourData();
-
-        // Chọn ngày
+        btnBack.setOnClickListener(v -> finish());
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
-        // Tự động load tên guide khi nhập ID
-        etGuideId.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String guideId = s.toString().trim();
-                if (!guideId.isEmpty() && guideId.length() > 10) {
-                    loadGuideName(guideId);
-                } else {
-                    tvGuideName.setText("Nhập ID hướng dẫn viên để xem tên");
-                }
-            }
-        });
-
         btnSave.setOnClickListener(v -> saveChanges());
+
+        loadTourData();
     }
 
     private void showDatePicker(EditText target) {
-        Calendar calendar = Calendar.getInstance();
-
-        // Parse ngày hiện tại từ EditText nếu có
-        String currentDate = target.getText().toString();
-        if (!currentDate.isEmpty()) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                Date date = sdf.parse(currentDate);
-                if (date != null) {
-                    calendar.setTime(date);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error parsing date", e);
-            }
-        }
-
-        DatePickerDialog dialog = new DatePickerDialog(this,
-                (view, year, month, dayOfMonth) -> {
-                    // Lưu dạng dd/MM/yyyy để dễ hiển thị
-                    String date = String.format(Locale.getDefault(), "%02d/%02d/%d", dayOfMonth, month + 1, year);
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog picker = new DatePickerDialog(this,
+                (view, year, month, day) -> {
+                    String date = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month + 1, year);
                     target.setText(date);
                 },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
-        dialog.show();
+                c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        picker.show();
     }
 
     private void loadTourData() {
-        Log.d(TAG, "Loading tour data for: " + tourId);
-
-        DocumentReference docRef = db.collection("tours").document(tourId);
-        docRef.get().addOnSuccessListener(doc -> {
-            if (doc.exists()) {
-                Log.d(TAG, "Document exists, data: " + doc.getData());
-
-                try {
-                    // Load tourName
-                    String tourName = doc.getString("tourName");
-                    etTourName.setText(tourName != null ? tourName : "");
-
-                    // Load description
-                    String description = doc.getString("description");
-                    etDescription.setText(description != null ? description : "");
-
-                    // Load location
-                    String location = doc.getString("location");
-                    etLocation.setText(location != null ? location : "");
-
-                    // Load availableSeats
-                    Object seatsObj = doc.get("availableSeats");
-                    if (seatsObj != null) {
-                        etSeats.setText(String.valueOf(seatsObj));
+        db.collection("tours").document(tourId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) {
+                        Toast.makeText(this, "Tour không tồn tại!", Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
                     }
 
-                    // Load price
-                    Object priceObj = doc.get("price");
-                    if (priceObj != null) {
-                        etPrice.setText(String.valueOf(priceObj));
+                    etTourName.setText(doc.getString("tourName"));
+                    etDescription.setText(doc.getString("description"));
+                    etLocation.setText(doc.getString("location"));
+                    etSeats.setText(String.valueOf(doc.getLong("availableSeats")));
+                    etPrice.setText(String.valueOf(doc.getLong("price")));
+                    etDepositPercent.setText(String.valueOf(doc.getLong("depositPercent")));
+
+                    etStartDate.setText(formatDate(doc.get("startDate")));
+                    etEndDate.setText(formatDate(doc.get("endDate")));
+
+                    // Load ảnh tour
+                    String imageUrl = doc.getString("imageUrl");
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
+                        Glide.with(this)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.ic_image_placeholder)
+                                .error(R.drawable.ic_image_placeholder)
+                                .into(imgTour);
+                    } else {
+                        imgTour.setImageResource(R.drawable.ic_image_placeholder);
                     }
 
-                    // Load depositPercent
-                    Object depositPercentObj = doc.get("depositPercent");
-                    if (depositPercentObj != null) {
-                        etDepositPercent.setText(String.valueOf(depositPercentObj));
-                    }
-
-                    // Load startDate - xử lý Timestamp
-                    Object startDateObj = doc.get("startDate");
-                    etStartDate.setText(formatDate(startDateObj));
-
-                    // Load endDate - xử lý Timestamp
-                    Object endDateObj = doc.get("endDate");
-                    etEndDate.setText(formatDate(endDateObj));
-
-                    // Load guideIds
+                    // Lấy hướng dẫn viên
                     Object guideIdsObj = doc.get("guideIds");
-                    if (guideIdsObj instanceof List) {
-                        List<?> guideIdsList = (List<?>) guideIdsObj;
-                        if (!guideIdsList.isEmpty() && guideIdsList.get(0) != null) {
-                            String guideId = guideIdsList.get(0).toString();
-                            etGuideId.setText(guideId);
-                            loadGuideName(guideId);
-                        }
+                    if (guideIdsObj instanceof List && !((List<?>) guideIdsObj).isEmpty()) {
+                        String guideId = ((List<?>) guideIdsObj).get(0).toString();
+                        etGuideId.setText(guideId);
+                        loadGuideName(guideId);
                     }
-
-                    Log.d(TAG, "Data loaded successfully");
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Error parsing document data", e);
-                    Toast.makeText(this, "Lỗi đọc dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-            } else {
-                Toast.makeText(this, "Tour không tồn tại!", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }).addOnFailureListener(e -> {
-            Log.e(TAG, "Failed to load tour data", e);
-            Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            finish();
-        });
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    // Format date từ Timestamp hoặc String
-    private String formatDate(Object dateObj) {
-        if (dateObj == null) return "";
-
-        try {
-            if (dateObj instanceof Timestamp) {
-                // Nếu là Timestamp, convert sang dd/MM/yyyy
-                Timestamp timestamp = (Timestamp) dateObj;
-                Date date = timestamp.toDate();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                return sdf.format(date);
-            } else if (dateObj instanceof String) {
-                // Nếu đã là String, parse và format lại
-                String dateStr = (String) dateObj;
-                // Thử parse nhiều format
-                String[] formats = {
-                        "dd/MM/yyyy",
-                        "d MMMM yyyy 'at' HH:mm:ss 'UTC'Z",
-                        "dd MMMM yyyy 'at' HH:mm:ss 'UTC'Z"
-                };
-
-                for (String format : formats) {
-                    try {
-                        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.ENGLISH);
-                        Date date = sdf.parse(dateStr);
-                        if (date != null) {
-                            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                            return outputFormat.format(date);
-                        }
-                    } catch (Exception e) {
-                        // Thử format tiếp theo
-                    }
-                }
-                return dateStr; // Trả về chuỗi gốc nếu không parse được
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error formatting date", e);
-        }
-
-        return dateObj.toString();
-    }
-
-    // Load tên hướng dẫn viên
     private void loadGuideName(String guideId) {
-        if (guideId == null || guideId.trim().isEmpty()) {
-            tvGuideName.setText("Chưa có hướng dẫn viên");
-            return;
-        }
-
-        tvGuideName.setText("Đang tải...");
-
-        db.collection("guides").document(guideId.trim())
+        db.collection("guides").document(guideId)
                 .get()
                 .addOnSuccessListener(guideDoc -> {
                     if (guideDoc.exists()) {
                         String guideName = guideDoc.getString("name");
-                        if (guideName != null && !guideName.isEmpty()) {
-                            tvGuideName.setText(guideName);
-                            Log.d(TAG, "Guide name loaded: " + guideName);
-                        } else {
-                            tvGuideName.setText("Hướng dẫn viên không có tên");
-                        }
+                        tvGuideName.setText(guideName != null ? guideName : "(Không có tên)");
                     } else {
-                        tvGuideName.setText("ID không tồn tại trong hệ thống");
-                        Log.w(TAG, "Guide document not found: " + guideId);
+                        tvGuideName.setText("(Không tìm thấy hướng dẫn viên)");
                     }
                 })
                 .addOnFailureListener(e -> {
-                    tvGuideName.setText("Lỗi tải thông tin: " + e.getMessage());
-                    Log.e(TAG, "Failed to load guide name", e);
+                    tvGuideName.setText("(Lỗi tải hướng dẫn viên)");
+                    Log.e(TAG, "Lỗi tải hướng dẫn viên", e);
                 });
     }
 
     private void saveChanges() {
-        String tourName = etTourName.getText().toString().trim();
-        String description = etDescription.getText().toString().trim();
-        String location = etLocation.getText().toString().trim();
-        String seatsStr = etSeats.getText().toString().trim();
-        String priceStr = etPrice.getText().toString().trim();
-        String depositPercentStr = etDepositPercent.getText().toString().trim();
-        String startDate = etStartDate.getText().toString().trim();
-        String endDate = etEndDate.getText().toString().trim();
-        String guideId = etGuideId.getText().toString().trim();
-
-        if (tourName.isEmpty() || description.isEmpty() || location.isEmpty() ||
-                seatsStr.isEmpty() || priceStr.isEmpty() || depositPercentStr.isEmpty() ||
-                startDate.isEmpty() || endDate.isEmpty() || guideId.isEmpty()) {
-            Toast.makeText(this, "Vui lòng điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         try {
-            int seats = Integer.parseInt(seatsStr);
-            long price = Long.parseLong(priceStr);
-            int depositPercent = Integer.parseInt(depositPercentStr);
+            String tourName = etTourName.getText().toString().trim();
+            String description = etDescription.getText().toString().trim();
+            String location = etLocation.getText().toString().trim();
+            String guideId = etGuideId.getText().toString().trim();
 
-            if (depositPercent < 0 || depositPercent > 100) {
-                Toast.makeText(this, "Phần trăm đặt cọc phải từ 0-100!", Toast.LENGTH_SHORT).show();
+            if (tourName.isEmpty() || description.isEmpty() || location.isEmpty() || guideId.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            // Convert date string thành Timestamp
-            Timestamp startTimestamp = convertToTimestamp(startDate);
-            Timestamp endTimestamp = convertToTimestamp(endDate);
 
             Map<String, Object> updates = new HashMap<>();
             updates.put("tourName", tourName);
             updates.put("description", description);
             updates.put("location", location);
-            updates.put("availableSeats", seats);
-            updates.put("price", price);
-            updates.put("depositPercent", depositPercent);
-            updates.put("startDate", startTimestamp);
-            updates.put("endDate", endTimestamp);
-            updates.put("guideIds", java.util.Collections.singletonList(guideId));
-
-            Log.d(TAG, "Updating tour with data: " + updates);
+            updates.put("availableSeats", Integer.parseInt(etSeats.getText().toString()));
+            updates.put("price", Long.parseLong(etPrice.getText().toString()));
+            updates.put("depositPercent", Integer.parseInt(etDepositPercent.getText().toString()));
+            updates.put("startDate", convertToTimestamp(etStartDate.getText().toString()));
+            updates.put("endDate", convertToTimestamp(etEndDate.getText().toString()));
+            updates.put("guideIds", Collections.singletonList(guideId));
 
             db.collection("tours").document(tourId)
                     .update(updates)
                     .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Tour updated successfully");
                         Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
                         finish();
                     })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to update tour", e);
-                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
-
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Dữ liệu số không hợp lệ!", Toast.LENGTH_SHORT).show();
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_LONG).show());
         } catch (Exception e) {
-            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    // Convert string date (dd/MM/yyyy) thành Timestamp
     private Timestamp convertToTimestamp(String dateStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Date date = sdf.parse(dateStr);
-            if (date != null) {
-                return new Timestamp(date);
-            }
+            return new Timestamp(date);
         } catch (Exception e) {
-            Log.e(TAG, "Error converting date to timestamp", e);
+            return Timestamp.now();
         }
-        // Fallback: trả về timestamp hiện tại
-        return Timestamp.now();
+    }
+
+    private String formatDate(Object obj) {
+        if (obj instanceof Timestamp) {
+            Date date = ((Timestamp) obj).toDate();
+            return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
+        }
+        return "";
     }
 }
