@@ -15,29 +15,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="4dp"
             android:orientation="vertical"
             android:padding="24dp"
-            android:paddingBottom="40dp"
-            android:elevation="4dp">
+            android:paddingBottom="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="30sp"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.02"
                 android:text="Thống kê hệ thống"
-                android:textColor="#3AA5BA"
-                android:textSize="26sp"
+                android:textColor="#17C5E6"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tổng quan hoạt động"
-                android:textSize="15sp"
-                android:textColor="#E0E7FF"
-                android:layout_marginTop="6dp"
-                android:alpha="0.95" />
         </LinearLayout>
 
         <!-- Container chính -->
@@ -62,58 +55,58 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="40dp">
 
                     <!-- Row 1: Người dùng + Booking -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
                         android:orientation="horizontal"
-                        android:weightSum="2"
-                        android:layout_marginBottom="12dp">
+                        android:weightSum="2">
 
                         <!-- Người dùng -->
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginEnd="6dp"
-                            app:cardCornerRadius="16dp"
+                            android:layout_weight="1"
                             app:cardBackgroundColor="#EEF2FF"
+                            app:cardCornerRadius="16dp"
                             app:cardElevation="0dp"
                             app:strokeWidth="0dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:orientation="vertical"
-                                android:padding="18dp"
-                                android:gravity="center">
+                                android:padding="14dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
                                     android:text="👥"
-                                    android:textSize="32sp"
-                                    android:layout_marginBottom="8dp" />
+                                    android:textSize="24sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="6dp"
+                                    android:letterSpacing="0.03"
                                     android:text="Người dùng"
                                     android:textColor="#6366F1"
                                     android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    android:letterSpacing="0.03"
-                                    android:layout_marginBottom="6dp" />
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/tvTotalUsers"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="0"
-                                    android:textSize="24sp"
                                     android:textColor="#4338CA"
+                                    android:textSize="20sp"
                                     android:textStyle="bold" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
@@ -122,44 +115,44 @@
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginStart="6dp"
-                            app:cardCornerRadius="16dp"
+                            android:layout_weight="1"
                             app:cardBackgroundColor="#DBEAFE"
+                            app:cardCornerRadius="16dp"
                             app:cardElevation="0dp"
                             app:strokeWidth="0dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:orientation="vertical"
-                                android:padding="18dp"
-                                android:gravity="center">
+                                android:padding="14dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
                                     android:text="📋"
-                                    android:textSize="32sp"
-                                    android:layout_marginBottom="8dp" />
+                                    android:textSize="24sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="6dp"
+                                    android:letterSpacing="0.03"
                                     android:text="Đơn đặt tour"
                                     android:textColor="#0284C7"
                                     android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    android:letterSpacing="0.03"
-                                    android:layout_marginBottom="6dp" />
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/tvTotalBookings"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="0"
-                                    android:textSize="24sp"
                                     android:textColor="#075985"
+                                    android:textSize="20sp"
                                     android:textStyle="bold" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
@@ -169,52 +162,52 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
                         android:orientation="horizontal"
-                        android:weightSum="2"
-                        android:layout_marginBottom="12dp">
+                        android:weightSum="2">
 
                         <!-- Tour -->
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginEnd="6dp"
-                            app:cardCornerRadius="16dp"
+                            android:layout_weight="1"
                             app:cardBackgroundColor="#FEF3C7"
+                            app:cardCornerRadius="16dp"
                             app:cardElevation="0dp"
                             app:strokeWidth="0dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:orientation="vertical"
-                                android:padding="18dp"
-                                android:gravity="center">
+                                android:padding="18dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
                                     android:text="🗺️"
-                                    android:textSize="32sp"
-                                    android:layout_marginBottom="8dp" />
+                                    android:textSize="24sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="6dp"
+                                    android:letterSpacing="0.03"
                                     android:text="Số tour"
                                     android:textColor="#D97706"
                                     android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    android:letterSpacing="0.03"
-                                    android:layout_marginBottom="6dp" />
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/tvTotalTours"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="0"
-                                    android:textSize="24sp"
                                     android:textColor="#B45309"
+                                    android:textSize="20sp"
                                     android:textStyle="bold" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
@@ -223,44 +216,44 @@
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginStart="6dp"
-                            app:cardCornerRadius="16dp"
+                            android:layout_weight="1"
                             app:cardBackgroundColor="#D1FAE5"
+                            app:cardCornerRadius="16dp"
                             app:cardElevation="0dp"
                             app:strokeWidth="0dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:orientation="vertical"
-                                android:padding="18dp"
-                                android:gravity="center">
+                                android:padding="18dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
                                     android:text="🎯"
-                                    android:textSize="32sp"
-                                    android:layout_marginBottom="8dp" />
+                                    android:textSize="24sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="6dp"
+                                    android:letterSpacing="0.03"
                                     android:text="Hướng dẫn viên"
                                     android:textColor="#059669"
                                     android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    android:letterSpacing="0.03"
-                                    android:layout_marginBottom="6dp" />
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/tvTotalGuides"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="0"
-                                    android:textSize="24sp"
                                     android:textColor="#047857"
+                                    android:textSize="20sp"
                                     android:textStyle="bold" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
@@ -277,44 +270,44 @@
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginEnd="6dp"
-                            app:cardCornerRadius="16dp"
+                            android:layout_weight="1"
                             app:cardBackgroundColor="#FEE2E2"
+                            app:cardCornerRadius="16dp"
                             app:cardElevation="0dp"
                             app:strokeWidth="0dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:orientation="vertical"
-                                android:padding="18dp"
-                                android:gravity="center">
+                                android:padding="18dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
                                     android:text="⭐"
-                                    android:textSize="32sp"
-                                    android:layout_marginBottom="8dp" />
+                                    android:textSize="24sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="6dp"
+                                    android:letterSpacing="0.03"
                                     android:text="Đánh giá"
                                     android:textColor="#DC2626"
                                     android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    android:letterSpacing="0.03"
-                                    android:layout_marginBottom="6dp" />
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/tvTotalReviews"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="0"
-                                    android:textSize="24sp"
                                     android:textColor="#B91C1C"
+                                    android:textSize="20sp"
                                     android:textStyle="bold" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
@@ -323,44 +316,44 @@
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginStart="6dp"
-                            app:cardCornerRadius="16dp"
+                            android:layout_weight="1"
                             app:cardBackgroundColor="#FCE7F3"
+                            app:cardCornerRadius="16dp"
                             app:cardElevation="0dp"
                             app:strokeWidth="0dp">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:orientation="vertical"
-                                android:padding="18dp"
-                                android:gravity="center">
+                                android:padding="18dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
                                     android:text="🎁"
-                                    android:textSize="32sp"
-                                    android:layout_marginBottom="8dp" />
+                                    android:textSize="24sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginBottom="6dp"
+                                    android:letterSpacing="0.03"
                                     android:text="Khuyến mãi"
                                     android:textColor="#DB2777"
                                     android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    android:letterSpacing="0.03"
-                                    android:layout_marginBottom="6dp" />
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/tvTotalPromotions"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="0"
-                                    android:textSize="24sp"
                                     android:textColor="#BE185D"
+                                    android:textSize="20sp"
                                     android:textStyle="bold" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
@@ -385,22 +378,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💰 Tổng doanh thu"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"
                         android:alpha="0.9"
-                        android:layout_marginBottom="8dp" />
+                        android:text="💰 Tổng doanh thu"
+                        android:textColor="#B15A5A"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvTotalRevenue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:letterSpacing="0.01"
                         android:text="0 ₫"
                         android:textColor="#4338CA"
-                        android:textStyle="bold"
-                        android:textSize="32sp"
-                        android:letterSpacing="0.01" />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -449,12 +442,12 @@
                             android:id="@+id/btnAddPromotion"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
                             android:layout_weight="1"
-                            android:text="Thêm mã khuyến mãi"
                             android:backgroundTint="#10B981"
+                            android:text="Thêm khuyến mãi"
                             android:textColor="@android:color/white"
-                            android:textStyle="bold"
-                            android:layout_marginStart="8dp" />
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

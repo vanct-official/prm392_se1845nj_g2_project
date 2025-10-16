@@ -3,21 +3,21 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="160dp"
-    android:background="#AD8EBF"
+    android:background="#853B9569"
     android:padding="16dp"
     android:gravity="bottom">
 
     <ImageView
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@drawable/ic_account"
-        android:contentDescription="Avatar" />
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:contentDescription="Avatar"
+        android:src="@drawable/outline_admin_panel_settings_24" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Admin"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:paddingTop="8dp" />
+        android:paddingTop="8dp"
+        android:text="Trang quản trị viên"
+        android:textColor="#6F233D"
+        android:textSize="18sp" />
 </LinearLayout>

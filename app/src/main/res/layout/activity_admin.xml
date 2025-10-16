@@ -6,6 +6,7 @@
     android:id="@+id/drawer_layout_admin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".AdminActivity">
 
     <!-- Màn hình chính -->
@@ -13,31 +14,76 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Toolbar -->
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_admin"
+        <!-- AppBar với Material Design 3 -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="Quản trị viên" />
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.Material3.Dark">
 
-        <!-- Container chứa Fragment -->
-        <FrameLayout
-            android:id="@+id/fragment_container_admin"
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar_admin"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/primary"
+                android:elevation="0dp"
+                app:title="Quản trị viên"
+                app:titleTextColor="@android:color/white"
+                app:navigationIcon="@drawable/ic_travel"
+                app:layout_scrollFlags="scroll|enterAlways|snap" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Container chứa Fragment với padding đẹp hơn -->
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize" />
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <FrameLayout
+                android:id="@+id/fragment_container_admin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background"
+                android:padding="0dp" />
+
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Floating Action Button (tùy chọn) -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_home"
+            app:tint="@android:color/white"
+            app:backgroundTint="#3CCC99"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Thanh điều hướng bên (Side Navigation) -->
+    <!-- Thanh điều hướng bên với Material Design 3 -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view_admin"
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:background="@color/surface"
         app:menu="@menu/menu_admin_drawer"
-        app:headerLayout="@layout/nav_header_admin" />
+        app:headerLayout="@layout/nav_header_admin"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:itemShapeFillColor="@color/nav_item_background"
+        app:itemShapeInsetStart="12dp"
+        app:itemShapeInsetEnd="12dp"
+        app:itemShapeInsetTop="4dp"
+        app:itemShapeInsetBottom="4dp"
+        app:itemShapeAppearance="@style/ShapeAppearance.Material3.Corner.Medium"
+        app:elevation="0dp" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

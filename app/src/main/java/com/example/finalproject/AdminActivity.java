@@ -16,6 +16,7 @@ import com.example.finalproject.fragment.admin.AdminChatFragment;
 import com.example.finalproject.fragment.admin.AdminFeedbackFragment;
 import com.example.finalproject.fragment.ProfileFragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import android.view.MenuItem;
 
@@ -66,6 +67,15 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
                     AdminActivity.super.onBackPressed();
                 }
             }
+        });
+
+        FloatingActionButton fab = findViewById(R.id.fab_admin);
+        fab.setOnClickListener(v -> {
+            // Thay fragment_container_admin bằng AdminHomeFragment
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container_admin, new AdminHomeFragment())
+                    .commit();
         });
 
         // Fragment mặc định khi khởi động
