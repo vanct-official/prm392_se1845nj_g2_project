@@ -51,9 +51,10 @@ public class AdminToursFragment extends Fragment {
         adapter = new TourAdapter(getContext(), tours, new TourAdapter.OnTourActionListener() {
             @Override
             public void onEdit(DocumentSnapshot doc) {
-                Toast.makeText(getContext(), "Chức năng sửa đang phát triển!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), com.example.finalproject.activity.EditTourActivity.class);
+                intent.putExtra("tourId", doc.getId()); // ✅ Truyền tourId sang
+                startActivity(intent);
             }
-
             @Override
             public void onView(DocumentSnapshot doc) {
                 Toast.makeText(getContext(), "Xem tour: " + doc.getId(), Toast.LENGTH_SHORT).show();

@@ -75,7 +75,7 @@ public class EditTourActivity extends AppCompatActivity {
 
         mapViews();
         setupListeners();
-        loadGuides(); // tải danh sách hướng dẫn viên
+
         loadTourData(); // tải tour
     }
 
@@ -147,18 +147,44 @@ public class EditTourActivity extends AppCompatActivity {
                 .addOnSuccessListener(querySnapshot -> {
                     guideIds.clear();
                     guideNames.clear();
+
                     for (DocumentSnapshot doc : querySnapshot) {
                         guideIds.add(doc.getId());
                         guideNames.add(doc.getString("name"));
                     }
+
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(
                             this, android.R.layout.simple_spinner_dropdown_item, guideNames);
                     spinnerGuide.setAdapter(adapter);
+
+                    // ✅ Nếu tour có sẵn hướng dẫn viên, chọn đúng người đó
+                    if (selectedGuideId != null) {
+                        int index = guideIds.indexOf(selectedGuideId);
+                        if (index >= 0) {
+                            spinnerGuide.setSelection(index);
+                            tvGuideName.setText("Hướng dẫn viên: " + guideNames.get(index));
+                        } else {
+                            tvGuideName.setText("(Chưa chọn hướng dẫn viên)");
+                        }
+                    } else {
+                        tvGuideName.setText("(Chưa chọn hướng dẫn viên)");
+                    }
+
+                    // ✅ Cập nhật tên hiển thị mỗi khi người dùng chọn khác
+                    spinnerGuide.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
+                            selectedGuideId = guideIds.get(position);
+                            tvGuideName.setText("Hướng dẫn viên: " + guideNames.get(position));
+                        }
+
+                        @Override
+                        public void onNothingSelected(android.widget.AdapterView<?> parent) { }
+                    });
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-
     private void loadTourData() {
         progressBar.setVisibility(android.view.View.VISIBLE);
         db.collection("tours").document(tourId)
@@ -184,24 +210,29 @@ public class EditTourActivity extends AppCompatActivity {
                     imageUrls = (List<String>) doc.get("images");
                     List<SlideModel> slides = new ArrayList<>();
                     if (imageUrls != null && !imageUrls.isEmpty()) {
-                        for (String url : imageUrls) slides.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
+                        for (String url : imageUrls) {
+                            slides.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
+                        }
                     } else {
                         slides.add(new SlideModel(R.drawable.ic_image_placeholder, ScaleTypes.CENTER_CROP));
                     }
                     imageSlider.setImageList(slides);
 
-                    // Load hướng dẫn viên
+                    // ✅ Lưu lại ID hướng dẫn viên được gán cho tour
                     List<String> gids = (List<String>) doc.get("guideIds");
                     if (gids != null && !gids.isEmpty()) {
                         selectedGuideId = gids.get(0);
-                        tvGuideName.setText("Hướng dẫn viên: " + gids.get(0));
                     }
+
+                    // ✅ Sau khi đã có selectedGuideId, gọi loadGuides()
+                    loadGuides();
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(android.view.View.GONE);
                     Toast.makeText(this, "Lỗi tải tour: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
 
     private void saveChanges() {
         try {
