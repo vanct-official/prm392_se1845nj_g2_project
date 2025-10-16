@@ -10,9 +10,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.finalproject.fragment.admin.AdminHomeFragment;
 import com.example.finalproject.fragment.admin.AdminToursFragment;
 import com.example.finalproject.fragment.admin.AdminManageUsersFragment;
-//import com.example.finalproject.fragment.admin.AdminBookingsFragment;
+import com.example.finalproject.fragment.admin.AdminBookingsFragment;
 import com.example.finalproject.fragment.admin.AdminPromotionsFragment;
-//import com.example.finalproject.fragment.admin.AdminChatFragment;
+import com.example.finalproject.fragment.admin.AdminChatFragment;
 import com.example.finalproject.fragment.admin.AdminFeedbackFragment;
 import com.example.finalproject.fragment.ProfileFragment;
 
@@ -89,15 +89,15 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
 
         } else if (id == R.id.nav_admin_tours) {
             selectedFragment = new AdminToursFragment();
-//
-//        } else if (id == R.id.nav_admin_bookings) {
-//            selectedFragment = new AdminBookingsFragment();
-//
+
+        } else if (id == R.id.nav_admin_bookings) {
+            selectedFragment = new AdminBookingsFragment();
+
         } else if (id == R.id.nav_admin_promotions) {
             selectedFragment = new AdminPromotionsFragment();
-//
-//        } else if (id == R.id.nav_admin_chat) {
-//            selectedFragment = new AdminChatFragment();
+
+        } else if (id == R.id.nav_admin_chat) {
+            selectedFragment = new AdminChatFragment();
 
         } else if (id == R.id.nav_admin_feedback) {
             selectedFragment = new AdminFeedbackFragment();
