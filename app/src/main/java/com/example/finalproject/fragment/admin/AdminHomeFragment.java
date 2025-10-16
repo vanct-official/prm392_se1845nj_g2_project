@@ -2,6 +2,7 @@ package com.example.finalproject.fragment.admin;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,21 +118,39 @@ public class AdminHomeFragment extends Fragment {
                 .addOnSuccessListener(querySnapshot -> {
                     double total = 0;
                     for (DocumentSnapshot doc : querySnapshot) {
-                        try {
-                            double amount = Double.parseDouble(doc.get("amount").toString());
-                            total += amount;
-                        } catch (Exception e) {
-                            // bỏ qua nếu lỗi dữ liệu
+                        Object amountObj = doc.get("amount");
+
+                        if (amountObj != null) {
+                            try {
+                                // Firestore có thể lưu amount là String hoặc Number
+                                if (amountObj instanceof String) {
+                                    String cleaned = ((String) amountObj).replaceAll("[^0-9.]", ""); // loại bỏ ký tự lạ
+                                    if (!cleaned.isEmpty()) {
+                                        total += Double.parseDouble(cleaned);
+                                    }
+                                } else if (amountObj instanceof Number) {
+                                    total += ((Number) amountObj).doubleValue();
+                                }
+                            } catch (Exception e) {
+                                Log.e("REVENUE_PARSE", "Lỗi parse amount: " + e.getMessage());
+                            }
+                        } else {
+                            Log.w("REVENUE_NULL", "amount is null in " + doc.getId());
                         }
                     }
 
                     DecimalFormat formatter = new DecimalFormat("#,###");
                     tvTotalRevenue.setText(formatter.format(total) + " ₫");
                     progressBar.setVisibility(View.GONE);
+
+                    Log.d("TOTAL_REVENUE", "Tổng doanh thu = " + total);
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Lỗi tải doanh thu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Lỗi tải doanh thu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("TOTAL_REVENUE", "Firestore error", e);
+                });
     }
+
 
     // ===========================================================
     // 🏆 Top 5 tour được đặt nhiều nhất
