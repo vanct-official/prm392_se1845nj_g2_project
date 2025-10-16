@@ -14,16 +14,16 @@
     <item
         android:id="@+id/nav_admin_tours"
         android:icon="@drawable/ic_map"
-        android:title="Tours" />
+        android:title="Chuyến tham quan" />
 
     <item
         android:id="@+id/nav_admin_bookings"
-        android:icon="@drawable/ic_home"
-        android:title="Bookings" />
+        android:icon="@drawable/ic_travel"
+        android:title="Đặt chỗ" />
 
     <item
         android:id="@+id/nav_admin_promotions"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/ic_km"
         android:title="Mã khuyến mãi" />
 
     <item
