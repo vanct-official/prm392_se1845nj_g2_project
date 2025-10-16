@@ -5,165 +5,114 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#F8FAFC"
+    android:background="#F0F4F8"
     tools:context=".activity.EditTourActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="32dp">
 
-        <!-- Header với gradient -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:paddingBottom="40dp"
+            android:padding="28dp"
+            android:paddingBottom="48dp"
+            android:background="#0284C7"
             android:elevation="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="Chỉnh sửa tour"
+                android:text="✏️ Chỉnh sửa tour"
                 android:textColor="#FFFFFF"
-                android:textSize="26sp"
+                android:textSize="28sp"
                 android:textStyle="bold"
-                android:letterSpacing="0.02" />
+                android:letterSpacing="0.01" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cập nhật thông tin tour du lịch"
+                android:text="Cập nhật thông tin tour du lịch của bạn"
                 android:textSize="15sp"
-                android:textColor="#E0E7FF"
-                android:layout_marginTop="6dp"
+                android:textColor="#E0F2FE"
+                android:layout_marginTop="8dp"
                 android:alpha="0.95" />
         </LinearLayout>
 
-        <!-- Card chính -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginTop="-24dp"
-            android:layout_marginBottom="24dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="8dp">
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="12dp"
+            android:elevation="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp"
+                android:background="#FFFFFF">
 
-                <!-- Section: Hình ảnh -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hình ảnh tour"
-                    android:textSize="16sp"
-                    android:textColor="#0F172A"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
-
-                <androidx.cardview.widget.CardView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    android:layout_marginBottom="12dp">
+                    android:orientation="vertical"
+                    android:background="#F8FAFC"
+                    android:padding="16dp"
+                    android:layout_marginBottom="24dp">
 
-                    <com.denzcoskun.imageslider.ImageSlider
-                        android:id="@+id/imageSlider"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        app:iss_auto_cycle="false"
-                        app:iss_period="3"
-                        app:iss_delay="1" />
-                </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📸 Hình ảnh tour"
+                        android:textSize="17sp"
+                        android:textColor="#0F172A"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnChooseImages"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="Chọn ảnh mới"
-                    android:textSize="15sp"
-                    android:textColor="#6366F1"
-                    android:textStyle="bold"
-                    android:textAllCaps="false"
-                    app:cornerRadius="12dp"
-                    app:strokeColor="#6366F1"
-                    app:strokeWidth="2dp"
-                    app:backgroundTint="#FFFFFF"
-                    app:icon="@android:drawable/ic_menu_camera"
-                    app:iconTint="#6366F1"
-                    app:iconGravity="textStart"
-                    android:layout_marginBottom="24dp"
-                    style="@style/Widget.Material3.Button.OutlinedButton" />
-
-                <!-- Divider -->
-
-                <!-- Section: Hướng dẫn viên -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hướng dẫn viên"
-                    android:textSize="16sp"
-                    android:textColor="#0F172A"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
-                    app:cardBackgroundColor="#F1F5F9"
-                    app:cardElevation="0dp"
-                    android:layout_marginBottom="12dp">
-
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Hiện tại"
-                            android:textSize="11sp"
-                            android:textColor="#64748B"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.05"
-                            android:layout_marginBottom="6dp" />
-
-                        <TextView
-                            android:id="@+id/tvGuideNames"
+                        <com.denzcoskun.imageslider.ImageSlider
+                            android:id="@+id/imageSlider"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="(Chưa chọn)"
-                            android:textSize="15sp"
-                            android:textColor="#0F172A"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                            android:layout_height="220dp"
+                            app:iss_auto_cycle="true"
+                            app:iss_corner_radius="16" />
+                    </androidx.cardview.widget.CardView>
 
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E2E8F0"
-                    android:layout_marginBottom="24dp" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChooseImages"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:text="🖼️ Chọn ảnh mới"
+                        android:textAllCaps="false"
+                        android:textColor="#0284C7"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp"
+                        app:strokeColor="#0284C7"
+                        app:strokeWidth="2dp"
+                        app:backgroundTint="#FFFFFF"
+                        android:layout_marginTop="16dp" />
+                </LinearLayout>
 
-                <!-- Section: Thông tin cơ bản -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thông tin cơ bản"
-                    android:textSize="16sp"
+                    android:text="📝 Thông tin cơ bản"
+                    android:textSize="17sp"
                     android:textColor="#0F172A"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
@@ -171,245 +120,209 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Tên tour"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="#6366F1"
-                    app:hintTextColor="#6366F1"
-                    android:layout_marginBottom="16dp"
+                    android:hint="Tiêu đề tour"
+                    android:layout_marginBottom="12dp"
+                    app:boxStrokeColor="#0284C7"
+                    app:hintTextColor="#0284C7"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etTourName"
+                        android:id="@+id/etTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textCapWords"
                         android:textSize="15sp"
-                        android:textColor="#0F172A"
-                        android:padding="16dp" />
+                        android:textColor="#1E293B" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Mô tả tour"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="#6366F1"
-                    app:hintTextColor="#6366F1"
-                    android:layout_marginBottom="16dp"
+                    android:hint="Mô tả chi tiết"
+                    android:layout_marginBottom="12dp"
+                    app:boxStrokeColor="#0284C7"
+                    app:hintTextColor="#0284C7"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
-                        android:minLines="3"
+                        android:minLines="4"
                         android:gravity="top"
                         android:textSize="15sp"
-                        android:textColor="#0F172A"
-                        android:padding="16dp" />
+                        android:textColor="#1E293B" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Địa điểm"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="#6366F1"
-                    app:hintTextColor="#6366F1"
-                    app:startIconDrawable="@android:drawable/ic_dialog_map"
-                    app:startIconTint="#6366F1"
-                    android:layout_marginBottom="24dp"
+                    android:hint="📍 Địa điểm"
+                    android:layout_marginBottom="12dp"
+                    app:boxStrokeColor="#0284C7"
+                    app:hintTextColor="#0284C7"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etLocation"
+                        android:id="@+id/etDestination"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textCapWords"
                         android:textSize="15sp"
-                        android:textColor="#0F172A"
-                        android:padding="16dp" />
+                        android:textColor="#1E293B" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Divider -->
-                <View
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E2E8F0"
-                    android:layout_marginBottom="24dp" />
+                    android:layout_height="wrap_content"
+                    android:hint="⏱️ Thời lượng"
+                    android:layout_marginBottom="24dp"
+                    app:boxStrokeColor="#0284C7"
+                    app:hintTextColor="#0284C7"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textColor="#1E293B" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Section: Chi tiết -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chi tiết tour"
-                    android:textSize="16sp"
+                    android:text="🗓️ Lịch trình &amp; Thời gian"
+                    android:textSize="17sp"
                     android:textColor="#0F172A"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Grid layout cho các trường số -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Chi tiết lịch trình"
+                    android:layout_marginBottom="12dp"
+                    app:boxStrokeColor="#0284C7"
+                    app:hintTextColor="#0284C7"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etItinerary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:minLines="4"
+                        android:gravity="top"
+                        android:textSize="15sp"
+                        android:textColor="#1E293B" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="24dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="Số ghế"
-                        app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxStrokeColor="#6366F1"
-                        app:hintTextColor="#6366F1"
+                        android:hint="Ngày bắt đầu"
                         android:layout_marginEnd="8dp"
+                        app:boxStrokeColor="#0284C7"
+                        app:hintTextColor="#0284C7"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etSeats"
+                            android:id="@+id/etStartDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
+                            android:focusable="false"
+                            android:clickable="true"
                             android:textSize="15sp"
-                            android:textColor="#0F172A"
-                            android:padding="16dp" />
+                            android:textColor="#1E293B" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="% Đặt cọc"
-                        app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxStrokeColor="#6366F1"
-                        app:hintTextColor="#6366F1"
+                        android:hint="Ngày kết thúc"
                         android:layout_marginStart="8dp"
+                        app:boxStrokeColor="#0284C7"
+                        app:hintTextColor="#0284C7"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDepositPercent"
+                            android:id="@+id/etEndDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
+                            android:focusable="false"
+                            android:clickable="true"
                             android:textSize="15sp"
-                            android:textColor="#0F172A"
-                            android:padding="16dp" />
+                            android:textColor="#1E293B" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💰 Giá &amp; Hướng dẫn viên"
+                    android:textSize="17sp"
+                    android:textColor="#0F172A"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Giá tour (VND)"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="#6366F1"
-                    app:hintTextColor="#6366F1"
+                    android:layout_marginBottom="20dp"
+                    app:boxStrokeColor="#0284C7"
+                    app:hintTextColor="#0284C7"
                     app:prefixText="₫ "
-                    android:layout_marginBottom="16dp"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPrice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"
                         android:textSize="15sp"
-                        android:textColor="#0F172A"
-                        android:padding="16dp" />
+                        android:textColor="#1E293B" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Ngày bắt đầu"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="#6366F1"
-                    app:hintTextColor="#6366F1"
-                    app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-                    app:startIconTint="#6366F1"
-                    android:layout_marginBottom="16dp"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    android:orientation="vertical"
+                    android:background="#F0F9FF"
+                    android:padding="16dp"
+                    android:layout_marginBottom="24dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etStartDate"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👤 Hướng dẫn viên"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="#0C4A6E"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvGuideNames"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:clickable="true"
-                        android:textSize="15sp"
-                        android:textColor="#0F172A"
-                        android:padding="16dp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="(Chưa chọn hướng dẫn viên)"
+                        android:textColor="#475569"
+                        android:textSize="14sp"
+                        android:padding="12dp"
+                        android:background="#FFFFFF"
+                        android:minHeight="48dp" />
+                </LinearLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Ngày kết thúc"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="#6366F1"
-                    app:hintTextColor="#6366F1"
-                    app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-                    app:startIconTint="#6366F1"
-                    android:layout_marginBottom="24dp"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etEndDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:clickable="true"
-                        android:textSize="15sp"
-                        android:textColor="#0F172A"
-                        android:padding="16dp" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Loading -->
                 <ProgressBar
                     android:id="@+id/progressBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
                     android:visibility="gone"
-                    android:indeterminateTint="#6366F1" />
+                    android:indeterminateTint="#0284C7" />
 
-                <!-- Nút hành động -->
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -419,35 +332,35 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnBack"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="56dp"
-                        android:text="Quay lại"
-                        android:textSize="15sp"
-                        android:textColor="#475569"
-                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:text="← Quay lại"
+                        android:textColor="#64748B"
                         android:textAllCaps="false"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
                         app:cornerRadius="12dp"
+                        app:backgroundTint="#F8FAFC"
                         app:strokeColor="#CBD5E1"
                         app:strokeWidth="2dp"
-                        app:backgroundTint="#FFFFFF"
                         android:layout_marginEnd="8dp"
                         style="@style/Widget.Material3.Button.OutlinedButton" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSave"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="56dp"
-                        android:text="Lưu thay đổi"
-                        android:textSize="15sp"
+                        android:layout_weight="1"
+                        android:text="💾 Lưu thay đổi"
                         android:textColor="#FFFFFF"
-                        android:textStyle="bold"
                         android:textAllCaps="false"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
                         app:cornerRadius="12dp"
-                        app:backgroundTint="#6366F1"
-                        app:elevation="4dp"
-                        android:layout_marginStart="8dp"
-                        style="@style/Widget.Material3.Button" />
+                        app:backgroundTint="#0284C7"
+                        android:elevation="4dp"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_marginStart="8dp" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

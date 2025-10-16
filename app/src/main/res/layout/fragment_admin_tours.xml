@@ -7,12 +7,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Header -->
+    <!-- HEADER -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="12dp">
 
+        <!-- Tiêu đề trang -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
@@ -20,39 +21,67 @@
             android:text="QUẢN LÝ TOUR DU LỊCH"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="#1E293B" />
+            android:textColor="#1E293B"
+            android:fontFamily="sans-serif-medium" />
 
+        <!-- Nút thêm tour -->
         <TextView
             android:id="@+id/tvAddTour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+ Thêm mới"
+            android:text="+ Thêm tour mới"
             android:textStyle="bold"
             android:textColor="#4F46E5"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:layout_alignParentEnd="true"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="4dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true" />
     </RelativeLayout>
 
-    <!-- Danh sách Tour -->
+    <!-- THANH NGĂN CÁCH -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E2E8F0"
+        android:layout_marginBottom="8dp" />
+
+    <!-- DANH SÁCH TOUR -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerTours"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:focusable="false"
-        android:clickable="false"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
         android:descendantFocusability="afterDescendants" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
+    <!-- PROGRESS BAR -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        android:gravity="center"
+        android:layout_marginTop="8dp">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="#4F46E5"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đang tải dữ liệu..."
+            android:textColor="#64748B"
+            android:textSize="14sp"
+            android:layout_marginStart="8dp"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </LinearLayout>

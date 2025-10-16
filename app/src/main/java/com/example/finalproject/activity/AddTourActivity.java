@@ -36,8 +36,7 @@ import java.util.Map;
 
 public class AddTourActivity extends AppCompatActivity {
 
-    private EditText etTourName, etDescription, etLocation, etPrice, etAvailableSeats,
-            etDepositPercent, etStartDate, etEndDate;
+    private EditText etTitle, etDescription, etDestination, etDuration, etItinerary, etPrice, etStartDate, etEndDate;
     private Button btnChooseImages, btnCancel, btnSave;
     private TextView tvImageCount, tvSelectedGuides;
     private ProgressBar progressBar;
@@ -59,12 +58,12 @@ public class AddTourActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // Ánh xạ view
-        etTourName = findViewById(R.id.etTourName);
+        etTitle = findViewById(R.id.etTourName);
         etDescription = findViewById(R.id.etDescription);
-        etLocation = findViewById(R.id.etLocation);
+        etDestination = findViewById(R.id.etLocation);
+        etDuration = findViewById(R.id.etAvailableSeats);
+        etItinerary = findViewById(R.id.etDepositPercent);
         etPrice = findViewById(R.id.etPrice);
-        etAvailableSeats = findViewById(R.id.etAvailableSeats);
-        etDepositPercent = findViewById(R.id.etDepositPercent);
         etStartDate = findViewById(R.id.etStartDate);
         etEndDate = findViewById(R.id.etEndDate);
         btnChooseImages = findViewById(R.id.btnChooseImages);
@@ -74,25 +73,19 @@ public class AddTourActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         tvSelectedGuides = findViewById(R.id.tvSelectedGuides);
 
-        // Load danh sách hướng dẫn viên
+        // Load hướng dẫn viên
         loadGuides();
 
-        // Chọn ngày
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
-        // Chọn ảnh
         btnChooseImages.setOnClickListener(v -> openGallery());
-
-        // Hủy
         btnCancel.setOnClickListener(v -> finish());
-
-        // Lưu tour
-        btnSave.setOnClickListener(v -> saveTour());
+        btnSave.setOnClickListener(v -> validateAndSaveTour());
     }
 
     // ===========================================================
-    // LOAD DANH SÁCH HƯỚNG DẪN VIÊN
+    // 🔹 Tải danh sách hướng dẫn viên
     // ===========================================================
     private void loadGuides() {
         db.collection("guides")
@@ -107,16 +100,12 @@ public class AddTourActivity extends AppCompatActivity {
                         guideNames.add(name != null ? name : doc.getId());
                     }
 
-                    // Bấm để mở dialog chọn nhiều hướng dẫn viên
                     tvSelectedGuides.setOnClickListener(v -> showMultiSelectDialog());
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // ===========================================================
-    // DIALOG CHỌN NHIỀU HƯỚNG DẪN VIÊN
-    // ===========================================================
     private void showMultiSelectDialog() {
         boolean[] checkedItems = new boolean[guideNames.size()];
         for (int i = 0; i < guideNames.size(); i++) {
@@ -128,7 +117,6 @@ public class AddTourActivity extends AppCompatActivity {
                 .setMultiChoiceItems(guideNames.toArray(new String[0]), checkedItems, (dialog, which, isChecked) -> {
                     String id = guideIds.get(which);
                     String name = guideNames.get(which);
-
                     if (isChecked) {
                         if (!selectedGuideIds.contains(id)) {
                             selectedGuideIds.add(id);
@@ -150,9 +138,6 @@ public class AddTourActivity extends AppCompatActivity {
                 .show();
     }
 
-    // ===========================================================
-    // CHỌN NGÀY
-    // ===========================================================
     private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
@@ -161,15 +146,12 @@ public class AddTourActivity extends AppCompatActivity {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    // ===========================================================
-    // CHỌN ẢNH TỪ THƯ VIỆN
-    // ===========================================================
     private void openGallery() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Chọn ảnh"), PICK_IMAGES_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Chọn ảnh tour"), PICK_IMAGES_REQUEST);
     }
 
     @Override
@@ -177,7 +159,6 @@ public class AddTourActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGES_REQUEST && resultCode == RESULT_OK && data != null) {
             selectedImageUris.clear();
-
             if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount();
                 for (int i = 0; i < count; i++) {
@@ -186,134 +167,133 @@ public class AddTourActivity extends AppCompatActivity {
             } else if (data.getData() != null) {
                 selectedImageUris.add(data.getData());
             }
-
             tvImageCount.setText("Đã chọn " + selectedImageUris.size() + " ảnh");
         }
     }
 
     // ===========================================================
-    // LƯU TOUR VÀO FIRESTORE
+    // ✅ Validate trước khi lưu
     // ===========================================================
-    private void saveTour() {
-        String name = etTourName.getText().toString().trim();
+    private void validateAndSaveTour() {
+        String title = etTitle.getText().toString().trim();
         String desc = etDescription.getText().toString().trim();
-        String loc = etLocation.getText().toString().trim();
+        String dest = etDestination.getText().toString().trim();
+        String duration = etDuration.getText().toString().trim();
+        String itinerary = etItinerary.getText().toString().trim();
         String priceStr = etPrice.getText().toString().trim();
-        String seatStr = etAvailableSeats.getText().toString().trim();
-        String depositStr = etDepositPercent.getText().toString().trim();
         String startStr = etStartDate.getText().toString().trim();
         String endStr = etEndDate.getText().toString().trim();
 
-        // Kiểm tra rỗng
-        if (name.isEmpty() || desc.isEmpty() || loc.isEmpty() ||
-                priceStr.isEmpty() || seatStr.isEmpty() || depositStr.isEmpty() ||
-                startStr.isEmpty() || endStr.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+        if (title.isEmpty() || desc.isEmpty() || dest.isEmpty() || duration.isEmpty() ||
+                itinerary.isEmpty() || priceStr.isEmpty() || startStr.isEmpty() || endStr.isEmpty()) {
+            Toast.makeText(this, "⚠️ Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (selectedGuideIds.isEmpty()) {
+            Toast.makeText(this, "⚠️ Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (selectedImageUris.isEmpty()) {
+            Toast.makeText(this, "⚠️ Vui lòng chọn ít nhất một ảnh tour!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         double price;
-        int seats, deposit;
         Date startDate, endDate;
 
         try {
             price = Double.parseDouble(priceStr);
-            seats = Integer.parseInt(seatStr);
-            deposit = Integer.parseInt(depositStr);
-
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             startDate = sdf.parse(startStr);
             endDate = sdf.parse(endStr);
         } catch (Exception e) {
-            Toast.makeText(this, "Dữ liệu nhập không hợp lệ!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Dữ liệu nhập không hợp lệ!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Validate logic
         if (price <= 0) {
-            Toast.makeText(this, "Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (deposit < 1 || deposit > 99) {
-            Toast.makeText(this, "% đặt cọc phải từ 1 đến 99!", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
         if (endDate.before(startDate) || endDate.equals(startDate)) {
-            Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (selectedGuideIds.isEmpty()) {
-            Toast.makeText(this, "Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Kiểm tra trùng tiêu đề tour
         progressBar.setVisibility(android.view.View.VISIBLE);
-
-        // Kiểm tra trùng tên tour
         db.collection("tours")
-                .whereEqualTo("tourName", name)
+                .whereEqualTo("title", title)
                 .get()
                 .addOnSuccessListener(query -> {
                     if (!query.isEmpty()) {
                         progressBar.setVisibility(android.view.View.GONE);
-                        Toast.makeText(this, "Tên tour đã tồn tại!", Toast.LENGTH_SHORT).show();
-                        return;
+                        Toast.makeText(this, "⚠️ Tiêu đề tour đã tồn tại!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        saveTour(title, desc, dest, duration, itinerary, price, startDate, endDate);
                     }
-
-                    new Thread(() -> {
-                        try {
-                            List<String> imageUrls = new ArrayList<>();
-                            for (Uri uri : selectedImageUris) {
-                                InputStream is = getContentResolver().openInputStream(uri);
-                                Bitmap bitmap = BitmapFactory.decodeStream(is);
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
-                                byte[] data = baos.toByteArray();
-
-                                Map uploadResult = CloudinaryManager.getInstance()
-                                        .uploader()
-                                        .upload(data, ObjectUtils.emptyMap());
-                                String url = (String) uploadResult.get("secure_url");
-                                imageUrls.add(url);
-                            }
-
-                            Map<String, Object> tour = new HashMap<>();
-                            tour.put("tourName", name);
-                            tour.put("description", desc);
-                            tour.put("location", loc);
-                            tour.put("price", price);
-                            tour.put("availableSeats", seats);
-                            tour.put("depositPercent", deposit);
-                            tour.put("startDate", new Timestamp(startDate));
-                            tour.put("endDate", new Timestamp(endDate));
-                            tour.put("images", imageUrls);
-                            tour.put("guideIds", selectedGuideIds); // ✅ nhiều hướng dẫn viên
-                            tour.put("createAt", new Timestamp(new Date()));
-                            tour.put("updateAt", new Timestamp(new Date()));
-
-                            db.collection("tours")
-                                    .add(tour)
-                                    .addOnSuccessListener(doc -> runOnUiThread(() -> {
-                                        progressBar.setVisibility(android.view.View.GONE);
-                                        Toast.makeText(this, "Thêm tour thành công!", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }))
-                                    .addOnFailureListener(e -> runOnUiThread(() -> {
-                                        progressBar.setVisibility(android.view.View.GONE);
-                                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }));
-
-                        } catch (Exception e) {
-                            runOnUiThread(() -> {
-                                progressBar.setVisibility(android.view.View.GONE);
-                                Toast.makeText(this, "Lỗi tải ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                    }).start();
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(android.view.View.GONE);
-                    Toast.makeText(this, "Lỗi khi kiểm tra tên tour: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Lỗi kiểm tra tiêu đề: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    // ===========================================================
+    // 💾 Lưu tour vào Firestore
+    // ===========================================================
+    private void saveTour(String title, String desc, String dest, String duration,
+                          String itinerary, double price, Date startDate, Date endDate) {
+
+        new Thread(() -> {
+            try {
+                List<String> imageUrls = new ArrayList<>();
+                for (Uri uri : selectedImageUris) {
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                    byte[] data = baos.toByteArray();
+
+                    Map uploadResult = CloudinaryManager.getInstance()
+                            .uploader()
+                            .upload(data, ObjectUtils.emptyMap());
+                    imageUrls.add((String) uploadResult.get("secure_url"));
+                }
+
+                Map<String, Object> tour = new HashMap<>();
+                tour.put("title", title);
+                tour.put("description", desc);
+                tour.put("destination", dest);
+                tour.put("duration", duration);
+                tour.put("itinerary", itinerary);
+                tour.put("price", price);
+                tour.put("start_date", new Timestamp(startDate));
+                tour.put("end_date", new Timestamp(endDate));
+                tour.put("guideIds", selectedGuideIds);
+                tour.put("images", imageUrls);
+
+                db.collection("tours")
+                        .add(tour)
+                        .addOnSuccessListener(doc -> runOnUiThread(() -> {
+                            progressBar.setVisibility(android.view.View.GONE);
+                            Toast.makeText(this, "✅ Thêm tour thành công!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }))
+                        .addOnFailureListener(e -> runOnUiThread(() -> {
+                            progressBar.setVisibility(android.view.View.GONE);
+                            Toast.makeText(this, "❌ Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }));
+
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(android.view.View.GONE);
+                    Toast.makeText(this, "❌ Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
     }
 }

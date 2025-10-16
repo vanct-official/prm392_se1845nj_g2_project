@@ -5,11 +5,9 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +18,8 @@ import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
 import com.example.finalproject.utils.CloudinaryManager;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,16 +36,15 @@ import java.util.Map;
 
 public class EditTourActivity extends AppCompatActivity {
 
-    private EditText etTourName, etDescription, etLocation, etSeats, etPrice,
-            etDepositPercent, etStartDate, etEndDate;
+    private TextInputEditText etTitle, etDescription, etDestination, etDuration,
+            etItinerary, etStartDate, etEndDate, etPrice;
     private TextView tvGuideNames;
-    private Button btnSave, btnBack, btnChooseImages;
+    private MaterialButton btnChooseImages, btnSave, btnBack;
     private ImageSlider imageSlider;
     private ProgressBar progressBar;
 
     private FirebaseFirestore db;
     private String tourId;
-
     private List<String> imageUrls = new ArrayList<>();
     private List<Uri> newImageUris = new ArrayList<>();
     private List<String> guideIds = new ArrayList<>();
@@ -62,7 +61,6 @@ public class EditTourActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         tourId = getIntent().getStringExtra("tourId");
-
         if (tourId == null || tourId.isEmpty()) {
             Toast.makeText(this, "Không tìm thấy tour ID!", Toast.LENGTH_SHORT).show();
             finish();
@@ -71,42 +69,40 @@ public class EditTourActivity extends AppCompatActivity {
 
         mapViews();
         setupListeners();
-        loadTourData(); // chỉ gọi loadTourData, loadGuides() sẽ được gọi bên trong
+        loadTourData();
     }
 
     private void mapViews() {
-        imageSlider = findViewById(R.id.imageSlider);
-        etTourName = findViewById(R.id.etTourName);
+        etTitle = findViewById(R.id.etTitle);
         etDescription = findViewById(R.id.etDescription);
-        etLocation = findViewById(R.id.etLocation);
-        etSeats = findViewById(R.id.etSeats);
-        etPrice = findViewById(R.id.etPrice);
-        etDepositPercent = findViewById(R.id.etDepositPercent);
+        etDestination = findViewById(R.id.etDestination);
+        etDuration = findViewById(R.id.etDuration);
+        etItinerary = findViewById(R.id.etItinerary);
         etStartDate = findViewById(R.id.etStartDate);
         etEndDate = findViewById(R.id.etEndDate);
+        etPrice = findViewById(R.id.etPrice);
         tvGuideNames = findViewById(R.id.tvGuideNames);
+        btnChooseImages = findViewById(R.id.btnChooseImages);
         btnSave = findViewById(R.id.btnSave);
         btnBack = findViewById(R.id.btnBack);
-        btnChooseImages = findViewById(R.id.btnChooseImages);
+        imageSlider = findViewById(R.id.imageSlider);
         progressBar = findViewById(R.id.progressBar);
     }
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
+        btnChooseImages.setOnClickListener(v -> openGallery());
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
-        btnChooseImages.setOnClickListener(v -> openGallery());
         btnSave.setOnClickListener(v -> saveChanges());
     }
 
-    private void showDatePicker(EditText target) {
+    private void showDatePicker(TextInputEditText target) {
         Calendar c = Calendar.getInstance();
-        new DatePickerDialog(this,
-                (view, year, month, day) -> {
-                    String date = String.format(Locale.getDefault(), "%02d/%02d/%04d", day, month + 1, year);
-                    target.setText(date);
-                },
-                c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(this, (view, year, month, day) -> {
+            String date = String.format(Locale.getDefault(), "%02d/%02d/%04d", day, month + 1, year);
+            target.setText(date);
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private void openGallery() {
@@ -114,7 +110,7 @@ public class EditTourActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Chọn ảnh mới"), PICK_IMAGES_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Chọn ảnh"), PICK_IMAGES_REQUEST);
     }
 
     @Override
@@ -124,20 +120,15 @@ public class EditTourActivity extends AppCompatActivity {
             newImageUris.clear();
             if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount();
-                for (int i = 0; i < count; i++) {
+                for (int i = 0; i < count; i++)
                     newImageUris.add(data.getClipData().getItemAt(i).getUri());
-                }
             } else if (data.getData() != null) {
                 newImageUris.add(data.getData());
             }
-
-            Toast.makeText(this, "Đã chọn " + newImageUris.size() + " ảnh mới", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Đã chọn " + newImageUris.size() + " ảnh", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // ===========================================================
-    // TẢI DỮ LIỆU TOUR HIỆN TẠI
-    // ===========================================================
     private void loadTourData() {
         progressBar.setVisibility(android.view.View.VISIBLE);
         db.collection("tours").document(tourId)
@@ -150,33 +141,35 @@ public class EditTourActivity extends AppCompatActivity {
                         return;
                     }
 
-                    etTourName.setText(doc.getString("tourName"));
+                    // --- Load dữ liệu
+                    etTitle.setText(doc.getString("title"));
                     etDescription.setText(doc.getString("description"));
-                    etLocation.setText(doc.getString("location"));
-                    etSeats.setText(String.valueOf(doc.getLong("availableSeats")));
-                    etPrice.setText(String.valueOf(doc.getDouble("price")));
-                    etDepositPercent.setText(String.valueOf(doc.getLong("depositPercent")));
-                    etStartDate.setText(formatDate(doc.get("startDate")));
-                    etEndDate.setText(formatDate(doc.get("endDate")));
+                    etDestination.setText(doc.getString("destination"));
+                    etDuration.setText(doc.getString("duration"));
+                    etItinerary.setText(doc.getString("itinerary"));
 
-                    // Ảnh
+                    etPrice.setText(String.valueOf(doc.getDouble("price")));
+
+                    etStartDate.setText(formatDate(doc.get("start_date")));
+                    etEndDate.setText(formatDate(doc.get("end_date")));
+
+                    // --- Ảnh
                     imageUrls = (List<String>) doc.get("images");
                     List<SlideModel> slides = new ArrayList<>();
                     if (imageUrls != null && !imageUrls.isEmpty()) {
-                        for (String url : imageUrls) slides.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
+                        for (String url : imageUrls)
+                            slides.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
                     } else {
                         slides.add(new SlideModel(R.drawable.ic_image_placeholder, ScaleTypes.CENTER_CROP));
                     }
                     imageSlider.setImageList(slides);
 
-                    // ✅ Lấy danh sách hướng dẫn viên đã gán
+                    // --- Hướng dẫn viên
                     List<String> gids = (List<String>) doc.get("guideIds");
                     if (gids != null) {
                         selectedGuideIds.clear();
                         selectedGuideIds.addAll(gids);
                     }
-
-                    // Sau khi có selectedGuideIds → load toàn bộ hướng dẫn viên
                     loadGuides();
                 })
                 .addOnFailureListener(e -> {
@@ -185,54 +178,37 @@ public class EditTourActivity extends AppCompatActivity {
                 });
     }
 
-    // ===========================================================
-    // LOAD DANH SÁCH HƯỚNG DẪN VIÊN & GÁN MULTI SELECT
-    // ===========================================================
     private void loadGuides() {
-        db.collection("guides")
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    guideIds.clear();
-                    guideNames.clear();
+        db.collection("guides").get().addOnSuccessListener(query -> {
+            guideIds.clear();
+            guideNames.clear();
 
-                    for (DocumentSnapshot doc : querySnapshot) {
-                        guideIds.add(doc.getId());
-                        String name = doc.getString("name");
-                        guideNames.add(name != null ? name : doc.getId());
-                    }
+            for (DocumentSnapshot d : query) {
+                guideIds.add(d.getId());
+                guideNames.add(d.getString("name"));
+            }
 
-                    // Xác định danh sách tên hướng dẫn viên đã chọn
-                    selectedGuideNames.clear();
-                    for (String id : selectedGuideIds) {
-                        int idx = guideIds.indexOf(id);
-                        if (idx >= 0) {
-                            selectedGuideNames.add(guideNames.get(idx));
-                        }
-                    }
-
-                    updateGuideText();
-
-                    tvGuideNames.setOnClickListener(v -> showMultiSelectDialog());
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            selectedGuideNames.clear();
+            for (String id : selectedGuideIds) {
+                int idx = guideIds.indexOf(id);
+                if (idx >= 0) selectedGuideNames.add(guideNames.get(idx));
+            }
+            updateGuideText();
+            tvGuideNames.setOnClickListener(v -> showGuideSelectDialog());
+        });
     }
 
-    // ===========================================================
-    // HIỂN THỊ DIALOG CHỌN NHIỀU HƯỚNG DẪN VIÊN
-    // ===========================================================
-    private void showMultiSelectDialog() {
-        boolean[] checkedItems = new boolean[guideNames.size()];
-        for (int i = 0; i < guideNames.size(); i++) {
-            checkedItems[i] = selectedGuideIds.contains(guideIds.get(i));
+    private void showGuideSelectDialog() {
+        boolean[] checked = new boolean[guideIds.size()];
+        for (int i = 0; i < guideIds.size(); i++) {
+            checked[i] = selectedGuideIds.contains(guideIds.get(i));
         }
 
         new AlertDialog.Builder(this)
                 .setTitle("Chọn hướng dẫn viên")
-                .setMultiChoiceItems(guideNames.toArray(new String[0]), checkedItems, (dialog, which, isChecked) -> {
+                .setMultiChoiceItems(guideNames.toArray(new String[0]), checked, (dialog, which, isChecked) -> {
                     String id = guideIds.get(which);
                     String name = guideNames.get(which);
-
                     if (isChecked) {
                         if (!selectedGuideIds.contains(id)) {
                             selectedGuideIds.add(id);
@@ -243,50 +219,54 @@ public class EditTourActivity extends AppCompatActivity {
                         selectedGuideNames.remove(name);
                     }
                 })
-                .setPositiveButton("Xong", (dialog, which) -> updateGuideText())
+                .setPositiveButton("Xong", (d, w) -> updateGuideText())
                 .setNegativeButton("Hủy", null)
                 .show();
     }
 
     private void updateGuideText() {
-        if (selectedGuideNames.isEmpty()) {
-            tvGuideNames.setText("(Chưa chọn hướng dẫn viên)");
-        } else {
+        if (selectedGuideNames.isEmpty())
+            tvGuideNames.setText("(Chưa chọn)");
+        else
             tvGuideNames.setText(String.join(", ", selectedGuideNames));
-        }
     }
 
-    // ===========================================================
-    // LƯU THAY ĐỔI TOUR
-    // ===========================================================
     private void saveChanges() {
         try {
             progressBar.setVisibility(android.view.View.VISIBLE);
-            String tourName = etTourName.getText().toString().trim();
+
+            String title = etTitle.getText().toString().trim();
             String desc = etDescription.getText().toString().trim();
-            String loc = etLocation.getText().toString().trim();
+            String dest = etDestination.getText().toString().trim();
+            String duration = etDuration.getText().toString().trim();
+            String itinerary = etItinerary.getText().toString().trim();
+            double price = Double.parseDouble(etPrice.getText().toString().trim());
+
+            if (title.isEmpty() || desc.isEmpty() || dest.isEmpty() || duration.isEmpty()
+                    || itinerary.isEmpty() || price <= 0) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin hợp lệ!", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(android.view.View.GONE);
+                return;
+            }
 
             if (selectedGuideIds.isEmpty()) {
-                Toast.makeText(this, "Vui lòng chọn ít nhất 1 hướng dẫn viên!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Chọn ít nhất 1 hướng dẫn viên!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(android.view.View.GONE);
                 return;
             }
 
             if (newImageUris.isEmpty()) {
-                updateFirestore(tourName, desc, loc, imageUrls);
+                updateFirestore(title, desc, dest, duration, itinerary, price, imageUrls);
             } else {
-                // Upload ảnh mới
                 new Thread(() -> {
                     try {
                         List<String> uploadedUrls = new ArrayList<>();
                         for (Uri uri : newImageUris) {
                             InputStream is = getContentResolver().openInputStream(uri);
-                            Map uploadResult = CloudinaryManager.getInstance()
-                                    .uploader()
-                                    .upload(is, ObjectUtils.emptyMap());
-                            uploadedUrls.add((String) uploadResult.get("secure_url"));
+                            Map upload = CloudinaryManager.getInstance().uploader().upload(is, ObjectUtils.emptyMap());
+                            uploadedUrls.add((String) upload.get("secure_url"));
                         }
-                        runOnUiThread(() -> updateFirestore(tourName, desc, loc, uploadedUrls));
+                        runOnUiThread(() -> updateFirestore(title, desc, dest, duration, itinerary, price, uploadedUrls));
                     } catch (Exception e) {
                         runOnUiThread(() -> {
                             progressBar.setVisibility(android.view.View.GONE);
@@ -302,23 +282,23 @@ public class EditTourActivity extends AppCompatActivity {
         }
     }
 
-    private void updateFirestore(String tourName, String desc, String loc, List<String> urls) {
+    private void updateFirestore(String title, String desc, String dest, String duration, String itinerary,
+                                 double price, List<String> urls) {
         Map<String, Object> data = new HashMap<>();
-        data.put("tourName", tourName);
+        data.put("title", title);
         data.put("description", desc);
-        data.put("location", loc);
-        data.put("availableSeats", Integer.parseInt(etSeats.getText().toString()));
-        data.put("price", Double.parseDouble(etPrice.getText().toString()));
-        data.put("depositPercent", Integer.parseInt(etDepositPercent.getText().toString()));
-        data.put("startDate", convertToTimestamp(etStartDate.getText().toString()));
-        data.put("endDate", convertToTimestamp(etEndDate.getText().toString()));
-        data.put("guideIds", selectedGuideIds); // ✅ danh sách nhiều hướng dẫn viên
+        data.put("destination", dest);
+        data.put("duration", duration);
+        data.put("itinerary", itinerary);
+        data.put("price", price);
+        data.put("start_date", etStartDate.getText().toString());
+        data.put("end_date", etEndDate.getText().toString());
+        data.put("guideIds", selectedGuideIds);
         data.put("images", urls);
         data.put("updateAt", new Timestamp(new Date()));
 
-        db.collection("tours").document(tourId)
-                .update(data)
-                .addOnSuccessListener(aVoid -> {
+        db.collection("tours").document(tourId).update(data)
+                .addOnSuccessListener(v -> {
                     progressBar.setVisibility(android.view.View.GONE);
                     Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
                     finish();
@@ -329,20 +309,15 @@ public class EditTourActivity extends AppCompatActivity {
                 });
     }
 
-    private Timestamp convertToTimestamp(String dateStr) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            Date date = sdf.parse(dateStr);
-            return new Timestamp(date);
-        } catch (Exception e) {
-            return Timestamp.now();
-        }
-    }
-
     private String formatDate(Object obj) {
-        if (obj instanceof Timestamp) {
-            Date date = ((Timestamp) obj).toDate();
-            return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
+        if (obj == null) return "";
+        try {
+            if (obj instanceof Timestamp) {
+                Date d = ((Timestamp) obj).toDate();
+                return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(d);
+            }
+            if (obj instanceof String) return (String) obj;
+        } catch (Exception ignored) {
         }
         return "";
     }

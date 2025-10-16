@@ -52,12 +52,14 @@ public class AdminToursFragment extends Fragment {
             @Override
             public void onEdit(DocumentSnapshot doc) {
                 Intent intent = new Intent(getContext(), com.example.finalproject.activity.EditTourActivity.class);
-                intent.putExtra("tourId", doc.getId()); // ✅ Truyền tourId sang
+                intent.putExtra("tourId", doc.getId());
                 startActivity(intent);
             }
+
             @Override
             public void onView(DocumentSnapshot doc) {
-                Toast.makeText(getContext(), "Xem tour: " + doc.getId(), Toast.LENGTH_SHORT).show();
+                // TODO: Có thể mở chi tiết tour tại đây
+                Toast.makeText(getContext(), "Tour: " + doc.getString("title"), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -68,26 +70,22 @@ public class AdminToursFragment extends Fragment {
 
         recyclerTours.setAdapter(adapter);
 
-        // Load dữ liệu ban đầu
-        loadTours();
-
-        // Khi bấm “+ Thêm mới”
         tvAddTour.setOnClickListener(v -> {
             Intent intent = new Intent(requireActivity(), AddTourActivity.class);
             startActivity(intent);
         });
 
-
+        loadTours();
         return view;
     }
 
     // ===========================================================
-    // LOAD DANH SÁCH TOUR
+    // 📦 Load danh sách tour
     // ===========================================================
     private void loadTours() {
         progressBar.setVisibility(View.VISIBLE);
         db.collection("tours")
-                .orderBy("createAt", Query.Direction.DESCENDING)
+                .orderBy("start_date", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     tours.clear();
@@ -96,28 +94,28 @@ public class AdminToursFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     // ===========================================================
-    // XÓA TOUR
+    // ❌ Xóa tour
     // ===========================================================
     private void confirmDelete(DocumentSnapshot doc) {
         new AlertDialog.Builder(getContext())
                 .setTitle("Xóa tour")
-                .setMessage("Bạn có chắc chắn muốn xóa tour này?")
+                .setMessage("Bạn có chắc chắn muốn xóa tour \"" + doc.getString("title") + "\" không?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
                     db.collection("tours").document(doc.getId())
                             .delete()
                             .addOnSuccessListener(aVoid -> {
                                 tours.remove(doc);
                                 adapter.notifyDataSetChanged();
-                                Toast.makeText(getContext(), "Đã xóa tour!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Đã xóa tour thành công!", Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e ->
-                                    Toast.makeText(getContext(), "Lỗi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                    Toast.makeText(getContext(), "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
@@ -126,6 +124,6 @@ public class AdminToursFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadTours(); // Tự reload mỗi khi quay lại
+        loadTours();
     }
 }
