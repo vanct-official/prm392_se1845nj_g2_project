@@ -360,12 +360,18 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
-                <Spinner
-                    android:id="@+id/spinnerGuide"
+                <TextView
+                    android:id="@+id/tvSelectedGuides"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="16dp"
                     android:background="@drawable/bg_spinner"
+                    android:text="Chọn hướng dẫn viên"
+                    android:textSize="16sp"
+                    android:textColor="#1E293B"
+                    android:drawablePadding="8dp"
                     android:layout_marginBottom="20dp" />
+
 
                 <!-- Chọn ảnh -->
                 <com.google.android.material.button.MaterialButton

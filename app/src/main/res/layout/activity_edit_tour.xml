@@ -105,11 +105,6 @@
                     style="@style/Widget.Material3.Button.OutlinedButton" />
 
                 <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E2E8F0"
-                    android:layout_marginBottom="24dp" />
 
                 <!-- Section: Hướng dẫn viên -->
                 <TextView
@@ -155,13 +150,6 @@
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
-
-                <Spinner
-                    android:id="@+id/spinnerGuide"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:padding="16dp"
-                    android:layout_marginBottom="24dp" />
 
                 <!-- Divider -->
                 <View

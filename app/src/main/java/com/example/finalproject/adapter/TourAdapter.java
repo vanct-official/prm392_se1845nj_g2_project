@@ -69,22 +69,29 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
                 : "");
 
         // Hiển thị hướng dẫn viên
+        // ✅ Hiển thị tất cả hướng dẫn viên
+        // ✅ Hiển thị tất cả hướng dẫn viên
         List<String> guideIds = (List<String>) doc.get("guideIds");
         if (guideIds != null && !guideIds.isEmpty()) {
-            String guideId = guideIds.get(0);
             FirebaseFirestore.getInstance()
                     .collection("guides")
-                    .document(guideId)
+                    .whereIn(com.google.firebase.firestore.FieldPath.documentId(), guideIds)
                     .get()
-                    .addOnSuccessListener(snapshot -> {
-                        if (snapshot.exists()) {
-                            String guideName = snapshot.getString("name");
-                            holder.tvGuideName.setText("Hướng dẫn viên: " + (guideName != null ? guideName : "(Không rõ)"));
+                    .addOnSuccessListener(querySnapshot -> {
+                        List<String> guideNames = new ArrayList<>();
+                        for (DocumentSnapshot guideDoc : querySnapshot.getDocuments()) {
+                            String guideName = guideDoc.getString("name"); // ← đổi tên biến ở đây
+                            if (guideName != null) guideNames.add(guideName);
+                        }
+                        if (!guideNames.isEmpty()) {
+                            holder.tvGuideName.setText("Hướng dẫn viên: " + String.join(", ", guideNames));
                         } else {
-                            holder.tvGuideName.setText("Hướng dẫn viên: (Không tồn tại)");
+                            holder.tvGuideName.setText("Hướng dẫn viên: (Không rõ)");
                         }
                     })
-                    .addOnFailureListener(e -> holder.tvGuideName.setText("Hướng dẫn viên: (Lỗi tải)"));
+                    .addOnFailureListener(e ->
+                            holder.tvGuideName.setText("Hướng dẫn viên: (Lỗi tải)")
+                    );
         } else {
             holder.tvGuideName.setText("Hướng dẫn viên: (Chưa gán)");
         }

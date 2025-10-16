@@ -1,15 +1,13 @@
 package com.example.finalproject.activity;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,14 +36,11 @@ import java.util.Map;
 
 public class EditTourActivity extends AppCompatActivity {
 
-    private static final String TAG = "EditTourActivity";
-
     private EditText etTourName, etDescription, etLocation, etSeats, etPrice,
             etDepositPercent, etStartDate, etEndDate;
-    private TextView tvGuideName;
-    private Spinner spinnerGuide;
-    private ImageSlider imageSlider;
+    private TextView tvGuideNames;
     private Button btnSave, btnBack, btnChooseImages;
+    private ImageSlider imageSlider;
     private ProgressBar progressBar;
 
     private FirebaseFirestore db;
@@ -55,7 +50,8 @@ public class EditTourActivity extends AppCompatActivity {
     private List<Uri> newImageUris = new ArrayList<>();
     private List<String> guideIds = new ArrayList<>();
     private List<String> guideNames = new ArrayList<>();
-    private String selectedGuideId;
+    private List<String> selectedGuideIds = new ArrayList<>();
+    private List<String> selectedGuideNames = new ArrayList<>();
 
     private static final int PICK_IMAGES_REQUEST = 200;
 
@@ -75,8 +71,7 @@ public class EditTourActivity extends AppCompatActivity {
 
         mapViews();
         setupListeners();
-
-        loadTourData(); // tải tour
+        loadTourData(); // chỉ gọi loadTourData, loadGuides() sẽ được gọi bên trong
     }
 
     private void mapViews() {
@@ -89,8 +84,7 @@ public class EditTourActivity extends AppCompatActivity {
         etDepositPercent = findViewById(R.id.etDepositPercent);
         etStartDate = findViewById(R.id.etStartDate);
         etEndDate = findViewById(R.id.etEndDate);
-        spinnerGuide = findViewById(R.id.spinnerGuide);
-        tvGuideName = findViewById(R.id.tvGuideNames);
+        tvGuideNames = findViewById(R.id.tvGuideNames);
         btnSave = findViewById(R.id.btnSave);
         btnBack = findViewById(R.id.btnBack);
         btnChooseImages = findViewById(R.id.btnChooseImages);
@@ -141,50 +135,9 @@ public class EditTourActivity extends AppCompatActivity {
         }
     }
 
-    private void loadGuides() {
-        db.collection("guides")
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    guideIds.clear();
-                    guideNames.clear();
-
-                    for (DocumentSnapshot doc : querySnapshot) {
-                        guideIds.add(doc.getId());
-                        guideNames.add(doc.getString("name"));
-                    }
-
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                            this, android.R.layout.simple_spinner_dropdown_item, guideNames);
-                    spinnerGuide.setAdapter(adapter);
-
-                    // ✅ Nếu tour có sẵn hướng dẫn viên, chọn đúng người đó
-                    if (selectedGuideId != null) {
-                        int index = guideIds.indexOf(selectedGuideId);
-                        if (index >= 0) {
-                            spinnerGuide.setSelection(index);
-                            tvGuideName.setText("Hướng dẫn viên: " + guideNames.get(index));
-                        } else {
-                            tvGuideName.setText("(Chưa chọn hướng dẫn viên)");
-                        }
-                    } else {
-                        tvGuideName.setText("(Chưa chọn hướng dẫn viên)");
-                    }
-
-                    // ✅ Cập nhật tên hiển thị mỗi khi người dùng chọn khác
-                    spinnerGuide.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
-                            selectedGuideId = guideIds.get(position);
-                            tvGuideName.setText("Hướng dẫn viên: " + guideNames.get(position));
-                        }
-
-                        @Override
-                        public void onNothingSelected(android.widget.AdapterView<?> parent) { }
-                    });
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
+    // ===========================================================
+    // TẢI DỮ LIỆU TOUR HIỆN TẠI
+    // ===========================================================
     private void loadTourData() {
         progressBar.setVisibility(android.view.View.VISIBLE);
         db.collection("tours").document(tourId)
@@ -206,25 +159,24 @@ public class EditTourActivity extends AppCompatActivity {
                     etStartDate.setText(formatDate(doc.get("startDate")));
                     etEndDate.setText(formatDate(doc.get("endDate")));
 
-                    // Load ảnh Cloudinary
+                    // Ảnh
                     imageUrls = (List<String>) doc.get("images");
                     List<SlideModel> slides = new ArrayList<>();
                     if (imageUrls != null && !imageUrls.isEmpty()) {
-                        for (String url : imageUrls) {
-                            slides.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
-                        }
+                        for (String url : imageUrls) slides.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
                     } else {
                         slides.add(new SlideModel(R.drawable.ic_image_placeholder, ScaleTypes.CENTER_CROP));
                     }
                     imageSlider.setImageList(slides);
 
-                    // ✅ Lưu lại ID hướng dẫn viên được gán cho tour
+                    // ✅ Lấy danh sách hướng dẫn viên đã gán
                     List<String> gids = (List<String>) doc.get("guideIds");
-                    if (gids != null && !gids.isEmpty()) {
-                        selectedGuideId = gids.get(0);
+                    if (gids != null) {
+                        selectedGuideIds.clear();
+                        selectedGuideIds.addAll(gids);
                     }
 
-                    // ✅ Sau khi đã có selectedGuideId, gọi loadGuides()
+                    // Sau khi có selectedGuideIds → load toàn bộ hướng dẫn viên
                     loadGuides();
                 })
                 .addOnFailureListener(e -> {
@@ -233,7 +185,80 @@ public class EditTourActivity extends AppCompatActivity {
                 });
     }
 
+    // ===========================================================
+    // LOAD DANH SÁCH HƯỚNG DẪN VIÊN & GÁN MULTI SELECT
+    // ===========================================================
+    private void loadGuides() {
+        db.collection("guides")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    guideIds.clear();
+                    guideNames.clear();
 
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        guideIds.add(doc.getId());
+                        String name = doc.getString("name");
+                        guideNames.add(name != null ? name : doc.getId());
+                    }
+
+                    // Xác định danh sách tên hướng dẫn viên đã chọn
+                    selectedGuideNames.clear();
+                    for (String id : selectedGuideIds) {
+                        int idx = guideIds.indexOf(id);
+                        if (idx >= 0) {
+                            selectedGuideNames.add(guideNames.get(idx));
+                        }
+                    }
+
+                    updateGuideText();
+
+                    tvGuideNames.setOnClickListener(v -> showMultiSelectDialog());
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // ===========================================================
+    // HIỂN THỊ DIALOG CHỌN NHIỀU HƯỚNG DẪN VIÊN
+    // ===========================================================
+    private void showMultiSelectDialog() {
+        boolean[] checkedItems = new boolean[guideNames.size()];
+        for (int i = 0; i < guideNames.size(); i++) {
+            checkedItems[i] = selectedGuideIds.contains(guideIds.get(i));
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Chọn hướng dẫn viên")
+                .setMultiChoiceItems(guideNames.toArray(new String[0]), checkedItems, (dialog, which, isChecked) -> {
+                    String id = guideIds.get(which);
+                    String name = guideNames.get(which);
+
+                    if (isChecked) {
+                        if (!selectedGuideIds.contains(id)) {
+                            selectedGuideIds.add(id);
+                            selectedGuideNames.add(name);
+                        }
+                    } else {
+                        selectedGuideIds.remove(id);
+                        selectedGuideNames.remove(name);
+                    }
+                })
+                .setPositiveButton("Xong", (dialog, which) -> updateGuideText())
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void updateGuideText() {
+        if (selectedGuideNames.isEmpty()) {
+            tvGuideNames.setText("(Chưa chọn hướng dẫn viên)");
+        } else {
+            tvGuideNames.setText(String.join(", ", selectedGuideNames));
+        }
+    }
+
+    // ===========================================================
+    // LƯU THAY ĐỔI TOUR
+    // ===========================================================
     private void saveChanges() {
         try {
             progressBar.setVisibility(android.view.View.VISIBLE);
@@ -241,12 +266,16 @@ public class EditTourActivity extends AppCompatActivity {
             String desc = etDescription.getText().toString().trim();
             String loc = etLocation.getText().toString().trim();
 
-            selectedGuideId = guideIds.get(spinnerGuide.getSelectedItemPosition());
+            if (selectedGuideIds.isEmpty()) {
+                Toast.makeText(this, "Vui lòng chọn ít nhất 1 hướng dẫn viên!", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(android.view.View.GONE);
+                return;
+            }
 
             if (newImageUris.isEmpty()) {
                 updateFirestore(tourName, desc, loc, imageUrls);
             } else {
-                // Upload lại ảnh mới lên Cloudinary
+                // Upload ảnh mới
                 new Thread(() -> {
                     try {
                         List<String> uploadedUrls = new ArrayList<>();
@@ -283,7 +312,7 @@ public class EditTourActivity extends AppCompatActivity {
         data.put("depositPercent", Integer.parseInt(etDepositPercent.getText().toString()));
         data.put("startDate", convertToTimestamp(etStartDate.getText().toString()));
         data.put("endDate", convertToTimestamp(etEndDate.getText().toString()));
-        data.put("guideIds", List.of(selectedGuideId));
+        data.put("guideIds", selectedGuideIds); // ✅ danh sách nhiều hướng dẫn viên
         data.put("images", urls);
         data.put("updateAt", new Timestamp(new Date()));
 

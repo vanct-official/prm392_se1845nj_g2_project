@@ -1,16 +1,15 @@
 package com.example.finalproject.activity;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,14 +39,15 @@ public class AddTourActivity extends AppCompatActivity {
     private EditText etTourName, etDescription, etLocation, etPrice, etAvailableSeats,
             etDepositPercent, etStartDate, etEndDate;
     private Button btnChooseImages, btnCancel, btnSave;
-    private TextView tvImageCount;
+    private TextView tvImageCount, tvSelectedGuides;
     private ProgressBar progressBar;
-    private Spinner spinnerGuide;
 
     private static final int PICK_IMAGES_REQUEST = 100;
     private List<Uri> selectedImageUris = new ArrayList<>();
     private List<String> guideIds = new ArrayList<>();
     private List<String> guideNames = new ArrayList<>();
+    private List<String> selectedGuideIds = new ArrayList<>();
+    private List<String> selectedGuideNames = new ArrayList<>();
 
     private FirebaseFirestore db;
 
@@ -72,12 +72,12 @@ public class AddTourActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         tvImageCount = findViewById(R.id.tvImageCount);
         progressBar = findViewById(R.id.progressBar);
-        spinnerGuide = findViewById(R.id.spinnerGuide);
+        tvSelectedGuides = findViewById(R.id.tvSelectedGuides);
 
         // Load danh sách hướng dẫn viên
         loadGuides();
 
-        // Ngày tháng
+        // Chọn ngày
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
@@ -107,15 +107,47 @@ public class AddTourActivity extends AppCompatActivity {
                         guideNames.add(name != null ? name : doc.getId());
                     }
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                            this,
-                            android.R.layout.simple_spinner_dropdown_item,
-                            guideNames
-                    );
-                    spinnerGuide.setAdapter(adapter);
+                    // Bấm để mở dialog chọn nhiều hướng dẫn viên
+                    tvSelectedGuides.setOnClickListener(v -> showMultiSelectDialog());
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // ===========================================================
+    // DIALOG CHỌN NHIỀU HƯỚNG DẪN VIÊN
+    // ===========================================================
+    private void showMultiSelectDialog() {
+        boolean[] checkedItems = new boolean[guideNames.size()];
+        for (int i = 0; i < guideNames.size(); i++) {
+            checkedItems[i] = selectedGuideIds.contains(guideIds.get(i));
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Chọn hướng dẫn viên")
+                .setMultiChoiceItems(guideNames.toArray(new String[0]), checkedItems, (dialog, which, isChecked) -> {
+                    String id = guideIds.get(which);
+                    String name = guideNames.get(which);
+
+                    if (isChecked) {
+                        if (!selectedGuideIds.contains(id)) {
+                            selectedGuideIds.add(id);
+                            selectedGuideNames.add(name);
+                        }
+                    } else {
+                        selectedGuideIds.remove(id);
+                        selectedGuideNames.remove(name);
+                    }
+                })
+                .setPositiveButton("Xong", (dialog, which) -> {
+                    if (selectedGuideNames.isEmpty()) {
+                        tvSelectedGuides.setText("Chọn hướng dẫn viên");
+                    } else {
+                        tvSelectedGuides.setText(String.join(", ", selectedGuideNames));
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     // ===========================================================
@@ -172,7 +204,7 @@ public class AddTourActivity extends AppCompatActivity {
         String startStr = etStartDate.getText().toString().trim();
         String endStr = etEndDate.getText().toString().trim();
 
-        // 1. Kiểm tra rỗng
+        // Kiểm tra rỗng
         if (name.isEmpty() || desc.isEmpty() || loc.isEmpty() ||
                 priceStr.isEmpty() || seatStr.isEmpty() || depositStr.isEmpty() ||
                 startStr.isEmpty() || endStr.isEmpty()) {
@@ -197,7 +229,7 @@ public class AddTourActivity extends AppCompatActivity {
             return;
         }
 
-        // 2. Validate logic giá & đặt cọc
+        // Validate logic
         if (price <= 0) {
             Toast.makeText(this, "Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
             return;
@@ -206,31 +238,30 @@ public class AddTourActivity extends AppCompatActivity {
             Toast.makeText(this, "% đặt cọc phải từ 1 đến 99!", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // 3. Validate ngày
         if (endDate.before(startDate) || endDate.equals(startDate)) {
             Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (selectedGuideIds.isEmpty()) {
+            Toast.makeText(this, "Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         progressBar.setVisibility(android.view.View.VISIBLE);
 
-        // 4. Kiểm tra trùng tên tour trên Firestore
+        // Kiểm tra trùng tên tour
         db.collection("tours")
                 .whereEqualTo("tourName", name)
                 .get()
                 .addOnSuccessListener(query -> {
                     if (!query.isEmpty()) {
                         progressBar.setVisibility(android.view.View.GONE);
-                        Toast.makeText(this, "Tên tour đã tồn tại, vui lòng nhập tên khác!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Tên tour đã tồn tại!", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    // Nếu hợp lệ → bắt đầu upload & lưu
                     new Thread(() -> {
                         try {
-                            String selectedGuideId = guideIds.get(spinnerGuide.getSelectedItemPosition());
-
                             List<String> imageUrls = new ArrayList<>();
                             for (Uri uri : selectedImageUris) {
                                 InputStream is = getContentResolver().openInputStream(uri);
@@ -256,7 +287,7 @@ public class AddTourActivity extends AppCompatActivity {
                             tour.put("startDate", new Timestamp(startDate));
                             tour.put("endDate", new Timestamp(endDate));
                             tour.put("images", imageUrls);
-                            tour.put("guideIds", List.of(selectedGuideId));
+                            tour.put("guideIds", selectedGuideIds); // ✅ nhiều hướng dẫn viên
                             tour.put("createAt", new Timestamp(new Date()));
                             tour.put("updateAt", new Timestamp(new Date()));
 
@@ -273,7 +304,6 @@ public class AddTourActivity extends AppCompatActivity {
                                     }));
 
                         } catch (Exception e) {
-                            e.printStackTrace();
                             runOnUiThread(() -> {
                                 progressBar.setVisibility(android.view.View.GONE);
                                 Toast.makeText(this, "Lỗi tải ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -286,5 +316,4 @@ public class AddTourActivity extends AppCompatActivity {
                     Toast.makeText(this, "Lỗi khi kiểm tra tên tour: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
-
 }
