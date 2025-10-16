@@ -1,11 +1,13 @@
 package com.example.finalproject.fragment.admin;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.finalproject.R;
+import com.example.finalproject.activity.AddPromotionActivity;
+import com.example.finalproject.activity.AddTourActivity;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.BarData;
@@ -61,6 +65,20 @@ public class AdminHomeFragment extends Fragment {
         tvTopTours = view.findViewById(R.id.tvTopTours);
         barChart = view.findViewById(R.id.barChart);
         progressBar = view.findViewById(R.id.progressBar);
+
+        // 🔹 Thao tác nhanh
+        Button btnAddTour = view.findViewById(R.id.btnAddTour);
+        Button btnAddPromotion = view.findViewById(R.id.btnAddPromotion);
+
+        btnAddTour.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AddTourActivity.class);
+            startActivity(intent);
+        });
+
+        btnAddPromotion.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AddPromotionActivity.class);
+            startActivity(intent);
+        });
 
         loadDashboardStats();
 
@@ -150,7 +168,6 @@ public class AdminHomeFragment extends Fragment {
                     Log.e("TOTAL_REVENUE", "Firestore error", e);
                 });
     }
-
 
     // ===========================================================
     // 🏆 Top 5 tour được đặt nhiều nhất

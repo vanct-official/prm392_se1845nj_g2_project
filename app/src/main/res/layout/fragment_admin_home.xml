@@ -404,6 +404,61 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Thao tác nhanh -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚡ Thao tác nhanh"
+                        android:textColor="#0F172A"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/btnAddTour"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Thêm tour mới"
+                            android:backgroundTint="#4F46E5"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="8dp" />
+
+                        <Button
+                            android:id="@+id/btnAddPromotion"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Thêm mã khuyến mãi"
+                            android:backgroundTint="#10B981"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:layout_marginStart="8dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
             <!-- Top 5 tours -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
