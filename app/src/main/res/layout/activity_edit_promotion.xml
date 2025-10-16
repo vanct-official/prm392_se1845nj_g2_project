@@ -139,17 +139,7 @@
                         android:layout_marginEnd="8dp"
                         app:boxBackgroundMode="outline"
                         app:boxStrokeColor="#6366F1"
-                        android:hint="Từ ngày">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etFromDate"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="false"
-                            android:clickable="true"
-                            android:padding="12dp"
-                            android:textColor="#1E293B" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:hint="Từ ngày"/>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
@@ -158,17 +148,7 @@
                         android:layout_marginStart="8dp"
                         app:boxBackgroundMode="outline"
                         app:boxStrokeColor="#6366F1"
-                        android:hint="Đến ngày">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etToDate"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="false"
-                            android:clickable="true"
-                            android:padding="12dp"
-                            android:textColor="#1E293B" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:hint="Đến ngày"/>
                 </LinearLayout>
 
                 <!-- Trạng thái -->

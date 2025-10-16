@@ -12,122 +12,136 @@
     app:cardBackgroundColor="#FFFFFF"
     android:foreground="?attr/selectableItemBackground">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
-        <!-- 🔹 Mã & Trạng thái -->
+        <!-- 🔹 Nhãn HẾT HẠN -->
+        <TextView
+            android:id="@+id/tvExpiredTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HẾT HẠN"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:background="@drawable/bg_expired_tag"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
+            android:visibility="gone" />
+
+        <!-- 🔹 Nội dung chính -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_below="@id/tvExpiredTag">
 
-            <TextView
-                android:id="@+id/tvCode"
-                android:layout_width="0dp"
+            <!-- 🔹 Mã & Trạng thái -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="SUMMER2025"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:textColor="#1E293B" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
+                <TextView
+                    android:id="@+id/tvCode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SUMMER2025"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:textColor="#1E293B" />
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hoạt động"
+                    android:textStyle="bold"
+                    android:textColor="#16A34A"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- 🔹 Mô tả -->
             <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvDescription"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hoạt động"
-                android:textStyle="bold"
-                android:textColor="#16A34A"
-                android:textSize="14sp" />
+                android:text="Giảm 20% cho tất cả tour mùa hè 2025"
+                android:textColor="#475569"
+                android:textSize="15sp"
+                android:layout_marginTop="6dp" />
+
+            <!-- 🔹 Điều kiện -->
+            <TextView
+                android:id="@+id/tvCondition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Giảm 20% • Tối thiểu 1.000.000đ"
+                android:textColor="#64748B"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+
+            <!-- 🔹 Dòng phân cách -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp"
+                android:background="#E2E8F0" />
+
+            <!-- 🔹 Các nút hành động -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Sửa"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="#6366F1"
+                    android:layout_marginEnd="6dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnView"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Xem"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="#4F46E5"
+                    android:layout_marginEnd="6dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="Xóa"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="#DC2626" />
+            </LinearLayout>
+
         </LinearLayout>
-
-        <!-- 🔹 Mô tả -->
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Giảm 20% cho tất cả tour mùa hè 2025"
-            android:textColor="#475569"
-            android:textSize="15sp"
-            android:layout_marginTop="6dp" />
-
-        <!-- 🔹 Điều kiện -->
-        <TextView
-            android:id="@+id/tvCondition"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Giảm 20% • Tối thiểu 1.000.000đ"
-            android:textColor="#64748B"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp" />
-
-        <!-- 🔹 Dòng phân cách -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="8dp"
-            android:background="#E2E8F0" />
-
-        <!-- 🔹 Các nút hành động -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEdit"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:text="Sửa"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                app:iconGravity="textStart"
-                app:iconPadding="6dp"
-                app:iconTint="@android:color/white"
-                app:cornerRadius="12dp"
-                app:backgroundTint="#6366F1"
-                android:layout_marginEnd="6dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnView"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:text="Xem"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                app:iconGravity="textStart"
-                app:iconPadding="6dp"
-                app:iconTint="@android:color/white"
-                app:cornerRadius="12dp"
-                app:backgroundTint="#4F46E5"
-                android:layout_marginEnd="6dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDelete"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:text="Xóa"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                app:iconGravity="textStart"
-                app:iconPadding="6dp"
-                app:iconTint="@android:color/white"
-                app:cornerRadius="12dp"
-                app:backgroundTint="#DC2626" />
-        </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

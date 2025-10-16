@@ -56,23 +56,55 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Prom
         boolean active = Boolean.TRUE.equals(doc.getBoolean("isActive"));
         Long discountObj = doc.getLong("discountPercent");
         Double minValueObj = doc.getDouble("minimumValue");
+        String endDateStr = doc.getString("endDate"); // ví dụ: "2025-10-20"
 
         int discount = (discountObj != null) ? discountObj.intValue() : 0;
         double minValue = (minValueObj != null) ? minValueObj : 0;
 
         String condition = "Giảm " + discount + "% • Tối thiểu " + (int) minValue + "đ";
-        String status = active ? "Hoạt động" : "Tạm ngưng";
+
+        // --- Kiểm tra hết hạn ---
+        boolean expired = false;
+        if (endDateStr != null && !endDateStr.isEmpty()) {
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                java.util.Date endDate = sdf.parse(endDateStr);
+                java.util.Date today = new java.util.Date();
+                if (endDate.before(today)) {
+                    expired = true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // --- Cập nhật giao diện ---
+        String status;
+        if (expired) {
+            status = "Đã hết hạn";
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#FFF3CD")); // vàng nhạt
+            holder.tvStatus.setTextColor(Color.parseColor("#B45309")); // nâu vàng
+        } else if (!active) {
+            status = "Tạm ngưng";
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#FEE2E2")); // đỏ nhạt
+            holder.tvStatus.setTextColor(Color.parseColor("#DC2626")); // đỏ
+        } else {
+            status = "Hoạt động";
+            holder.cardView.setCardBackgroundColor(Color.WHITE);
+            holder.tvStatus.setTextColor(Color.parseColor("#16A34A")); // xanh lá
+        }
 
         holder.tvCode.setText(name != null ? name : id);
         holder.tvDescription.setText(desc != null ? desc : "Không có mô tả");
         holder.tvCondition.setText(condition);
         holder.tvStatus.setText(status);
-        holder.tvStatus.setTextColor(active ? Color.parseColor("#16A34A") : Color.parseColor("#DC2626"));
 
+        // Gán sự kiện
         holder.btnView.setOnClickListener(v -> listener.onView(doc));
         holder.btnEdit.setOnClickListener(v -> listener.onEdit(doc));
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
     }
+
 
     @Override
     public int getItemCount() {

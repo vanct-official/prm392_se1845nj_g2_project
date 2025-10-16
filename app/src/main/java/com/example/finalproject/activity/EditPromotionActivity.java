@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class EditPromotionActivity extends AppCompatActivity {
 
-    private EditText etPromotionCode, etDescription, etDiscountPercent, etMinValue, etFromDate, etToDate;
+    private EditText etPromotionCode, etDescription, etDiscountPercent, etMinValue;
     private SwitchMaterial switchActive;  // Đổi thành SwitchMaterial
     private Button btnSave, btnCancel;
     private FirebaseFirestore db;
@@ -53,8 +53,6 @@ public class EditPromotionActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
         etDiscountPercent = findViewById(R.id.etDiscountPercent);
         etMinValue = findViewById(R.id.etMinValue);
-        etFromDate = findViewById(R.id.etFromDate);
-        etToDate = findViewById(R.id.etToDate);
         switchActive = findViewById(R.id.switchActive);
         btnSave = findViewById(R.id.btnSave);
         btnCancel = findViewById(R.id.btnCancel);
@@ -63,10 +61,6 @@ public class EditPromotionActivity extends AppCompatActivity {
 
         // XÓA dòng trùng lặp này đi
         // docId = getIntent().getStringExtra("promotionId");
-
-        // Sự kiện chọn ngày
-        etFromDate.setOnClickListener(v -> showDatePicker(etFromDate));
-        etToDate.setOnClickListener(v -> showDatePicker(etToDate));
 
         // Nút Hủy
         btnCancel.setOnClickListener(v -> finish());
@@ -109,11 +103,6 @@ public class EditPromotionActivity extends AppCompatActivity {
                 : "");
         switchActive.setChecked(Boolean.TRUE.equals(doc.getBoolean("isActive")));
 
-        Timestamp from = doc.getTimestamp("validFrom");
-        Timestamp to = doc.getTimestamp("validTo");
-
-        if (from != null) etFromDate.setText(sdf.format(from.toDate()));
-        if (to != null) etToDate.setText(sdf.format(to.toDate()));
     }
 
     // ============================================================
@@ -123,11 +112,9 @@ public class EditPromotionActivity extends AppCompatActivity {
         String desc = etDescription.getText().toString().trim();
         String discountStr = etDiscountPercent.getText().toString().trim();
         String minValueStr = etMinValue.getText().toString().trim();
-        String fromStr = etFromDate.getText().toString().trim();
-        String toStr = etToDate.getText().toString().trim();
         boolean isActive = switchActive.isChecked();
 
-        if (desc.isEmpty() || discountStr.isEmpty() || minValueStr.isEmpty() || fromStr.isEmpty() || toStr.isEmpty()) {
+        if (desc.isEmpty() || discountStr.isEmpty() || minValueStr.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -154,21 +141,12 @@ public class EditPromotionActivity extends AppCompatActivity {
         }
 
         try {
-            Date fromDate = sdf.parse(fromStr);
-            Date toDate = sdf.parse(toStr);
-
-            if (fromDate.after(toDate)) {
-                Toast.makeText(this, "Ngày bắt đầu phải nhỏ hơn ngày kết thúc!", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
             Map<String, Object> update = new HashMap<>();
             update.put("description", desc);
             update.put("discountPercent", discount);
             update.put("minimumValue", minValue);
             update.put("isActive", isActive);
-            update.put("validFrom", new Timestamp(fromDate));
-            update.put("validTo", new Timestamp(toDate));
 
             db.collection("promotions").document(docId)
                     .update(update)
@@ -181,7 +159,7 @@ public class EditPromotionActivity extends AppCompatActivity {
                         Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         android.util.Log.e("PROMO_DEBUG", "Update error", e);
                     });
-        } catch (ParseException e) {
+        } catch (Exception e) {
             Toast.makeText(this, "Định dạng ngày không hợp lệ!", Toast.LENGTH_SHORT).show();
         }
     }

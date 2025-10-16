@@ -13,7 +13,7 @@ import java.util.Locale;
 
 public class ViewPromotionActivity extends AppCompatActivity {
 
-    private TextView tvPromotionCode, tvDescription, tvDiscount, tvMinValue, tvValidTime, tvStatus;
+    private TextView tvPromotionCode, tvDescription, tvDiscount, tvMinValue, tvStatus;
     private MaterialButton btnBack;
     private FirebaseFirestore db;
 
@@ -28,7 +28,6 @@ public class ViewPromotionActivity extends AppCompatActivity {
         tvDescription = findViewById(R.id.tvDescription);
         tvDiscount = findViewById(R.id.tvDiscount);
         tvMinValue = findViewById(R.id.tvMinValue);
-        tvValidTime = findViewById(R.id.tvValidTime);
         tvStatus = findViewById(R.id.tvStatus);
         btnBack = findViewById(R.id.btnBack);
 
@@ -57,10 +56,6 @@ public class ViewPromotionActivity extends AppCompatActivity {
                         Timestamp from = doc.getTimestamp("validFrom");
                         Timestamp to = doc.getTimestamp("validTo");
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                        String validTime = (from != null && to != null)
-                                ? sdf.format(from.toDate()) + " - " + sdf.format(to.toDate())
-                                : "Không xác định";
-                        tvValidTime.setText(validTime);
 
                         boolean isActive = Boolean.TRUE.equals(doc.getBoolean("isActive"));
                         tvStatus.setText(isActive ? "Hoạt động" : "Tạm ngưng");

@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class AddPromotionActivity extends AppCompatActivity {
 
-    private EditText etPromotionCode, etDescription, etDiscountPercent, etMinOrderValue, etStartDate, etEndDate;
+    private EditText etPromotionCode, etDescription, etDiscountPercent, etMinOrderValue;
     private SwitchMaterial switchActive;
     private MaterialButton btnCancel, btnCreate;
 
@@ -40,17 +40,11 @@ public class AddPromotionActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
         etDiscountPercent = findViewById(R.id.etDiscountPercent);
         etMinOrderValue = findViewById(R.id.etMinOrderValue);
-        etStartDate = findViewById(R.id.etStartDate);
-        etEndDate = findViewById(R.id.etEndDate);
         switchActive = findViewById(R.id.switchActive);
         btnCancel = findViewById(R.id.btnCancel);
         btnCreate = findViewById(R.id.btnCreate);
 
         db = FirebaseFirestore.getInstance();
-
-        // 🗓Chọn ngày
-        etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
-        etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
         // Hủy
         btnCancel.setOnClickListener(v -> finish());
@@ -83,12 +77,10 @@ public class AddPromotionActivity extends AppCompatActivity {
         String desc = etDescription.getText().toString().trim();
         String discountStr = etDiscountPercent.getText().toString().trim();
         String minValueStr = etMinOrderValue.getText().toString().trim();
-        String startStr = etStartDate.getText().toString().trim();
-        String endStr = etEndDate.getText().toString().trim();
         boolean isActive = switchActive.isChecked();
 
         if (code.isEmpty() || desc.isEmpty() || discountStr.isEmpty() || minValueStr.isEmpty()
-                || startStr.isEmpty() || endStr.isEmpty()) {
+                ) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -106,21 +98,6 @@ public class AddPromotionActivity extends AppCompatActivity {
             return;
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        Date startDate, endDate;
-        try {
-            startDate = sdf.parse(startStr);
-            endDate = sdf.parse(endStr);
-
-            if (startDate != null && endDate != null && !startDate.before(endDate)) {
-                Toast.makeText(this, "Ngày bắt đầu phải nhỏ hơn ngày kết thúc!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } catch (ParseException e) {
-            Toast.makeText(this, "Định dạng ngày không hợp lệ!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         // Kiểm tra trùng tên khuyến mãi
         db.collection("promotions").document(code)
                 .get()
@@ -135,8 +112,6 @@ public class AddPromotionActivity extends AppCompatActivity {
                         promo.put("discountPercent", discount);
                         promo.put("minimumValue", minValue);
                         promo.put("isActive", isActive);
-                        promo.put("validFrom", new Timestamp(startDate));
-                        promo.put("validTo", new Timestamp(endDate));
 
                         db.collection("promotions").document(code)
                                 .set(promo)
