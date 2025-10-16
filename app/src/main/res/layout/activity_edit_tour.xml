@@ -19,7 +19,7 @@
             android:id="@+id/imageSlider"
             android:layout_width="match_parent"
             android:layout_height="220dp"
-            app:iss_auto_cycle="true"
+            app:iss_auto_cycle="false"
             app:iss_period="3"
             app:iss_delay="1"
             android:layout_marginBottom="12dp" />
