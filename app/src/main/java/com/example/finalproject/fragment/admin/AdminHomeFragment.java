@@ -197,7 +197,7 @@ public class AdminHomeFragment extends Fragment {
                         int finalI = i;
                         db.collection("tours").document(tourId).get()
                                 .addOnSuccessListener(tourDoc -> {
-                                    String tourName = tourDoc.getString("tourName");
+                                    String tourName = tourDoc.getString("title");
                                     topToursText.append(finalI + 1)
                                             .append(". ")
                                             .append(tourName != null ? tourName : "(Không rõ)")
