@@ -43,8 +43,8 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
         String comment = (String) review.get("comment");
         holder.tvComment.setText(comment != null ? comment : "(Không có bình luận)");
 
-        holder.tvTourId.setText("Tour: " + review.getOrDefault("tourName", "(Không rõ tour)"));
-        holder.tvUserId.setText("Người dùng: " + review.getOrDefault("userName", "(Không rõ user)"));
+        holder.tvTourId.setText("" + review.getOrDefault("tourName", "(Không rõ tour)"));
+        holder.tvUserId.setText("" + review.getOrDefault("userName", "(Không rõ user)"));
 
         // Rating
         Object ratingObj = review.get("rating");

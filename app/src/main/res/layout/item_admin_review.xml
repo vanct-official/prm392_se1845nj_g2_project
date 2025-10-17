@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,59 +15,169 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tvComment"
-            android:layout_width="wrap_content"
+        <!-- Header Section: Avatar + Name + Rating -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bình luận mẫu"
-            android:textSize="15sp"
-            android:textColor="#0F172A"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
-        <RatingBar
-            android:id="@+id/ratingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:numStars="5"
-            android:stepSize="0.5"
-            android:isIndicator="true"
-            android:layout_marginBottom="4dp" />
+            <!-- Avatar Placeholder -->
+            <ImageView
+                android:id="@+id/ivUserAvatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_user_placeholder"
+                android:contentDescription="User Avatar"
+                android:scaleType="centerCrop"
+                android:background="@drawable/bg_avatar_circle"
+                android:layout_marginEnd="12dp" />
 
-        <TextView
-            android:id="@+id/tvRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="4.5 ★"
-            android:textColor="#EAB308"
-            android:textStyle="bold"
-            android:textSize="14sp" />
+            <!-- Name and Rating -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvTourId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tour ID: ..."
-            android:textSize="13sp"
-            android:textColor="#475569"
-            android:layout_marginTop="6dp" />
+                <TextView
+                    android:id="@+id/tvComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bình luận mẫu"
+                    android:textSize="14sp"
+                    android:textColor="#1F2937"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvUserId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User ID: ..."
-            android:textSize="13sp"
-            android:textColor="#475569" />
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:isIndicator="true"
+                    android:layout_marginTop="4dp"
+                    style="?android:attr/ratingBarStyleSmall" />
 
+            </LinearLayout>
+
+            <!-- Rating Text -->
+            <TextView
+                android:id="@+id/tvRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4.5"
+                android:textColor="#F59E0B"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E5E7EB"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Comment Content -->
         <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvCommentContent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ngày: ..."
-            android:textSize="13sp"
-            android:textColor="#64748B"
-            android:layout_marginTop="4dp" />
+            android:text="Nội dung bình luận chi tiết sẽ hiển thị tại đây..."
+            android:textSize="14sp"
+            android:textColor="#374151"
+            android:lineSpacingMultiplier="1.4"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Footer Section: Tour ID, User ID, Date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tour:"
+                    android:textColor="#6B7280"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTourId"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="..."
+                    android:textSize="12sp"
+                    android:textColor="#9CA3AF" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="User:"
+                    android:textColor="#6B7280"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvUserId"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="..."
+                    android:textSize="12sp"
+                    android:textColor="#9CA3AF" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ngày:"
+                    android:textSize="12sp"
+                    android:textColor="#6B7280"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="..."
+                    android:textSize="12sp"
+                    android:textColor="#9CA3AF" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>
