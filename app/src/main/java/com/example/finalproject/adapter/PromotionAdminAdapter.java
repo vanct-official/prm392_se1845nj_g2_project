@@ -18,7 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.PromoViewHolder> {
+public class PromotionAdminAdapter extends RecyclerView.Adapter<PromotionAdminAdapter.PromoViewHolder> {
 
     public interface OnPromotionActionListener {
         void onView(DocumentSnapshot doc);
@@ -30,7 +30,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Prom
     private final OnPromotionActionListener listener;
     private List<DocumentSnapshot> promotions = new ArrayList<>();
 
-    public PromotionAdapter(Context context, List<DocumentSnapshot> promotions, OnPromotionActionListener listener) {
+    public PromotionAdminAdapter(Context context, List<DocumentSnapshot> promotions, OnPromotionActionListener listener) {
         this.context = context;
         this.promotions = new ArrayList<>(promotions);
         this.listener = listener;
@@ -39,7 +39,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Prom
     @NonNull
     @Override
     public PromoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_promotion_card, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_promotion_card_admin, parent, false);
         return new PromoViewHolder(view);
     }
 

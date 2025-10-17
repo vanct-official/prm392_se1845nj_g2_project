@@ -14,6 +14,7 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
+import com.example.finalproject.activity.TourDetailAdminActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,10 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.finalproject.activity.TourDetailActivity;
-import com.example.finalproject.activity.EditTourActivity;
+import com.example.finalproject.activity.EditTourAdminActivity;
 
-public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder> {
+public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.TourViewHolder> {
 
     public interface OnTourActionListener {
         void onEdit(DocumentSnapshot doc);
@@ -38,7 +38,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
     private final List<DocumentSnapshot> tours;
     private final OnTourActionListener listener;
 
-    public TourAdapter(Context context, List<DocumentSnapshot> tours, OnTourActionListener listener) {
+    public TourAdminAdapter(Context context, List<DocumentSnapshot> tours, OnTourActionListener listener) {
         this.context = context;
         this.tours = tours;
         this.listener = listener;
@@ -47,7 +47,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
     @NonNull
     @Override
     public TourViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_tour_card, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_tour_card_admin, parent, false);
         return new TourViewHolder(view);
     }
 
@@ -116,14 +116,14 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
 
         // 🔹 Các nút thao tác
         holder.btnView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, TourDetailActivity.class);
+            Intent intent = new Intent(context, TourDetailAdminActivity.class);
             intent.putExtra("tourId", doc.getId());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });
 
         holder.btnEdit.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), EditTourActivity.class);
+            Intent intent = new Intent(v.getContext(), EditTourAdminActivity.class);
             intent.putExtra("tourId", doc.getId());
             v.getContext().startActivity(intent);
         });

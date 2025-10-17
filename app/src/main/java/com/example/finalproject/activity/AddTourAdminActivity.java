@@ -39,9 +39,9 @@ import java.util.Map;
 import java.util.TimeZone;
 
 
-public class AddTourActivity extends AppCompatActivity {
+public class AddTourAdminActivity extends AppCompatActivity {
 
-    private static final String TAG = "AddTourActivity";
+    private static final String TAG = "AddTourAdminActivity";
     private EditText etTitle, etDescription, etDestination, etDuration, etItinerary, etPrice, etStartDate, etEndDate;
     private Button btnChooseImages, btnCancel, btnSave;
     private TextView tvImageCount, tvSelectedGuides;
@@ -60,7 +60,7 @@ public class AddTourActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_tour);
+        setContentView(R.layout.activity_add_tour_admin);
 
         db = FirebaseFirestore.getInstance();
 

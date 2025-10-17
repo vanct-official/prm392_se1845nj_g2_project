@@ -1,7 +1,6 @@
 package com.example.finalproject.activity;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -11,18 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.finalproject.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class AddPromotionActivity extends AppCompatActivity {
+public class AddPromotionAdminActivity extends AppCompatActivity {
 
     private EditText etPromotionCode, etDescription, etDiscountPercent, etMinOrderValue;
     private SwitchMaterial switchActive;
@@ -33,7 +28,7 @@ public class AddPromotionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_promotion);
+        setContentView(R.layout.activity_add_promotion_admin);
 
         // Ánh xạ view
         etPromotionCode = findViewById(R.id.etPromotionCode);

@@ -11,7 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class ViewPromotionActivity extends AppCompatActivity {
+public class ViewPromotionAdminActivity extends AppCompatActivity {
     private TextView tvPromotionCode, tvDescription, tvDiscount, tvMinValue, tvStatus;
     private MaterialButton btnBack;
     private FirebaseFirestore db;
@@ -19,7 +19,7 @@ public class ViewPromotionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_promotion);
+        setContentView(R.layout.activity_view_promotion_admin);
 
         db = FirebaseFirestore.getInstance();
 

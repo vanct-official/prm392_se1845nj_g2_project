@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.finalproject.fragment.admin.AdminHomeFragment;
+import com.example.finalproject.fragment.admin.AdminDashboardFragment;
 import com.example.finalproject.fragment.admin.AdminToursFragment;
 import com.example.finalproject.fragment.admin.AdminManageUsersFragment;
 //import com.example.finalproject.fragment.admin.AdminBookingsFragment;
@@ -56,7 +56,7 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
 
         // Nút FloatingActionButton quay về trang Home dashboard
         findViewById(R.id.fab_admin).setOnClickListener(v -> {
-            replaceFragment(new AdminHomeFragment());
+            replaceFragment(new AdminDashboardFragment());
             navigationView.setCheckedItem(R.id.nav_admin_home);
         });
 
@@ -77,7 +77,7 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
 
         // Fragment mặc định khi khởi động
         if (savedInstanceState == null) {
-            replaceFragment(new AdminHomeFragment());
+            replaceFragment(new AdminDashboardFragment());
             navigationView.setCheckedItem(R.id.nav_admin_home);
         }
     }
@@ -89,7 +89,7 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         int id = item.getItemId();
 
         if (id == R.id.nav_admin_home) {
-            selectedFragment = new AdminHomeFragment();
+            selectedFragment = new AdminDashboardFragment();
 
         } else if (id == R.id.nav_admin_users) {
             selectedFragment = new AdminManageUsersFragment();

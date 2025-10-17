@@ -17,8 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.AddPromotionActivity;
-import com.example.finalproject.activity.AddTourActivity;
+import com.example.finalproject.activity.AddPromotionAdminActivity;
+import com.example.finalproject.activity.AddTourAdminActivity;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.BarData;
@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AdminHomeFragment extends Fragment {
+public class AdminDashboardFragment extends Fragment {
 
     // Các thành phần hiển thị
     private TextView tvTotalUsers, tvTotalBookings, tvTotalTours, tvTotalGuides, tvTotalReviews, tvTotalPromotions;
@@ -50,7 +50,7 @@ public class AdminHomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_admin_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_admin_dashboard, container, false);
 
         db = FirebaseFirestore.getInstance();
 
@@ -71,12 +71,12 @@ public class AdminHomeFragment extends Fragment {
         Button btnAddPromotion = view.findViewById(R.id.btnAddPromotion);
 
         btnAddTour.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AddTourActivity.class);
+            Intent intent = new Intent(getActivity(), AddTourAdminActivity.class);
             startActivity(intent);
         });
 
         btnAddPromotion.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AddPromotionActivity.class);
+            Intent intent = new Intent(getActivity(), AddPromotionAdminActivity.class);
             startActivity(intent);
         });
 

@@ -14,19 +14,16 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.cloudinary.utils.ObjectUtils;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
-import com.example.finalproject.utils.CloudinaryManager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class EditTourActivity extends AppCompatActivity {
+public class EditTourAdminActivity extends AppCompatActivity {
 
     private TextInputEditText etTitle, etDescription, etDestination, etDuration,
             etItinerary, etStartDate, etEndDate, etPrice;
@@ -60,7 +57,7 @@ public class EditTourActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_tour);
+        setContentView(R.layout.activity_edit_tour_admin);
 
         db = FirebaseFirestore.getInstance();
         tourId = getIntent().getStringExtra("tourId");

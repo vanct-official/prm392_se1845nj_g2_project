@@ -21,12 +21,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.AddPromotionActivity;
-import com.example.finalproject.adapter.PromotionAdapter;
+import com.example.finalproject.activity.AddPromotionAdminActivity;
+import com.example.finalproject.activity.EditPromotionAdminActivity;
+import com.example.finalproject.activity.ViewPromotionAdminActivity;
+import com.example.finalproject.adapter.PromotionAdminAdapter;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class AdminPromotionsFragment extends Fragment {
     private TextView tvAddPromotion;
 
     private FirebaseFirestore db;
-    private PromotionAdapter adapter;
+    private PromotionAdminAdapter adapter;
     private List<DocumentSnapshot> allPromotions = new ArrayList<>();
     private List<DocumentSnapshot> promotions = new ArrayList<>();
 
@@ -62,17 +63,17 @@ public class AdminPromotionsFragment extends Fragment {
         recyclerPromotions.setLayoutManager(new LinearLayoutManager(getContext()));
         db = FirebaseFirestore.getInstance();
 
-        adapter = new PromotionAdapter(getContext(), promotions, new PromotionAdapter.OnPromotionActionListener() {
+        adapter = new PromotionAdminAdapter(getContext(), promotions, new PromotionAdminAdapter.OnPromotionActionListener() {
             @Override
             public void onView(DocumentSnapshot doc) {
-                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.ViewPromotionActivity.class);
+                Intent intent = new Intent(requireContext(), ViewPromotionAdminActivity.class);
                 intent.putExtra("promotionId", doc.getId());
                 startActivity(intent);
             }
 
             @Override
             public void onEdit(DocumentSnapshot doc) {
-                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
+                Intent intent = new Intent(requireContext(), EditPromotionAdminActivity.class);
                 intent.putExtra("promotionId", doc.getId());
                 startActivity(intent);
             }
@@ -92,7 +93,7 @@ public class AdminPromotionsFragment extends Fragment {
         // ✅ Nút "+ Thêm mới"
         tvAddPromotion.setOnClickListener(v -> {
             android.util.Log.d("PROMO_DEBUG", "👉 Nút 'Thêm mới' được bấm!");
-            Intent intent = new Intent(getContext(), AddPromotionActivity.class);
+            Intent intent = new Intent(getContext(), AddPromotionAdminActivity.class);
             startActivityForResult(intent, 100);
         });
 

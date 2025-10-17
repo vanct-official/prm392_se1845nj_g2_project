@@ -17,8 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.AddTourActivity;
-import com.example.finalproject.adapter.TourAdapter;
+import com.example.finalproject.activity.AddTourAdminActivity;
+import com.example.finalproject.activity.EditTourAdminActivity;
+import com.example.finalproject.adapter.TourAdminAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -33,7 +34,7 @@ public class AdminToursFragment extends Fragment {
     private ProgressBar progressBar;
 
     private FirebaseFirestore db;
-    private TourAdapter adapter;
+    private TourAdminAdapter adapter;
     private List<DocumentSnapshot> tours = new ArrayList<>();
 
     @Nullable
@@ -48,10 +49,10 @@ public class AdminToursFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         recyclerTours.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new TourAdapter(getContext(), tours, new TourAdapter.OnTourActionListener() {
+        adapter = new TourAdminAdapter(getContext(), tours, new TourAdminAdapter.OnTourActionListener() {
             @Override
             public void onEdit(DocumentSnapshot doc) {
-                Intent intent = new Intent(getContext(), com.example.finalproject.activity.EditTourActivity.class);
+                Intent intent = new Intent(getContext(), EditTourAdminActivity.class);
                 intent.putExtra("tourId", doc.getId());
                 startActivity(intent);
             }
@@ -71,7 +72,7 @@ public class AdminToursFragment extends Fragment {
         recyclerTours.setAdapter(adapter);
 
         tvAddTour.setOnClickListener(v -> {
-            Intent intent = new Intent(requireActivity(), AddTourActivity.class);
+            Intent intent = new Intent(requireActivity(), AddTourAdminActivity.class);
             startActivity(intent);
         });
 

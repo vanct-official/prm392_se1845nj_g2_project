@@ -11,19 +11,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finalproject.R;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class EditPromotionActivity extends AppCompatActivity {
+public class EditPromotionAdminActivity extends AppCompatActivity {
 
     private EditText etPromotionCode, etDescription, etDiscountPercent, etMinValue;
     private SwitchMaterial switchActive;  // Đổi thành SwitchMaterial
@@ -36,7 +33,7 @@ public class EditPromotionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_promotion);
+        setContentView(R.layout.activity_edit_promotion_admin);
 
         // Chỉ lấy docId MỘT LẦN ngay đầu
         docId = getIntent().getStringExtra("promotionId");

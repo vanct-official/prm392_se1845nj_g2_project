@@ -17,9 +17,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class TourDetailActivity extends AppCompatActivity {
+public class TourDetailAdminActivity extends AppCompatActivity {
 
-    private static final String TAG = "TourDetailActivity";
+    private static final String TAG = "TourDetailAdminActivity";
 
     private TextView tvTitle, tvDescription, tvDestination, tvDuration, tvPrice,
             tvStartDate, tvEndDate, tvItinerary, tvGuideName;
@@ -31,7 +31,7 @@ public class TourDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tour_detail);
+        setContentView(R.layout.activity_tour_detail_admin);
 
         tvTitle = findViewById(R.id.tvTitle);
         tvDescription = findViewById(R.id.tvDescription);
