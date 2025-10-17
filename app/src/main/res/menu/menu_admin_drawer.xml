@@ -37,9 +37,14 @@
         android:icon="@drawable/ic_reviews" />
 
     <item
-        android:id="@+id/nav_admin_feedback"
+        android:id="@+id/nav_admin_reports"
         android:icon="@drawable/ic_feedback"
-        android:title="Phản hồi" />
+        android:title="Báo cáo tour" />
+
+<!--    <item-->
+<!--        android:id="@+id/nav_admin_feedback"-->
+<!--        android:icon="@drawable/ic_feedback"-->
+<!--        android:title="Phản hồi" />-->
 
     <item
         android:id="@+id/nav_profile"

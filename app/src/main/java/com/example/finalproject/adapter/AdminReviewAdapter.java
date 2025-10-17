@@ -60,9 +60,9 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
         if (createdAt instanceof com.google.firebase.Timestamp) {
             Date date = ((com.google.firebase.Timestamp) createdAt).toDate();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            holder.tvDate.setText("Ngày: " + sdf.format(date));
+            holder.tvDate.setText("" + sdf.format(date));
         } else if (createdAt != null) {
-            holder.tvDate.setText("Ngày: " + createdAt.toString());
+            holder.tvDate.setText("" + createdAt.toString());
         } else {
             holder.tvDate.setText("Ngày: (Không rõ)");
         }
