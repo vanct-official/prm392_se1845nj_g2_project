@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class ViewPromotionActivity extends AppCompatActivity {
-
     private TextView tvPromotionCode, tvDescription, tvDiscount, tvMinValue, tvStatus;
     private MaterialButton btnBack;
     private FirebaseFirestore db;
