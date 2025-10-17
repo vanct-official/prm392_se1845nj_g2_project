@@ -88,7 +88,7 @@ public class AddTourActivity extends AppCompatActivity {
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"upcoming", "in_progress", "completed", "cancelled"}
+                new String[]{"Chưa diễn ra", "Đang diễn ra", "Hoàn thành", "Hủy"}
         );
         spStatus.setAdapter(statusAdapter);
         spStatus.setEnabled(false); // chỉ hiển thị, không cho chọn

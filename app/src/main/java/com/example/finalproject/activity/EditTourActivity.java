@@ -93,17 +93,17 @@ public class EditTourActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         spStatus = findViewById(R.id.spStatus);
     }
-
     private void setupStatusSpinner() {
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"upcoming", "in_progress", "completed", "cancelled"}
+                new String[]{"Chưa diễn ra", "Đang diễn ra", "Hoàn thành", "Hủy"}
         );
         spStatus.setAdapter(statusAdapter);
         spStatus.setEnabled(false);
         spStatus.setClickable(false);
     }
+
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
@@ -163,7 +163,13 @@ public class EditTourActivity extends AppCompatActivity {
                     etDestination.setText(doc.getString("destination"));
                     etDuration.setText(doc.getString("duration"));
                     etItinerary.setText(doc.getString("itinerary"));
-                    etPrice.setText(String.valueOf(doc.getDouble("price")));
+
+                    Double price = doc.getDouble("price");
+                    if (price != null) {
+                        java.text.NumberFormat nf = java.text.NumberFormat.getInstance(new Locale("vi", "VN"));
+                        etPrice.setText(nf.format(price));
+                    }
+
                     etStartDate.setText(formatDate(doc.get("start_date")));
                     etEndDate.setText(formatDate(doc.get("end_date")));
 
@@ -273,20 +279,43 @@ public class EditTourActivity extends AppCompatActivity {
             Date end = sdf.parse(etEndDate.getText().toString());
             Date now = new Date();
 
-            String status;
+            String statusEn;
             if (now.before(start)) {
-                status = "upcoming";
+                statusEn = "upcoming";
             } else if (!now.before(start) && !now.after(end)) {
-                status = "in_progress";
+                statusEn = "in_progress";
             } else {
-                status = "completed";
+                statusEn = "completed";
             }
 
+            // Chuyển sang tiếng Việt chỉ để hiển thị
+            String statusVi = convertStatusToVietnamese(statusEn);
+
             ArrayAdapter<String> adapter = (ArrayAdapter<String>) spStatus.getAdapter();
-            int pos = adapter.getPosition(status);
+            int pos = adapter.getPosition(statusVi);
             if (pos >= 0) spStatus.setSelection(pos);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private String convertStatusToVietnamese(String statusEn) {
+        switch (statusEn) {
+            case "upcoming": return "Chưa diễn ra";
+            case "in_progress": return "Đang diễn ra";
+            case "completed": return "Hoàn thành";
+            case "cancelled": return "Hủy";
+            default: return statusEn;
+        }
+    }
+
+    private String convertStatusToEnglish(String statusVi) {
+        switch (statusVi) {
+            case "Chưa diễn ra": return "upcoming";
+            case "Đang diễn ra": return "in_progress";
+            case "Hoàn thành": return "completed";
+            case "Hủy": return "cancelled";
+            default: return statusVi;
         }
     }
 
@@ -310,7 +339,9 @@ public class EditTourActivity extends AppCompatActivity {
                 return;
             }
 
+            priceStr = priceStr.replace(".", "");
             double price = Double.parseDouble(priceStr);
+
             if (price <= 0) {
                 Toast.makeText(this, "⚠️ Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(android.view.View.GONE);
