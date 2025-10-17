@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.finalproject.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,19 +39,32 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Map<String, Object> review = reviewList.get(position);
 
-        holder.tvComment.setText((String) review.get("comment"));
-        holder.tvTourId.setText("Tour ID: " + review.get("tourId"));
-        holder.tvUserId.setText("User ID: " + review.get("userId"));
+        // Comment
+        String comment = (String) review.get("comment");
+        holder.tvComment.setText(comment != null ? comment : "(Không có bình luận)");
 
-        Object rating = review.get("rating");
-        if (rating instanceof Number) {
-            holder.ratingBar.setRating(((Number) rating).floatValue());
-            holder.tvRating.setText(String.format(Locale.getDefault(), "%.1f ★", ((Number) rating).floatValue()));
+        holder.tvTourId.setText("Tour: " + review.getOrDefault("tourName", "(Không rõ tour)"));
+        holder.tvUserId.setText("Người dùng: " + review.getOrDefault("userName", "(Không rõ user)"));
+
+        // Rating
+        Object ratingObj = review.get("rating");
+        float rating = 0;
+        if (ratingObj instanceof Number) {
+            rating = ((Number) ratingObj).floatValue();
         }
+        holder.ratingBar.setRating(rating);
+        holder.tvRating.setText(String.format(Locale.getDefault(), "%.1f", rating));
 
+        // Date - Chỉ xử lý 1 lần
         Object createdAt = review.get("createdAt");
-        if (createdAt != null) {
-            holder.tvDate.setText("Ngày: " + createdAt.toString().replace("UTC+7", ""));
+        if (createdAt instanceof com.google.firebase.Timestamp) {
+            Date date = ((com.google.firebase.Timestamp) createdAt).toDate();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            holder.tvDate.setText("Ngày: " + sdf.format(date));
+        } else if (createdAt != null) {
+            holder.tvDate.setText("Ngày: " + createdAt.toString());
+        } else {
+            holder.tvDate.setText("Ngày: (Không rõ)");
         }
     }
 
