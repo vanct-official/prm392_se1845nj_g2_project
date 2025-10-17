@@ -36,7 +36,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ăn cá hải sản đặc biệt thơm ngon"
+                android:text="Tên tour mẫu"
                 android:textColor="#0C4A6E"
                 android:textSize="26sp"
                 android:textStyle="bold"
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Ăn cá hải sản đặc biệt thơm ngon"
+                android:text="Mô tả tour..."
                 android:textColor="#475569"
                 android:textSize="16sp"
                 android:lineSpacingExtra="4dp" />
@@ -118,7 +118,7 @@
                         android:id="@+id/tvDuration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2N2Đ"
+                        android:text="3 ngày 2 đêm"
                         android:textColor="#0C4A6E"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -152,7 +152,7 @@
                         android:id="@+id/tvStartDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2/10/2025"
+                        android:text="12/10/2025"
                         android:textColor="#0C4A6E"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -186,7 +186,7 @@
                         android:id="@+id/tvEndDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="31/10/2025"
+                        android:text="15/10/2025"
                         android:textColor="#0C4A6E"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -220,7 +220,41 @@
                         android:id="@+id/tvGuideName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="A, B"
+                        android:text="(Chưa có)"
+                        android:textColor="#0C4A6E"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E2E8F0"
+                    android:layout_marginVertical="4dp" />
+
+                <!-- Tour Status -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="📊 Trạng thái"
+                        android:textColor="#64748B"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đang diễn ra"
                         android:textColor="#0C4A6E"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -273,7 +307,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:lineSpacingExtra="6dp"
-                android:text="Lịch trình chi tiết sẽ được cập nhật..."
+                android:text="Chi tiết lịch trình..."
                 android:textColor="#475569"
                 android:textSize="15sp"
                 android:padding="12dp"

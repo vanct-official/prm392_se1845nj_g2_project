@@ -96,7 +96,6 @@
                 android:padding="12dp"
                 android:layout_marginBottom="12dp">
 
-                DESTINATION ROW
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -353,6 +353,22 @@
                     android:textSize="14sp"
                     android:layout_marginBottom="24dp" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trạng thái tour"
+                    android:textSize="14sp"
+                    android:textColor="#475569"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <Spinner
+                    android:id="@+id/spStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:spinnerMode="dropdown" />
+
                 <!-- Nút hành động -->
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -7,9 +7,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,13 +36,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
+
 
 public class AddTourActivity extends AppCompatActivity {
 
+    private static final String TAG = "AddTourActivity";
     private EditText etTitle, etDescription, etDestination, etDuration, etItinerary, etPrice, etStartDate, etEndDate;
     private Button btnChooseImages, btnCancel, btnSave;
     private TextView tvImageCount, tvSelectedGuides;
     private ProgressBar progressBar;
+    private Spinner spStatus;
 
     private static final int PICK_IMAGES_REQUEST = 100;
     private List<Uri> selectedImageUris = new ArrayList<>();
@@ -58,6 +65,7 @@ public class AddTourActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // Ánh xạ view
+        spStatus = findViewById(R.id.spStatus);
         etTitle = findViewById(R.id.etTourName);
         etDescription = findViewById(R.id.etDescription);
         etDestination = findViewById(R.id.etLocation);
@@ -76,6 +84,16 @@ public class AddTourActivity extends AppCompatActivity {
         // Load hướng dẫn viên
         loadGuides();
 
+        // Khởi tạo Spinner (trạng thái – chỉ hiển thị, không dùng để lưu)
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"upcoming", "in_progress", "completed", "cancelled"}
+        );
+        spStatus.setAdapter(statusAdapter);
+        spStatus.setEnabled(false); // chỉ hiển thị, không cho chọn
+
+        // Sự kiện chọn ngày
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
@@ -171,6 +189,51 @@ public class AddTourActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Chuẩn hóa ngày về 00:00:00 để so sánh chính xác
+     */
+    private Date normalizeDate(Date date) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    /**
+     * Tính toán status dựa trên ngày
+     */
+    private String calculateStatus(Date startDate, Date endDate) {
+        Date now = normalizeDate(new Date());
+        Date start = normalizeDate(startDate);
+        Date end = normalizeDate(endDate);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        Log.d(TAG, "Now: " + sdf.format(now));
+        Log.d(TAG, "Start: " + sdf.format(start));
+        Log.d(TAG, "End: " + sdf.format(end));
+
+        String status;
+
+        if (now.before(start)) {
+            // Ngày hiện tại < ngày bắt đầu → upcoming
+            status = "upcoming";
+            Log.d(TAG, "Status: upcoming (now < start)");
+        } else if (now.equals(start) || (now.after(start) && (now.before(end) || now.equals(end)))) {
+            // Ngày hiện tại >= ngày bắt đầu VÀ <= ngày kết thúc → in_progress
+            status = "in_progress";
+            Log.d(TAG, "Status: in_progress (start <= now <= end)");
+        } else {
+            // Ngày hiện tại > ngày kết thúc → completed
+            status = "completed";
+            Log.d(TAG, "Status: completed (now > end)");
+        }
+
+        return status;
+    }
+
     // ===========================================================
     // ✅ Validate trước khi lưu
     // ===========================================================
@@ -206,10 +269,18 @@ public class AddTourActivity extends AppCompatActivity {
         try {
             price = Double.parseDouble(priceStr);
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+
             startDate = sdf.parse(startStr);
             endDate = sdf.parse(endStr);
+
+            if (startDate == null || endDate == null) {
+                throw new Exception("Không thể parse ngày");
+            }
+
         } catch (Exception e) {
-            Toast.makeText(this, "⚠️ Dữ liệu nhập không hợp lệ!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Dữ liệu nhập không hợp lệ! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Parse error", e);
             return;
         }
 
@@ -218,8 +289,12 @@ public class AddTourActivity extends AppCompatActivity {
             return;
         }
 
-        if (endDate.before(startDate) || endDate.equals(startDate)) {
-            Toast.makeText(this, "⚠️ Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
+        // So sánh ngày đã chuẩn hóa
+        Date normalizedStart = normalizeDate(startDate);
+        Date normalizedEnd = normalizeDate(endDate);
+
+        if (normalizedEnd.before(normalizedStart)) {
+            Toast.makeText(this, "⚠️ Ngày kết thúc phải sau hoặc bằng ngày bắt đầu!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -250,6 +325,7 @@ public class AddTourActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
+                // Upload ảnh lên Cloudinary
                 List<String> imageUrls = new ArrayList<>();
                 for (Uri uri : selectedImageUris) {
                     InputStream is = getContentResolver().openInputStream(uri);
@@ -264,6 +340,12 @@ public class AddTourActivity extends AppCompatActivity {
                     imageUrls.add((String) uploadResult.get("secure_url"));
                 }
 
+                // ✅ Tính toán status tự động
+                String status = calculateStatus(startDate, endDate);
+
+                Log.d(TAG, "Final status to save: " + status);
+
+                // ✅ Tạo dữ liệu tour
                 Map<String, Object> tour = new HashMap<>();
                 tour.put("title", title);
                 tour.put("description", desc);
@@ -275,23 +357,29 @@ public class AddTourActivity extends AppCompatActivity {
                 tour.put("end_date", new Timestamp(endDate));
                 tour.put("guideIds", selectedGuideIds);
                 tour.put("images", imageUrls);
+                tour.put("status", status);
+                tour.put("created_at", new Timestamp(new Date()));
 
+                // Lưu vào Firestore
                 db.collection("tours")
                         .add(tour)
                         .addOnSuccessListener(doc -> runOnUiThread(() -> {
                             progressBar.setVisibility(android.view.View.GONE);
-                            Toast.makeText(this, "✅ Thêm tour thành công!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "✅ Thêm tour thành công! Status: " + status, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "Tour saved successfully with status: " + status);
                             finish();
                         }))
                         .addOnFailureListener(e -> runOnUiThread(() -> {
                             progressBar.setVisibility(android.view.View.GONE);
                             Toast.makeText(this, "❌ Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Failed to save tour", e);
                         }));
 
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     progressBar.setVisibility(android.view.View.GONE);
                     Toast.makeText(this, "❌ Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Upload error", e);
                 });
             }
         }).start();

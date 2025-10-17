@@ -26,6 +26,7 @@ public class TourDetailActivity extends AppCompatActivity {
     private ImageSlider imageSlider;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private TextView tvStatus;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +43,8 @@ public class TourDetailActivity extends AppCompatActivity {
         tvItinerary = findViewById(R.id.tvItinerary);
         tvGuideName = findViewById(R.id.tvGuideName);
         imageSlider = findViewById(R.id.imageSlider);
+        tvStatus = findViewById(R.id.tvStatus);
+
 
         String tourId = getIntent().getStringExtra("tourId");
         if (tourId == null || tourId.isEmpty()) {
@@ -75,6 +78,30 @@ public class TourDetailActivity extends AppCompatActivity {
         tvDestination.setText(doc.getString("destination"));
         tvDuration.setText(doc.getString("duration"));
         tvItinerary.setText(doc.getString("itinerary"));
+
+        // Trạng thái tour
+        String status = doc.getString("status");
+        if (status != null) {
+            switch (status) {
+                case "completed":
+                    tvStatus.setText("✅ Hoàn thành");
+                    break;
+                case "in_progress":
+                    tvStatus.setText("🚩 Đang diễn ra");
+                    break;
+                case "upcoming":
+                    tvStatus.setText("🕓 Chưa bắt đầu");
+                    break;
+                case "cancelled":
+                    tvStatus.setText("❌ Hủy");
+                    break;
+                default:
+                    tvStatus.setText("Không xác định");
+                    break;
+            }
+        } else {
+            tvStatus.setText("Không xác định");
+        }
 
         Double price = doc.getDouble("price");
         if (price != null)
