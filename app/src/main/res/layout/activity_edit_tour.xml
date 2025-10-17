@@ -17,30 +17,31 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="40sp"
+            android:background="#0284C7"
+            android:elevation="4dp"
             android:orientation="vertical"
             android:padding="28dp"
-            android:paddingBottom="48dp"
-            android:background="#0284C7"
-            android:elevation="4dp">
+            android:paddingBottom="48dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.01"
                 android:text="✏️ Chỉnh sửa tour"
                 android:textColor="#FFFFFF"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.01" />
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cập nhật thông tin tour du lịch của bạn"
-                android:textSize="15sp"
-                android:textColor="#E0F2FE"
                 android:layout_marginTop="8dp"
-                android:alpha="0.95" />
+                android:alpha="0.95"
+                android:text="Cập nhật thông tin tour du lịch của bạn"
+                android:textColor="#E0F2FE"
+                android:textSize="15sp" />
         </LinearLayout>
 
         <androidx.cardview.widget.CardView
@@ -57,26 +58,26 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#FFFFFF"
                 android:orientation="vertical"
-                android:padding="24dp"
-                android:background="#FFFFFF">
+                android:padding="24dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_marginBottom="24dp"
                     android:background="#F8FAFC"
-                    android:padding="16dp"
-                    android:layout_marginBottom="24dp">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
                         android:text="📸 Hình ảnh tour"
-                        android:textSize="17sp"
                         android:textColor="#0F172A"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
@@ -96,222 +97,230 @@
                         android:id="@+id/btnChooseImages"
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
+                        android:layout_marginTop="16dp"
                         android:text="🖼️ Chọn ảnh mới"
                         android:textAllCaps="false"
                         android:textColor="#0284C7"
                         android:textSize="15sp"
                         android:textStyle="bold"
+                        app:backgroundTint="#FFFFFF"
                         app:cornerRadius="12dp"
                         app:strokeColor="#0284C7"
-                        app:strokeWidth="2dp"
-                        app:backgroundTint="#FFFFFF"
-                        android:layout_marginTop="16dp" />
+                        app:strokeWidth="2dp" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
                     android:text="📝 Thông tin cơ bản"
-                    android:textSize="17sp"
                     android:textColor="#0F172A"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Tiêu đề tour"
                     android:layout_marginBottom="12dp"
+                    android:hint="Tiêu đề tour"
                     app:boxStrokeColor="#0284C7"
-                    app:hintTextColor="#0284C7"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    app:hintTextColor="#0284C7">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textCapWords"
-                        android:textSize="15sp"
-                        android:textColor="#1E293B" />
+                        android:textColor="#1E293B"
+                        android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Mô tả chi tiết"
                     android:layout_marginBottom="12dp"
+                    android:hint="Mô tả chi tiết"
                     app:boxStrokeColor="#0284C7"
-                    app:hintTextColor="#0284C7"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    app:hintTextColor="#0284C7">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="top"
                         android:inputType="textMultiLine"
                         android:minLines="4"
-                        android:gravity="top"
-                        android:textSize="15sp"
-                        android:textColor="#1E293B" />
+                        android:textColor="#1E293B"
+                        android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="📍 Địa điểm"
                     android:layout_marginBottom="12dp"
+                    android:hint="📍 Địa điểm"
                     app:boxStrokeColor="#0284C7"
-                    app:hintTextColor="#0284C7"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    app:hintTextColor="#0284C7">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDestination"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="15sp"
-                        android:textColor="#1E293B" />
+                        android:textColor="#1E293B"
+                        android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="⏱️ Thời lượng"
                     android:layout_marginBottom="24dp"
+                    android:hint="⏱️ Thời lượng"
                     app:boxStrokeColor="#0284C7"
-                    app:hintTextColor="#0284C7"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    app:hintTextColor="#0284C7">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDuration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="15sp"
-                        android:textColor="#1E293B" />
+                        android:textColor="#1E293B"
+                        android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
                     android:text="🗓️ Lịch trình &amp; Thời gian"
-                    android:textSize="17sp"
                     android:textColor="#0F172A"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Chi tiết lịch trình"
                     android:layout_marginBottom="12dp"
+                    android:hint="Chi tiết lịch trình"
                     app:boxStrokeColor="#0284C7"
-                    app:hintTextColor="#0284C7"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    app:hintTextColor="#0284C7">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etItinerary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="top"
                         android:inputType="textMultiLine"
                         android:minLines="4"
-                        android:gravity="top"
-                        android:textSize="15sp"
-                        android:textColor="#1E293B" />
+                        android:textColor="#1E293B"
+                        android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="24dp">
+                    android:layout_marginBottom="24dp"
+                    android:orientation="horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
                         android:layout_weight="1"
                         android:hint="Ngày bắt đầu"
-                        android:layout_marginEnd="8dp"
                         app:boxStrokeColor="#0284C7"
-                        app:hintTextColor="#0284C7"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                        app:hintTextColor="#0284C7">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etStartDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:focusable="false"
                             android:clickable="true"
-                            android:textSize="15sp"
-                            android:textColor="#1E293B" />
+                            android:focusable="false"
+                            android:textColor="#1E293B"
+                            android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:hint="Ngày kết thúc"
-                        android:layout_marginStart="8dp"
                         app:boxStrokeColor="#0284C7"
-                        app:hintTextColor="#0284C7"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                        app:hintTextColor="#0284C7">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etEndDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:focusable="false"
                             android:clickable="true"
-                            android:textSize="15sp"
-                            android:textColor="#1E293B" />
+                            android:focusable="false"
+                            android:textColor="#1E293B"
+                            android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
                     android:text="💰 Giá &amp; Hướng dẫn viên"
-                    android:textSize="17sp"
                     android:textColor="#0F172A"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Giá tour (VND)"
                     android:layout_marginBottom="20dp"
+                    android:hint="Giá tour (VND)"
                     app:boxStrokeColor="#0284C7"
                     app:hintTextColor="#0284C7"
-                    app:prefixText="₫ "
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    app:prefixText="₫ ">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPrice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"
-                        android:textSize="15sp"
-                        android:textColor="#1E293B" />
+                        android:textColor="#1E293B"
+                        android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_marginBottom="24dp"
                     android:background="#F0F9FF"
-                    android:padding="16dp"
-                    android:layout_marginBottom="24dp">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:text="👤 Hướng dẫn viên"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
                         android:textColor="#0C4A6E"
-                        android:layout_marginBottom="8dp" />
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvGuideNames"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
+                        android:minHeight="48dp"
+                        android:padding="12dp"
                         android:text="(Chưa chọn hướng dẫn viên)"
                         android:textColor="#475569"
-                        android:textSize="14sp"
-                        android:padding="12dp"
-                        android:background="#FFFFFF"
-                        android:minHeight="48dp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <ProgressBar
@@ -319,48 +328,48 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:visibility="gone"
-                    android:indeterminateTint="#0284C7" />
+                    android:indeterminateTint="#0284C7"
+                    android:visibility="gone" />
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnBack"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
+                        android:layout_marginEnd="8dp"
                         android:layout_weight="1"
                         android:text="← Quay lại"
-                        android:textColor="#64748B"
                         android:textAllCaps="false"
+                        android:textColor="#64748B"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        app:cornerRadius="12dp"
                         app:backgroundTint="#F8FAFC"
+                        app:cornerRadius="12dp"
                         app:strokeColor="#CBD5E1"
-                        app:strokeWidth="2dp"
-                        android:layout_marginEnd="8dp"
-                        style="@style/Widget.Material3.Button.OutlinedButton" />
+                        app:strokeWidth="2dp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSave"
+                        style="@style/Widget.Material3.Button"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
+                        android:layout_marginStart="8dp"
                         android:layout_weight="1"
+                        android:elevation="4dp"
                         android:text="💾 Lưu thay đổi"
-                        android:textColor="#FFFFFF"
                         android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        app:cornerRadius="12dp"
                         app:backgroundTint="#0284C7"
-                        android:elevation="4dp"
-                        style="@style/Widget.Material3.Button"
-                        android:layout_marginStart="8dp" />
+                        app:cornerRadius="12dp" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
