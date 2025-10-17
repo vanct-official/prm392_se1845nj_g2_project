@@ -54,6 +54,13 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        // Nút FloatingActionButton quay về trang Home dashboard
+        findViewById(R.id.fab_admin).setOnClickListener(v -> {
+            replaceFragment(new AdminHomeFragment());
+            navigationView.setCheckedItem(R.id.nav_admin_home);
+        });
+
+
         // ✅ Sử dụng OnBackPressedDispatcher thay cho onBackPressed()
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
