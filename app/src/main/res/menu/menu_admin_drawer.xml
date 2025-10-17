@@ -40,4 +40,9 @@
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_account"
         android:title="Hồ sơ" />
+    <item
+        android:id="@+id/nav_admin_reviews"
+        android:title="Đánh giá tour"
+        android:icon="@drawable/ic_reviews" />
+
 </menu>
