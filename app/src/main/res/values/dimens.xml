@@ -1,0 +1,6 @@
+<!-- File: `app/src/main/res/values/dimens.xml` (add or update) -->
+<resources>
+    <!-- Max width for message bubble / image to prevent overly large items.
+         Adjust value as needed (this is ~70% of common phone widths). -->
+    <dimen name="message_max_width">280dp</dimen>
+</resources>

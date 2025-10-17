@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.finalproject.fragment.ChatListFragment;
 import com.example.finalproject.fragment.customer.CustomerHomeFragment;
 import com.example.finalproject.fragment.ProfileFragment;
 import com.example.finalproject.fragment.guide.GuideChatFragment;
@@ -37,7 +38,7 @@ public class GuideActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_guide_tours) {
                 selectedFragment = new GuideToursFragment();
             } else if (itemId == R.id.nav_guide_chat) {
-                selectedFragment = new GuideChatFragment();
+                selectedFragment = new ChatListFragment();
             } else if (itemId == R.id.nav_guide_profile) {
                 selectedFragment = new ProfileFragment();
             }
