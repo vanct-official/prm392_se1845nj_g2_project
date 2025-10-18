@@ -148,19 +148,21 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Query Firestore để lấy user theo email trong collection "users"
-
         db.collection("users")
                 .whereEqualTo("email", email)
                 .get()
                 .addOnSuccessListener(snap -> {
                     if (!snap.isEmpty()) {
+                        // 🔹 Lấy user đầu tiên
                         User user = snap.getDocuments().get(0).toObject(User.class);
-                        if (user != null && user.getRole() != null) {
-                            redirectByRole(user.getRole());
+
+                        if (user != null) {
+                            Log.d(TAG, "User tồn tại: " + user.getEmail());
+                            redirectByRole(user); // ✅ truyền cả object user
                         } else {
-                            Toast.makeText(this, "Không xác định được vai trò người dùng", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Không xác định được thông tin người dùng", Toast.LENGTH_SHORT).show();
                         }
+
                     } else {
                         Log.w(TAG, "User chưa tồn tại trong Firestore, tạo mới...");
                         createNewUser(firebaseUser);
@@ -172,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+
     /** 🆕 Nếu user chưa có trong Firestore thì tạo mới */
     private void createNewUser(FirebaseUser firebaseUser) {
         if (firebaseUser == null) return;
@@ -181,14 +184,13 @@ public class LoginActivity extends AppCompatActivity {
         String lastName = "User";
 
         if (displayName != null && !displayName.trim().isEmpty()) {
-            String[] parts = displayName.trim().split("\\s+"); // tách theo khoảng trắng
+            String[] parts = displayName.trim().split("\\s+");
             if (parts.length == 1) {
                 firstName = parts[0];
                 lastName = "";
             } else {
-                // Theo cách đặt tên Việt Nam: Họ ở đầu, Tên ở cuối
-                firstName = parts[parts.length - 1]; // Tên chính
-                lastName = String.join(" ", Arrays.copyOf(parts, parts.length - 1)); // Họ + tên đệm
+                firstName = parts[parts.length - 1];
+                lastName = String.join(" ", Arrays.copyOf(parts, parts.length - 1));
             }
         }
 
@@ -197,9 +199,9 @@ public class LoginActivity extends AppCompatActivity {
         newUser.setFirstname(firstName);
         newUser.setLastname(lastName);
         newUser.setRole("customer"); // Mặc định là khách hàng
-        newUser.setActive(true);
+        newUser.setIsActive(true);
         newUser.setPhone("");
-        newUser.setGender(true); // Mặc định là nam giới
+        newUser.setGender(true);
         newUser.setDob(null);
         newUser.setUsername(firebaseUser.getEmail().split("@")[0]);
         newUser.setCreatedAt(new Timestamp(new java.util.Date()));
@@ -209,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                 .add(newUser)
                 .addOnSuccessListener(docRef -> {
                     Log.d(TAG, "Tạo mới user thành công: " + firebaseUser.getEmail());
-                    redirectByRole("CUSTOMER");
+                    redirectByRole(newUser); // ✅ đổi thành truyền user object
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Lỗi tạo mới user: " + e.getMessage());
@@ -217,17 +219,40 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+
     /** 🚀 Chuyển sang màn hình tương ứng theo vai trò */
-    private void redirectByRole(String role) {
-        Intent intent;
-        if(role.equals("admin")) {
-            intent = new Intent(this, AdminActivity.class);
-        } else if (role.equals("guide")) {
-            intent = new Intent(this, GuideActivity.class);
-        } else {
-            intent = new Intent(this, CustomerActivity.class);
+    private void redirectByRole(User user) {
+        if (user == null) {
+            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        Boolean active = user.getIsActive();
+        if (active == null || !active) {
+            Toast.makeText(this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+            return;
+        }
+
+        String role = user.getRole();
+        if (role == null) role = "customer";
+
+        Intent intent;
+        switch (role.toLowerCase()) {
+            case "admin":
+                intent = new Intent(this, AdminActivity.class);
+                break;
+            case "guide":
+                intent = new Intent(this, GuideActivity.class);
+                break;
+            default:
+                intent = new Intent(this, CustomerActivity.class);
+                break;
+        }
+
         startActivity(intent);
         finish();
     }
+
+
 }

@@ -134,12 +134,12 @@ public class User {
     }
 
     @PropertyName("isActive")
-    public boolean isActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 
     @PropertyName("isActive")
-    public void setActive(boolean active) {
+    public void setIsActive(boolean active) {
         isActive = active;
     }
 
