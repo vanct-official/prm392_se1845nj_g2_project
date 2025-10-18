@@ -74,19 +74,16 @@ public class AdminToursFragment extends Fragment {
         });
 
         recyclerTours.setAdapter(adapter);
-
-        tvAddTour.setOnClickListener(v -> {
-            Intent intent = new Intent(requireActivity(), AddTourAdminActivity.class);
-            startActivity(intent);
-        });
+        tvAddTour.setOnClickListener(v -> startActivity(new Intent(requireActivity(), AddTourAdminActivity.class)));
 
         setupSearchView();
         loadTours();
+
         return view;
     }
 
     // ===========================================================
-    // 🔎 Thiết lập thanh tìm kiếm
+    // 🔎 Tìm kiếm
     // ===========================================================
     private void setupSearchView() {
         searchView.clearFocus();
@@ -130,7 +127,7 @@ public class AdminToursFragment extends Fragment {
     }
 
     // ===========================================================
-    // 🔍 Lọc danh sách theo tiêu đề
+    // 🔍 Lọc danh sách theo tên
     // ===========================================================
     private void filterTours(String query) {
         tours.clear();
@@ -149,26 +146,69 @@ public class AdminToursFragment extends Fragment {
     }
 
     // ===========================================================
-    // ❌ Xóa tour
+    // ❌ Kiểm tra trước khi xóa
     // ===========================================================
     private void confirmDelete(DocumentSnapshot doc) {
+        String tourTitle = doc.getString("title");
         new AlertDialog.Builder(getContext())
                 .setTitle("Xóa tour")
-                .setMessage("Bạn có chắc chắn muốn xóa tour \"" + doc.getString("title") + "\" không?")
-                .setPositiveButton("Xóa", (dialog, which) -> {
-                    db.collection("tours").document(doc.getId())
-                            .delete()
-                            .addOnSuccessListener(aVoid -> {
-                                tours.remove(doc);
-                                allTours.remove(doc);
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(getContext(), "Đã xóa tour thành công!", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(getContext(), "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                })
+                .setMessage("Bạn có chắc chắn muốn xóa tour \"" + tourTitle + "\" không?")
+                .setPositiveButton("Xóa", (dialog, which) -> checkTourStatusBeforeDelete(doc))
                 .setNegativeButton("Hủy", null)
                 .show();
+    }
+
+    // ===========================================================
+    // ⚠️ Kiểm tra status trước khi xóa
+    // ===========================================================
+    private void checkTourStatusBeforeDelete(DocumentSnapshot doc) {
+        String status = doc.getString("status");
+        if (status == null) status = "";
+
+        // ❗ Chỉ cho phép xóa khi completed hoặc cancelled
+        if (!status.equalsIgnoreCase("completed") && !status.equalsIgnoreCase("cancelled")) {
+            Toast.makeText(getContext(), "Chỉ có thể xóa tour đã hoàn thành hoặc bị hủy!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        checkIfTourHasBookings(doc);
+    }
+
+    // ===========================================================
+    // ⚠️ Kiểm tra tour có bookings không
+    // ===========================================================
+    private void checkIfTourHasBookings(DocumentSnapshot doc) {
+        String tourId = doc.getId();
+
+        db.collection("bookings")
+                .whereEqualTo("tourId", tourId)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        Toast.makeText(getContext(), "Không thể xóa! Tour này đã có lượt đặt.", Toast.LENGTH_LONG).show();
+                    } else {
+                        deleteTour(doc);
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Lỗi khi kiểm tra bookings: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // ===========================================================
+    // 🗑️ Xóa tour nếu hợp lệ
+    // ===========================================================
+    private void deleteTour(DocumentSnapshot doc) {
+        db.collection("tours").document(doc.getId())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    tours.remove(doc);
+                    allTours.remove(doc);
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(getContext(), "Đã xóa tour thành công!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     @Override
