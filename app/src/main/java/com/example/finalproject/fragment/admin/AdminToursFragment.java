@@ -3,10 +3,12 @@ package com.example.finalproject.fragment.admin;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,10 +34,12 @@ public class AdminToursFragment extends Fragment {
     private RecyclerView recyclerTours;
     private TextView tvAddTour;
     private ProgressBar progressBar;
+    private SearchView searchView;
 
     private FirebaseFirestore db;
     private TourAdminAdapter adapter;
-    private List<DocumentSnapshot> tours = new ArrayList<>();
+    private final List<DocumentSnapshot> tours = new ArrayList<>();
+    private final List<DocumentSnapshot> allTours = new ArrayList<>();
 
     @Nullable
     @Override
@@ -45,11 +49,12 @@ public class AdminToursFragment extends Fragment {
         recyclerTours = view.findViewById(R.id.recyclerTours);
         tvAddTour = view.findViewById(R.id.tvAddTour);
         progressBar = view.findViewById(R.id.progressBar);
+        searchView = view.findViewById(R.id.searchView);
 
         db = FirebaseFirestore.getInstance();
         recyclerTours.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new TourAdminAdapter(getContext(), tours, new TourAdminAdapter.OnTourActionListener() {
+        adapter = new TourAdminAdapter(requireContext(), tours, new TourAdminAdapter.OnTourActionListener() {
             @Override
             public void onEdit(DocumentSnapshot doc) {
                 Intent intent = new Intent(getContext(), EditTourAdminActivity.class);
@@ -59,7 +64,6 @@ public class AdminToursFragment extends Fragment {
 
             @Override
             public void onView(DocumentSnapshot doc) {
-                // TODO: Có thể mở chi tiết tour tại đây
                 Toast.makeText(getContext(), "Tour: " + doc.getString("title"), Toast.LENGTH_SHORT).show();
             }
 
@@ -76,8 +80,29 @@ public class AdminToursFragment extends Fragment {
             startActivity(intent);
         });
 
+        setupSearchView();
         loadTours();
         return view;
+    }
+
+    // ===========================================================
+    // 🔎 Thiết lập thanh tìm kiếm
+    // ===========================================================
+    private void setupSearchView() {
+        searchView.clearFocus();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterTours(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterTours(newText);
+                return true;
+            }
+        });
     }
 
     // ===========================================================
@@ -86,11 +111,15 @@ public class AdminToursFragment extends Fragment {
     private void loadTours() {
         progressBar.setVisibility(View.VISIBLE);
         db.collection("tours")
-                .orderBy("start_date", Query.Direction.DESCENDING)
+                .orderBy("title", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
+                    allTours.clear();
+                    allTours.addAll(querySnapshot.getDocuments());
+
                     tours.clear();
-                    tours.addAll(querySnapshot.getDocuments());
+                    tours.addAll(allTours);
+
                     adapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
                 })
@@ -98,6 +127,25 @@ public class AdminToursFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    // ===========================================================
+    // 🔍 Lọc danh sách theo tiêu đề
+    // ===========================================================
+    private void filterTours(String query) {
+        tours.clear();
+        if (TextUtils.isEmpty(query)) {
+            tours.addAll(allTours);
+        } else {
+            String lowerQuery = query.toLowerCase();
+            for (DocumentSnapshot doc : allTours) {
+                String title = doc.getString("title");
+                if (title != null && title.toLowerCase().contains(lowerQuery)) {
+                    tours.add(doc);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     // ===========================================================
@@ -112,6 +160,7 @@ public class AdminToursFragment extends Fragment {
                             .delete()
                             .addOnSuccessListener(aVoid -> {
                                 tours.remove(doc);
+                                allTours.remove(doc);
                                 adapter.notifyDataSetChanged();
                                 Toast.makeText(getContext(), "Đã xóa tour thành công!", Toast.LENGTH_SHORT).show();
                             })
