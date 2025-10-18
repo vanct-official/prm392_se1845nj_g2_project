@@ -13,7 +13,18 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#1E293B"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="8dp" />
+
+    <!-- Ô tìm kiếm -->
+    <EditText
+        android:id="@+id/edtSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="🔍 Tìm kiếm tour..."
+        android:padding="10dp"
+        android:background="@android:drawable/edit_text"
+        android:layout_marginBottom="12dp"
+        android:inputType="text" />
 
     <FrameLayout
         android:layout_width="match_parent"

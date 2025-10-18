@@ -52,6 +52,20 @@ public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.
         holder.tvParticipants.setText("👥 " + (participants != null ? participants : 0) + " khách");
         holder.tvRating.setText("⭐ " + (rating != null ? rating : 0));
 
+// Đổi sang tiếng Việt khi hiển thị
+        String statusDisplay;
+        switch (status) {
+            case "completed":
+                statusDisplay = "Hoàn thành";
+                break;
+            case "pending":
+            default:
+                statusDisplay = "Chờ xử lý";
+                break;
+        }
+
+        holder.tvStatus.setText("Trạng thái: " + statusDisplay);
+
         Object createdAt = report.get("createdAt");
         if (createdAt instanceof Timestamp) {
             Date date = ((Timestamp) createdAt).toDate();
