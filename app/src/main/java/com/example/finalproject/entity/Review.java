@@ -1,100 +1,84 @@
 package com.example.finalproject.entity;
 
-import com.google.firebase.Timestamp;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class Review {
     private String id;
     private String userId;
     private String userName;
-    private String userAvatar;
     private String tourId;
     private String tourName;
     private String comment;
-    private Object rating; // có thể là Long, Double, hoặc String
-    private Timestamp createdAt;
+    private double rating;
 
     public Review() {
-        // Firestore cần constructor rỗng
+        // Bắt buộc có constructor rỗng để Firestore map dữ liệu
     }
 
-    public Review(String id, String userId, String userName, String userAvatar,
-                  String tourId, String tourName, String comment,
-                  Object rating, Timestamp createdAt) {
-        this.id = id;
-        this.userId = userId;
-        this.userName = userName;
-        this.userAvatar = userAvatar;
-        this.tourId = tourId;
-        this.tourName = tourName;
-        this.comment = comment;
-        this.rating = rating;
-        this.createdAt = createdAt;
-    }
-
-    // ===== Getter & Setter =====
+    // --- ID ---
     public String getId() {
         return id;
     }
 
-    public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
+    // --- USER ---
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) { this.userId = userId; }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getUserName() {
-        return userName;
+        return userName != null ? userName : "";
     }
 
-    public void setUserName(String userName) { this.userName = userName; }
-
-    public String getUserAvatar() {
-        return userAvatar;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setUserAvatar(String userAvatar) { this.userAvatar = userAvatar; }
-
+    // --- TOUR ---
     public String getTourId() {
         return tourId;
     }
 
-    public void setTourId(String tourId) { this.tourId = tourId; }
+    public void setTourId(String tourId) {
+        this.tourId = tourId;
+    }
 
     public String getTourName() {
-        return tourName;
+        return tourName != null ? tourName : "";
     }
 
-    public void setTourName(String tourName) { this.tourName = tourName; }
+    public void setTourName(String tourName) {
+        this.tourName = tourName;
+    }
 
+    // --- COMMENT ---
     public String getComment() {
-        return comment;
+        return comment != null ? comment : "";
     }
 
-    public void setComment(String comment) { this.comment = comment; }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-    public Object getRating() {
+    // --- RATING ---
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(Object rating) { this.rating = rating; }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-
-    // ===== Xử lý định dạng ngày =====
-    public String getFormattedDate() {
-        if (createdAt == null) return "";
-        Date date = createdAt.toDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-        return sdf.format(date);
+    public void setRating(Object ratingObj) {
+        try {
+            if (ratingObj instanceof Number) {
+                this.rating = ((Number) ratingObj).doubleValue();
+            } else if (ratingObj instanceof String) {
+                this.rating = Double.parseDouble((String) ratingObj);
+            }
+        } catch (Exception e) {
+            this.rating = 0;
+        }
     }
 }

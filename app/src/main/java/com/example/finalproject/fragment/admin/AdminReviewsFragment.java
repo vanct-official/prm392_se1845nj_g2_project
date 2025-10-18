@@ -3,6 +3,7 @@ package com.example.finalproject.fragment.admin;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
 import com.example.finalproject.adapter.AdminReviewAdapter;
-import com.example.finalproject.entity.Review;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,15 +27,18 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AdminReviewsFragment extends Fragment {
 
+    private static final String TAG = "AdminReviewsFragment";
     private RecyclerView recyclerViewReviews;
     private ProgressBar progressBar;
     private EditText edtSearch;
     private FirebaseFirestore db;
     private AdminReviewAdapter adapter;
-    private List<Review> reviewList = new ArrayList<>();
+    private List<Map<String, Object>> reviewList = new ArrayList<>();
+    private List<Map<String, Object>> originalList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -52,15 +55,21 @@ public class AdminReviewsFragment extends Fragment {
         adapter = new AdminReviewAdapter(getContext(), reviewList);
         recyclerViewReviews.setAdapter(adapter);
 
+        // ✅ Gọi hàm tải review
         loadReviews();
 
-        // tìm kiếm theo tên user hoặc tour
+        // ✅ Gắn sự kiện tìm kiếm
         edtSearch.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.filter(s.toString());
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterReviews(s.toString());
             }
-            @Override public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
 
         return view;
@@ -68,78 +77,102 @@ public class AdminReviewsFragment extends Fragment {
 
     private void loadReviews() {
         progressBar.setVisibility(View.VISIBLE);
+
         db.collection("reviews")
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     reviewList.clear();
+                    originalList.clear();
+
                     if (querySnapshot.isEmpty()) {
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Chưa có đánh giá nào", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Chưa có đánh giá nào.", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    List<Task<Review>> tasks = new ArrayList<>();
+                    List<Task<Map<String, Object>>> tasks = new ArrayList<>();
+
                     for (DocumentSnapshot doc : querySnapshot) {
-                        Review review = new Review();
-                        review.setId(doc.getId());
-                        review.setComment(doc.getString("comment"));
-                        review.setUserId(doc.getString("userId"));
-                        review.setTourId(doc.getString("tourId"));
-                        review.setRating(doc.get("rating"));
-                        review.setCreatedAt(doc.getTimestamp("createdAt"));
+                        Map<String, Object> review = doc.getData();
+                        if (review == null) continue;
+                        review.put("id", doc.getId());
 
-                        Task<DocumentSnapshot> tourTask = (review.getTourId() != null)
-                                ? db.collection("tours").document(review.getTourId()).get()
+                        String tourId = (String) review.get("tourId");
+                        String userId = (String) review.get("userId");
+
+                        Task<DocumentSnapshot> tourTask = (tourId != null && !tourId.isEmpty())
+                                ? db.collection("tours").document(tourId).get()
                                 : Tasks.forResult(null);
 
-                        Task<DocumentSnapshot> userTask = (review.getUserId() != null)
-                                ? db.collection("users").document(review.getUserId()).get()
+                        Task<DocumentSnapshot> userTask = (userId != null && !userId.isEmpty())
+                                ? db.collection("users").document(userId).get()
                                 : Tasks.forResult(null);
 
-                        Task<Review> combined = Tasks.whenAllSuccess(tourTask, userTask)
+                        Task<Map<String, Object>> reviewTask = Tasks.whenAllSuccess(tourTask, userTask)
                                 .continueWith(task -> {
                                     List<Object> results = task.getResult();
                                     DocumentSnapshot tourDoc = (DocumentSnapshot) results.get(0);
                                     DocumentSnapshot userDoc = (DocumentSnapshot) results.get(1);
 
                                     if (tourDoc != null && tourDoc.exists()) {
-                                        review.setTourName(tourDoc.getString("title"));
-                                    } else {
-                                        review.setTourName("(Tour không tồn tại)");
+                                        String tourName = tourDoc.getString("title");
+                                        review.put("tourName", tourName != null ? tourName : "(Không có tên tour)");
                                     }
 
                                     if (userDoc != null && userDoc.exists()) {
                                         String firstname = userDoc.getString("firstname");
                                         String lastname = userDoc.getString("lastname");
-                                        String fullName = "";
-                                        if (firstname != null) fullName += firstname;
-                                        if (lastname != null)
-                                            fullName = fullName.isEmpty() ? lastname : fullName + " " + lastname;
-
-                                        review.setUserName(fullName.isEmpty() ? "(Không có tên)" : fullName);
-                                        review.setUserAvatar(userDoc.getString("avatar"));
-                                    } else {
-                                        review.setUserName("(User không tồn tại)");
-                                        review.setUserAvatar(null);
+                                        String fullName = (firstname != null ? firstname : "") + " " + (lastname != null ? lastname : "");
+                                        review.put("userName", fullName.trim().isEmpty() ? "(Không có tên user)" : fullName.trim());
                                     }
+
                                     return review;
                                 });
 
-                        tasks.add(combined);
+                        tasks.add(reviewTask);
                     }
 
-                    Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
-                        for (Task<Review> rTask : tasks) {
-                            if (rTask.isSuccessful()) reviewList.add(rTask.getResult());
+                    Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> {
+                        for (Task<Map<String, Object>> t : tasks) {
+                            if (t.isSuccessful()) {
+                                reviewList.add(t.getResult());
+                            }
                         }
+                        originalList.addAll(reviewList);
                         adapter.notifyDataSetChanged();
                         progressBar.setVisibility(View.GONE);
                     });
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error loading reviews", e);
+                    Toast.makeText(getContext(), "Lỗi tải review: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    // ✅ Hàm lọc theo comment, tên user hoặc tour
+    private void filterReviews(String query) {
+        if (originalList == null || originalList.isEmpty()) return;
+
+        if (query.trim().isEmpty()) {
+            adapter.filterList(new ArrayList<>(originalList));
+            return;
+        }
+
+        List<Map<String, Object>> filteredList = new ArrayList<>();
+        String lowerQuery = query.toLowerCase();
+
+        for (Map<String, Object> review : originalList) {
+            String comment = review.get("comment") != null ? review.get("comment").toString().toLowerCase() : "";
+            String tourName = review.get("tourName") != null ? review.get("tourName").toString().toLowerCase() : "";
+            String userName = review.get("userName") != null ? review.get("userName").toString().toLowerCase() : "";
+
+            if (comment.contains(lowerQuery) || tourName.contains(lowerQuery) || userName.contains(lowerQuery)) {
+                filteredList.add(review);
+            }
+        }
+
+        adapter.filterList(filteredList);
     }
 }
