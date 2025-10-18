@@ -133,7 +133,12 @@
                         android:id="@+id/etLocation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Nhập địa điểm (VD: Hạ Long, Quảng Ninh)"
+                        android:hint="Chọn địa điểm từ danh sách"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:inputType="none"
+                        android:drawableEnd="@drawable/ic_account"
+                        android:drawablePadding="8dp"
                         android:padding="16dp"
                         android:textSize="16sp"
                         android:textColor="#1E293B" />

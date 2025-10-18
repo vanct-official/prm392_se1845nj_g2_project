@@ -148,11 +148,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:hint="📍 Địa điểm">
+                    android:hint="📍 Địa điểm (Tỉnh / Phường)">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDestination"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:inputType="none"
+                        android:drawableEnd="@drawable/ic_account"
+                        android:drawablePadding="8dp"
+                        android:hint="Chọn địa điểm từ danh sách"
+                        android:padding="14dp"
+                        android:textSize="16sp"
+                        android:textColor="#1E293B" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Thời lượng -->

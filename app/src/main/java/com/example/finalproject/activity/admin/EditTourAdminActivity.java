@@ -71,6 +71,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
         setupStatusSpinner();
         setupListeners();
         loadTourData();
+        setupLocationSelector();
     }
 
     private void mapViews() {
@@ -396,4 +397,55 @@ public class EditTourAdminActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
         return "";
     }
+
+    /**
+     * 📍 Chọn địa điểm từ bảng locations (Firestore)
+     */
+    private void setupLocationSelector() {
+        etDestination.setOnClickListener(v -> {
+            FirebaseFirestore.getInstance().collection("locations")
+                    .get()
+                    .addOnSuccessListener(provinceSnap -> {
+                        List<String> provinceNames = new ArrayList<>();
+                        List<String> provinceCodes = new ArrayList<>();
+                        for (DocumentSnapshot doc : provinceSnap) {
+                            provinceNames.add(doc.getString("name"));
+                            provinceCodes.add(doc.getId());
+                        }
+
+                        new AlertDialog.Builder(this)
+                                .setTitle("Chọn tỉnh/thành phố")
+                                .setItems(provinceNames.toArray(new String[0]), (dialog, index) -> {
+                                    String provinceCode = provinceCodes.get(index);
+
+                                    // Khi chọn xong, load danh sách phường/xã trong tỉnh
+                                    FirebaseFirestore.getInstance()
+                                            .collection("locations")
+                                            .document(provinceCode)
+                                            .collection("wards")
+                                            .get()
+                                            .addOnSuccessListener(wardSnap -> {
+                                                List<String> wardNames = new ArrayList<>();
+                                                for (DocumentSnapshot w : wardSnap) {
+                                                    wardNames.add(w.getString("name"));
+                                                }
+
+                                                new AlertDialog.Builder(this)
+                                                        .setTitle("Chọn phường/xã")
+                                                        .setItems(wardNames.toArray(new String[0]), (d2, idx) -> {
+                                                            String full = provinceNames.get(index) + " - " + wardNames.get(idx);
+                                                            etDestination.setText(full);
+                                                        })
+                                                        .show();
+                                            })
+                                            .addOnFailureListener(e ->
+                                                    Toast.makeText(this, "Lỗi tải danh sách phường/xã: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                })
+                                .show();
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Lỗi tải danh sách tỉnh/thành: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        });
+    }
+
 }
