@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,13 +15,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.finalproject.R;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import android.view.View;
 
 public class ReportDetailDialogAdmin extends Dialog {
 
@@ -39,9 +44,8 @@ public class ReportDetailDialogAdmin extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_report_detail);
 
-        // 🔽 Gắn view SAU setContentView()
+        // 🔽 Gắn view
         View statusContainer = findViewById(R.id.statusContainer);
-
         TextView tvTourName = findViewById(R.id.tvTourName);
         TextView tvGuideId = findViewById(R.id.tvGuideId);
         TextView tvSummary = findViewById(R.id.tvSummary);
@@ -53,8 +57,8 @@ public class ReportDetailDialogAdmin extends Dialog {
         Button btnSave = findViewById(R.id.btnSave);
         Button btnClose = findViewById(R.id.btnClose);
 
+        // ====== Thông tin cơ bản ======
         tvTourName.setText("Tour: " + report.getOrDefault("tourName", "(Không rõ)"));
-        tvGuideId.setText("Hướng dẫn viên ID: " + report.getOrDefault("guideId", "(Không rõ)"));
         tvSummary.setText("Tóm tắt: " + report.getOrDefault("summary", "(Không có)"));
         tvIssues.setText("Sự cố: " + report.getOrDefault("issues", "(Không có)"));
         tvStatus.setText("Trạng thái: " + report.getOrDefault("status", "(Không rõ)"));
@@ -65,25 +69,32 @@ public class ReportDetailDialogAdmin extends Dialog {
         }
 
         Object createdAt = report.get("createdAt");
-        if (createdAt instanceof com.google.firebase.Timestamp) {
-            Date date = ((com.google.firebase.Timestamp) createdAt).toDate();
+        if (createdAt instanceof Timestamp) {
+            Date date = ((Timestamp) createdAt).toDate();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             tvCreatedAt.setText("Ngày gửi: " + sdf.format(date));
         }
 
-        // ⚙️ Kiểm tra trạng thái
+        // ====== Lấy hướng dẫn viên từ tourId ======
+        String tourId = (String) report.get("tourId");
+        if (tourId == null || tourId.isEmpty()) {
+            tvGuideId.setText("Hướng dẫn viên: (Không rõ tour)");
+        } else {
+            loadGuidesForTour(tourId, tvGuideId);
+        }
+
+        // ====== Kiểm tra trạng thái ======
         String status = (String) report.get("status");
         if ("completed".equalsIgnoreCase(status)) {
             etAdminComment.setEnabled(false);
             etAdminComment.setAlpha(0.7f);
             btnSave.setVisibility(View.GONE);
-
-            // 🌿 Đổi màu nền + hiển thị thông báo hoàn tất
             statusContainer.setBackgroundColor(Color.parseColor("#E6F9EC"));
             tvStatus.setText("✔️ Báo cáo đã hoàn tất");
             tvStatus.setTextColor(Color.parseColor("#16A34A"));
         }
 
+        // ====== Hành động ======
         btnClose.setOnClickListener(v -> dismiss());
 
         btnSave.setOnClickListener(v -> {
@@ -99,16 +110,14 @@ public class ReportDetailDialogAdmin extends Dialog {
                 return;
             }
 
-            FirebaseFirestore.getInstance().collection("reports").document(id)
+            db.collection("reports").document(id)
                     .update(
                             "adminComment", comment,
                             "status", "completed",
-                            "updatedAt", new com.google.firebase.Timestamp(new Date())
+                            "updatedAt", new Timestamp(new Date())
                     )
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getContext(), "✅ Báo cáo đã hoàn tất!", Toast.LENGTH_SHORT).show();
-
-                        // 🔄 Cập nhật giao diện ngay lập tức
                         btnSave.setVisibility(View.GONE);
                         etAdminComment.setEnabled(false);
                         etAdminComment.setAlpha(0.7f);
@@ -122,4 +131,56 @@ public class ReportDetailDialogAdmin extends Dialog {
         });
     }
 
+    /**
+     * 🔹 Lấy danh sách hướng dẫn viên thuộc tour
+     */
+    private void loadGuidesForTour(String tourId, TextView tvGuideId) {
+        db.collection("tours").document(tourId)
+                .get()
+                .addOnSuccessListener(tourDoc -> {
+                    if (!tourDoc.exists()) {
+                        tvGuideId.setText("Hướng dẫn viên: (Không tìm thấy tour)");
+                        return;
+                    }
+
+                    List<String> guideIds = (List<String>) tourDoc.get("guideIds");
+                    if (guideIds == null || guideIds.isEmpty()) {
+                        tvGuideId.setText("Hướng dẫn viên: (Chưa gán)");
+                        return;
+                    }
+
+                    db.collection("users")
+                            .whereIn(FieldPath.documentId(), guideIds)
+                            .get()
+                            .addOnSuccessListener(userQuery -> {
+                                if (userQuery.isEmpty()) {
+                                    tvGuideId.setText("Hướng dẫn viên: (Không tìm thấy)");
+                                    return;
+                                }
+
+                                List<String> guideNames = new ArrayList<>();
+                                for (DocumentSnapshot userDoc : userQuery) {
+                                    if ("guide".equals(userDoc.getString("role"))) {
+                                        String firstName = userDoc.getString("firstname");
+                                        String lastName = userDoc.getString("lastname");
+                                        String fullName = ((firstName != null ? firstName : "") + " " +
+                                                (lastName != null ? lastName : "")).trim();
+                                        if (!fullName.isEmpty()) guideNames.add(fullName);
+                                    }
+                                }
+
+                                if (!guideNames.isEmpty()) {
+                                    tvGuideId.setText("Hướng dẫn viên: " + String.join(", ", guideNames));
+                                } else {
+                                    tvGuideId.setText("Hướng dẫn viên: (Không rõ)");
+                                }
+                            })
+                            .addOnFailureListener(e ->
+                                    tvGuideId.setText("Hướng dẫn viên: (Lỗi tải danh sách)")
+                            );
+                })
+                .addOnFailureListener(e ->
+                        tvGuideId.setText("Hướng dẫn viên: (Lỗi tải tour)")
+                );
+    }
 }
