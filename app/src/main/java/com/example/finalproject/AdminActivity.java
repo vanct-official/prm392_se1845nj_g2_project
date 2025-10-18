@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.finalproject.fragment.ChatListFragment;
 import com.example.finalproject.fragment.admin.AdminDashboardFragment;
 import com.example.finalproject.fragment.admin.AdminReportsFragment;
 import com.example.finalproject.fragment.admin.AdminReviewsFragment;
@@ -105,8 +106,8 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         } else if (id == R.id.nav_admin_promotions) {
             selectedFragment = new AdminPromotionsFragment();
 //
-//        } else if (id == R.id.nav_admin_chat) {
-//            selectedFragment = new AdminChatFragment();
+        } else if (id == R.id.nav_admin_chat) {
+            selectedFragment = new ChatListFragment();
 
 //        } else if (id == R.id.nav_admin_feedback) {
 //            selectedFragment = new AdminFeedbackFragment();

@@ -41,6 +41,15 @@
             android:focusable="true" />
     </RelativeLayout>
 
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Tìm kiếm tour theo tên..."
+        android:iconifiedByDefault="false"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_search_box" />
+
     <!-- THANH NGĂN CÁCH -->
     <View
         android:layout_width="match_parent"

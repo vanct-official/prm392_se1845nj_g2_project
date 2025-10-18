@@ -59,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
     private void redirectByRole(String role) {
         Intent intent;
         switch (role) {
-            case "ADMIN":
+            case "admin":
                 intent = new Intent(this, AdminActivity.class);
                 break;
-            case "GUIDE":
+            case "guide":
                 intent = new Intent(this, GuideActivity.class);
                 break;
             default:

@@ -1,4 +1,4 @@
-package com.example.finalproject.activity;
+package com.example.finalproject.activity.admin;
 
 import android.os.Bundle;
 import android.widget.TextView;

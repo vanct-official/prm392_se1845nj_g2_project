@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="#F0F4F8"
-    tools:context=".activity.EditTourAdminActivity">
+    tools:context=".activity.admin.EditTourAdminActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

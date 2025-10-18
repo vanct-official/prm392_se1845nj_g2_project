@@ -1,18 +1,16 @@
-package com.example.finalproject.adapter;
+package com.example.finalproject.adapter.admin;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.dialog.ReportDetailDialog;
+import com.example.finalproject.dialog.ReportDetailDialogAdmin;
 import com.google.firebase.Timestamp;
 
 import java.text.SimpleDateFormat;
@@ -52,6 +50,20 @@ public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.
         holder.tvParticipants.setText("👥 " + (participants != null ? participants : 0) + " khách");
         holder.tvRating.setText("⭐ " + (rating != null ? rating : 0));
 
+// Đổi sang tiếng Việt khi hiển thị
+        String statusDisplay;
+        switch (status) {
+            case "completed":
+                statusDisplay = "Hoàn thành";
+                break;
+            case "pending":
+            default:
+                statusDisplay = "Chờ xử lý";
+                break;
+        }
+
+        holder.tvStatus.setText("Trạng thái: " + statusDisplay);
+
         Object createdAt = report.get("createdAt");
         if (createdAt instanceof Timestamp) {
             Date date = ((Timestamp) createdAt).toDate();
@@ -61,7 +73,7 @@ public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.
 
         // Khi admin bấm vào item → mở dialog chi tiết
         holder.itemView.setOnClickListener(v -> {
-            new ReportDetailDialog(context, report).show();
+            new ReportDetailDialogAdmin(context, report).show();
         });
     }
 
