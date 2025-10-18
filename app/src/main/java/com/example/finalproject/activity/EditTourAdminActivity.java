@@ -90,6 +90,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         spStatus = findViewById(R.id.spStatus);
     }
+
     private void setupStatusSpinner() {
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
                 this,
@@ -100,7 +101,6 @@ public class EditTourAdminActivity extends AppCompatActivity {
         spStatus.setEnabled(false);
         spStatus.setClickable(false);
     }
-
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
@@ -154,7 +154,6 @@ public class EditTourAdminActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // ====== Gán dữ liệu cơ bản ======
                     etTitle.setText(doc.getString("title"));
                     etDescription.setText(doc.getString("description"));
                     etDestination.setText(doc.getString("destination"));
@@ -170,7 +169,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
                     etStartDate.setText(formatDate(doc.get("start_date")));
                     etEndDate.setText(formatDate(doc.get("end_date")));
 
-                    // ====== Ảnh tour ======
+                    // Ảnh
                     imageUrls = (List<String>) doc.get("images");
                     List<SlideModel> slides = new ArrayList<>();
                     if (imageUrls != null && !imageUrls.isEmpty()) {
@@ -181,46 +180,14 @@ public class EditTourAdminActivity extends AppCompatActivity {
                     }
                     imageSlider.setImageList(slides);
 
-                    // ====== Tự động tính lại trạng thái ======
                     updateStatusBasedOnDates();
 
-                    // ====== Hiển thị hướng dẫn viên ======
+                    // ====== Hướng dẫn viên ======
                     List<String> gids = (List<String>) doc.get("guideIds");
                     selectedGuideIds.clear();
-                    if (gids != null) {
-                        selectedGuideIds.addAll(gids);
-                    }
+                    if (gids != null) selectedGuideIds.addAll(gids);
 
-                    db.collection("guides").get().addOnSuccessListener(query -> {
-                        guideIds.clear();
-                        guideNames.clear();
-                        selectedGuideNames.clear();
-
-                        for (DocumentSnapshot d : query) {
-                            String id = d.getId();
-                            String name = d.getString("name");
-
-                            guideIds.add(id);
-                            guideNames.add(name != null ? name : id);
-
-                            if (selectedGuideIds.contains(id)) {
-                                selectedGuideNames.add(name != null ? name : id);
-                            }
-                        }
-
-                        // Cập nhật text hiển thị
-                        if (selectedGuideNames.isEmpty()) {
-                            tvGuideNames.setText("(Chưa chọn hướng dẫn viên)");
-                        } else {
-                            tvGuideNames.setText(String.join(", ", selectedGuideNames));
-                        }
-
-                        // Cho phép người dùng chọn lại
-                        tvGuideNames.setOnClickListener(v -> showGuideSelectDialog());
-
-                    }).addOnFailureListener(e ->
-                            Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-
+                    loadGuidesFromUsers();
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(android.view.View.GONE);
@@ -229,11 +196,50 @@ public class EditTourAdminActivity extends AppCompatActivity {
     }
 
     /**
-     * Hiển thị hộp thoại chọn hướng dẫn viên
+     * ✅ Lấy danh sách hướng dẫn viên từ bảng USERS (role = guide)
      */
+    private void loadGuidesFromUsers() {
+        db.collection("users")
+                .whereEqualTo("role", "guide")
+                .get()
+                .addOnSuccessListener(query -> {
+                    guideIds.clear();
+                    guideNames.clear();
+                    selectedGuideNames.clear();
+
+                    for (DocumentSnapshot d : query) {
+                        String id = d.getId();
+                        String firstName = d.getString("firstname");
+                        String lastName = d.getString("lastname");
+                        String fullName = (firstName != null ? firstName : "") + " " +
+                                (lastName != null ? lastName : "");
+                        fullName = fullName.trim().isEmpty() ? id : fullName.trim();
+
+                        guideIds.add(id);
+                        guideNames.add(fullName);
+
+                        if (selectedGuideIds.contains(id)) {
+                            selectedGuideNames.add(fullName);
+                        }
+                    }
+
+                    // Hiển thị danh sách đã chọn
+                    if (selectedGuideNames.isEmpty()) {
+                        tvGuideNames.setText("(Chưa chọn hướng dẫn viên)");
+                    } else {
+                        tvGuideNames.setText(String.join(", ", selectedGuideNames));
+                    }
+
+                    // Cho phép chọn lại
+                    tvGuideNames.setOnClickListener(v -> showGuideSelectDialog());
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
     private void showGuideSelectDialog() {
         if (guideNames.isEmpty()) {
-            Toast.makeText(this, "Danh sách hướng dẫn viên đang trống!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Danh sách hướng dẫn viên trống!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -247,7 +253,6 @@ public class EditTourAdminActivity extends AppCompatActivity {
                 .setMultiChoiceItems(guideNames.toArray(new String[0]), checkedItems, (dialog, which, isChecked) -> {
                     String id = guideIds.get(which);
                     String name = guideNames.get(which);
-
                     if (isChecked) {
                         if (!selectedGuideIds.contains(id)) {
                             selectedGuideIds.add(id);
@@ -277,23 +282,15 @@ public class EditTourAdminActivity extends AppCompatActivity {
             Date now = new Date();
 
             String statusEn;
-            if (now.before(start)) {
-                statusEn = "upcoming";
-            } else if (!now.before(start) && !now.after(end)) {
-                statusEn = "in_progress";
-            } else {
-                statusEn = "completed";
-            }
+            if (now.before(start)) statusEn = "upcoming";
+            else if (!now.before(start) && !now.after(end)) statusEn = "in_progress";
+            else statusEn = "completed";
 
-            // Chuyển sang tiếng Việt chỉ để hiển thị
             String statusVi = convertStatusToVietnamese(statusEn);
-
             ArrayAdapter<String> adapter = (ArrayAdapter<String>) spStatus.getAdapter();
             int pos = adapter.getPosition(statusVi);
             if (pos >= 0) spStatus.setSelection(pos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
     private String convertStatusToVietnamese(String statusEn) {
@@ -303,16 +300,6 @@ public class EditTourAdminActivity extends AppCompatActivity {
             case "completed": return "Hoàn thành";
             case "cancelled": return "Hủy";
             default: return statusEn;
-        }
-    }
-
-    private String convertStatusToEnglish(String statusVi) {
-        switch (statusVi) {
-            case "Chưa diễn ra": return "upcoming";
-            case "Đang diễn ra": return "in_progress";
-            case "Hoàn thành": return "completed";
-            case "Hủy": return "cancelled";
-            default: return statusVi;
         }
     }
 
@@ -327,7 +314,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
             String itinerary = etItinerary.getText().toString().trim();
             String startStr = etStartDate.getText().toString().trim();
             String endStr = etEndDate.getText().toString().trim();
-            String priceStr = etPrice.getText().toString().trim();
+            String priceStr = etPrice.getText().toString().trim().replace(".", "");
 
             if (title.isEmpty() || desc.isEmpty() || dest.isEmpty() || duration.isEmpty()
                     || itinerary.isEmpty() || startStr.isEmpty() || endStr.isEmpty() || priceStr.isEmpty()) {
@@ -336,9 +323,14 @@ public class EditTourAdminActivity extends AppCompatActivity {
                 return;
             }
 
-            priceStr = priceStr.replace(".", "");
-            double price = Double.parseDouble(priceStr);
+            // ✅ Kiểm tra bắt buộc chọn ít nhất 1 hướng dẫn viên
+            if (selectedGuideIds.isEmpty()) {
+                Toast.makeText(this, "⚠️ Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(android.view.View.GONE);
+                return;
+            }
 
+            double price = Double.parseDouble(priceStr);
             if (price <= 0) {
                 Toast.makeText(this, "⚠️ Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(android.view.View.GONE);
@@ -355,14 +347,12 @@ public class EditTourAdminActivity extends AppCompatActivity {
                 return;
             }
 
-            // Tính status tự động
             String status;
             Date now = new Date();
             if (now.before(startDate)) status = "upcoming";
             else if (!now.before(startDate) && !now.after(endDate)) status = "in_progress";
             else status = "completed";
 
-            List<String> urls = imageUrls;
             Map<String, Object> data = new HashMap<>();
             data.put("title", title);
             data.put("description", desc);
@@ -373,7 +363,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
             data.put("start_date", new Timestamp(startDate));
             data.put("end_date", new Timestamp(endDate));
             data.put("guideIds", selectedGuideIds);
-            data.put("images", urls);
+            data.put("images", imageUrls);
             data.put("status", status);
             data.put("updated_at", new Timestamp(new Date()));
 
@@ -381,7 +371,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
                     .update(data)
                     .addOnSuccessListener(aVoid -> {
                         progressBar.setVisibility(android.view.View.GONE);
-                        Toast.makeText(this, "✅ Cập nhật thành công! (" + status + ")", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "✅ Cập nhật thành công!", Toast.LENGTH_SHORT).show();
                         finish();
                     })
                     .addOnFailureListener(e -> {
@@ -403,8 +393,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
                 return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(d);
             }
             if (obj instanceof String) return (String) obj;
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
         return "";
     }
 }

@@ -103,10 +103,11 @@ public class AddTourAdminActivity extends AppCompatActivity {
     }
 
     // ===========================================================
-    // 🔹 Tải danh sách hướng dẫn viên
+    // 🔹 Tải danh sách hướng dẫn viên từ bảng USERS (role = "guide")
     // ===========================================================
     private void loadGuides() {
-        db.collection("guides")
+        db.collection("users")
+                .whereEqualTo("role", "guide")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     guideIds.clear();
@@ -114,10 +115,16 @@ public class AddTourAdminActivity extends AppCompatActivity {
 
                     for (DocumentSnapshot doc : querySnapshot) {
                         guideIds.add(doc.getId());
-                        String name = doc.getString("name");
-                        guideNames.add(name != null ? name : doc.getId());
+
+                        String firstName = doc.getString("firstname");
+                        String lastName = doc.getString("lastname");
+                        String fullName = (firstName != null ? firstName : "") + " " +
+                                (lastName != null ? lastName : "");
+
+                        guideNames.add(fullName.trim().isEmpty() ? doc.getId() : fullName.trim());
                     }
 
+                    // Cho phép click chọn danh sách
                     tvSelectedGuides.setOnClickListener(v -> showMultiSelectDialog());
                 })
                 .addOnFailureListener(e ->

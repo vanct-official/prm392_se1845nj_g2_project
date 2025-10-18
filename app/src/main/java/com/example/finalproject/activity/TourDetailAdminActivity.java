@@ -22,11 +22,10 @@ public class TourDetailAdminActivity extends AppCompatActivity {
     private static final String TAG = "TourDetailAdminActivity";
 
     private TextView tvTitle, tvDescription, tvDestination, tvDuration, tvPrice,
-            tvStartDate, tvEndDate, tvItinerary, tvGuideName;
+            tvStartDate, tvEndDate, tvItinerary, tvGuideName, tvStatus;
     private ImageSlider imageSlider;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-    private TextView tvStatus;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,9 +41,8 @@ public class TourDetailAdminActivity extends AppCompatActivity {
         tvEndDate = findViewById(R.id.tvEndDate);
         tvItinerary = findViewById(R.id.tvItinerary);
         tvGuideName = findViewById(R.id.tvGuideName);
-        imageSlider = findViewById(R.id.imageSlider);
         tvStatus = findViewById(R.id.tvStatus);
-
+        imageSlider = findViewById(R.id.imageSlider);
 
         String tourId = getIntent().getStringExtra("tourId");
         if (tourId == null || tourId.isEmpty()) {
@@ -79,30 +77,19 @@ public class TourDetailAdminActivity extends AppCompatActivity {
         tvDuration.setText(doc.getString("duration"));
         tvItinerary.setText(doc.getString("itinerary"));
 
-        // Trạng thái tour
+        // Trạng thái
         String status = doc.getString("status");
         if (status != null) {
             switch (status) {
-                case "completed":
-                    tvStatus.setText("✅ Hoàn thành");
-                    break;
-                case "in_progress":
-                    tvStatus.setText("🚩 Đang diễn ra");
-                    break;
-                case "upcoming":
-                    tvStatus.setText("🕓 Chưa bắt đầu");
-                    break;
-                case "cancelled":
-                    tvStatus.setText("❌ Hủy");
-                    break;
-                default:
-                    tvStatus.setText("Không xác định");
-                    break;
+                case "completed": tvStatus.setText("✅ Hoàn thành"); break;
+                case "in_progress": tvStatus.setText("🚩 Đang diễn ra"); break;
+                case "upcoming": tvStatus.setText("🕓 Chưa bắt đầu"); break;
+                case "cancelled": tvStatus.setText("❌ Hủy"); break;
+                default: tvStatus.setText("Không xác định"); break;
             }
-        } else {
-            tvStatus.setText("Không xác định");
-        }
+        } else tvStatus.setText("Không xác định");
 
+        // Giá
         Double price = doc.getDouble("price");
         if (price != null)
             tvPrice.setText(NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price));
@@ -123,34 +110,47 @@ public class TourDetailAdminActivity extends AppCompatActivity {
 
         // Hướng dẫn viên
         List<String> guideIds = (List<String>) doc.get("guideIds");
-        if (guideIds != null && !guideIds.isEmpty()) {
-            fetchGuides(guideIds);
-        } else {
-            tvGuideName.setText("Chưa có hướng dẫn viên");
-        }
+        fetchGuides(guideIds);
     }
 
-    private void fetchGuides(List<String> ids) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        StringBuilder sb = new StringBuilder();
-        int[] done = {0};
-        for (String id : ids) {
-            db.collection("guides").document(id).get()
-                    .addOnSuccessListener(g -> {
-                        String name = g.getString("name");
-                        if (name == null) name = id;
-                        if (sb.length() > 0) sb.append(", ");
-                        sb.append(name);
-                        done[0]++;
-                        if (done[0] == ids.size())
-                            tvGuideName.setText("" + sb.toString());
-                    })
-                    .addOnFailureListener(e -> {
-                        done[0]++;
-                        if (done[0] == ids.size())
-                            tvGuideName.setText("" + sb.toString());
-                    });
+    private void fetchGuides(List<String> guideIds) {
+        if (guideIds == null || guideIds.isEmpty()) {
+            tvGuideName.setText("Chưa có hướng dẫn viên");
+            return;
         }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .whereIn(com.google.firebase.firestore.FieldPath.documentId(), guideIds)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        List<String> guideNames = new ArrayList<>();
+                        for (DocumentSnapshot doc : querySnapshot) {
+                            if ("guide".equals(doc.getString("role"))) {
+                                String firstName = doc.getString("firstname");
+                                String lastName = doc.getString("lastname");
+                                String fullName = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
+                                guideNames.add(fullName.trim());
+                            }
+                        }
+
+                        // ✅ Xóa trùng lặp nếu có
+                        List<String> uniqueNames = new ArrayList<>(new LinkedHashSet<>(guideNames));
+
+                        if (!uniqueNames.isEmpty()) {
+                            tvGuideName.setText(String.join(", ", uniqueNames));
+                        } else {
+                            tvGuideName.setText("Không có hướng dẫn viên phù hợp");
+                        }
+                    } else {
+                        tvGuideName.setText("Không có hướng dẫn viên");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    tvGuideName.setText("Lỗi tải hướng dẫn viên");
+                    Log.e(TAG, "Error fetching guides", e);
+                });
     }
 
     private String safeFormatDate(Object obj) {

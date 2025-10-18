@@ -6,25 +6,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
+import com.example.finalproject.activity.EditTourAdminActivity;
 import com.example.finalproject.activity.TourDetailAdminActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import com.example.finalproject.activity.EditTourAdminActivity;
 
 public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.TourViewHolder> {
 
@@ -55,7 +51,6 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
     public void onBindViewHolder(@NonNull TourViewHolder holder, int position) {
         DocumentSnapshot doc = tours.get(position);
 
-        // 🔹 Đọc đúng field mới
         String title = doc.getString("title");
         String desc = doc.getString("description");
         String destination = doc.getString("destination");
@@ -63,13 +58,11 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
         String duration = doc.getString("duration");
 
         List<String> images = (List<String>) doc.get("images");
-        List<String> guideIds = (List<String>) doc.get("guideIds");
 
-        // 🔹 Set dữ liệu cơ bản
         holder.tvTourTitle.setText(title != null ? title : "Không có tiêu đề");
         holder.tvDescription.setText(desc != null ? desc : "(Không có mô tả)");
         holder.tvDestination.setText(destination != null ? destination : "Chưa xác định");
-        holder.tvDuration.setText(duration != null ? "" + duration : "");
+        holder.tvDuration.setText(duration != null ? duration : "");
 
         if (price != null && price > 0) {
             holder.tvPrice.setText("Giá: " + NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price));
@@ -77,21 +70,33 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
             holder.tvPrice.setText("Giá: Đang cập nhật");
         }
 
-        // 🔹 Hiển thị danh sách hướng dẫn viên
+        // 🔹 Hiển thị danh sách hướng dẫn viên được gán cho tour
+        List<String> guideIds = (List<String>) doc.get("guideIds");
+
         if (guideIds != null && !guideIds.isEmpty()) {
             FirebaseFirestore.getInstance()
-                    .collection("guides")
+                    .collection("users")
                     .whereIn(com.google.firebase.firestore.FieldPath.documentId(), guideIds)
                     .get()
                     .addOnSuccessListener(querySnapshot -> {
                         List<String> guideNames = new ArrayList<>();
-                        for (DocumentSnapshot guideDoc : querySnapshot) {
-                            String guideName = guideDoc.getString("name");
-                            if (guideName != null) guideNames.add(guideName);
+
+                        for (DocumentSnapshot userDoc : querySnapshot) {
+                            // Chỉ hiển thị nếu user có role = "guide"
+                            if ("guide".equals(userDoc.getString("role"))) {
+                                String firstName = userDoc.getString("firstname");
+                                String lastName = userDoc.getString("lastname");
+                                String fullName = (firstName != null ? firstName : "") + " " +
+                                        (lastName != null ? lastName : "");
+                                guideNames.add(fullName.trim());
+                            }
                         }
 
-                        if (!guideNames.isEmpty()) {
-                            holder.tvGuides.setText("" + String.join(", ", guideNames));
+                        // ✅ Xóa trùng lặp (phòng khi Firestore có lỗi hoặc ID trùng)
+                        List<String> unique = new ArrayList<>(new java.util.LinkedHashSet<>(guideNames));
+
+                        if (!unique.isEmpty()) {
+                            holder.tvGuides.setText("Hướng dẫn viên: " + String.join(", ", unique));
                         } else {
                             holder.tvGuides.setText("Hướng dẫn viên: (Không rõ)");
                         }
@@ -103,7 +108,7 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
             holder.tvGuides.setText("Hướng dẫn viên: (Chưa gán)");
         }
 
-        // 🔹 Hiển thị ảnh
+        // Ảnh
         List<SlideModel> slideModels = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
             for (String url : images) {
@@ -114,7 +119,7 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
         }
         holder.imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
 
-        // 🔹 Các nút thao tác
+        // Nút
         holder.btnView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TourDetailAdminActivity.class);
             intent.putExtra("tourId", doc.getId());
