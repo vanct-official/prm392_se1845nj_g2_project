@@ -61,7 +61,9 @@ public class ReportDetailDialogAdmin extends Dialog {
         tvTourName.setText("Tour: " + report.getOrDefault("tourName", "(Không rõ)"));
         tvSummary.setText("Tóm tắt: " + report.getOrDefault("summary", "(Không có)"));
         tvIssues.setText("Sự cố: " + report.getOrDefault("issues", "(Không có)"));
-        tvStatus.setText("Trạng thái: " + report.getOrDefault("status", "(Không rõ)"));
+        String statusEn = (String) report.getOrDefault("status", "unknown");
+        String statusVi = convertStatusToVietnamese(statusEn);
+        tvStatus.setText("Trạng thái: " + statusVi);
 
         Object ratingObj = report.get("ratingFromGuide");
         if (ratingObj instanceof Number) {
@@ -183,4 +185,20 @@ public class ReportDetailDialogAdmin extends Dialog {
                         tvGuideId.setText("Hướng dẫn viên: (Lỗi tải tour)")
                 );
     }
+    private String convertStatusToVietnamese(String statusEn) {
+        if (statusEn == null) return "(Không rõ)";
+        switch (statusEn.toLowerCase()) {
+            case "pending":
+                return "Chờ xử lý";
+            case "reviewed":
+                return "Đã xem xét";
+            case "completed":
+                return "Hoàn tất";
+            case "cancelled":
+                return "Đã hủy";
+            default:
+                return "(Không rõ)";
+        }
+    }
+
 }
