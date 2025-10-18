@@ -3,39 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F9FAFB"
-    android:padding="16dp">
+    android:padding="12dp"
+    android:background="#F9FAFB">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="📋 Danh sách đánh giá tour"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#1E293B"
-        android:layout_marginBottom="12dp" />
-
-    <FrameLayout
+    <EditText
+        android:id="@+id/edtSearch"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="44dp"
+        android:hint="Tìm kiếm theo tên người dùng hoặc tour..."
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/bg_search_box"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="10dp"
+        android:textSize="14sp"
+        android:inputType="text"
+        android:layout_marginBottom="8dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvReviews"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            android:clipToPadding="false"
-            android:paddingBottom="8dp" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginVertical="8dp" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:indeterminateTint="#3B82F6" />
-
-    </FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewReviews"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical" />
 
 </LinearLayout>

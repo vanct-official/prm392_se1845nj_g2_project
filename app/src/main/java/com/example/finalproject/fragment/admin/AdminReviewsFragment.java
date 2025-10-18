@@ -1,10 +1,12 @@
 package com.example.finalproject.fragment.admin;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
 import com.example.finalproject.adapter.AdminReviewAdapter;
+import com.example.finalproject.entity.Review;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,163 +27,119 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class AdminReviewsFragment extends Fragment {
 
-    private static final String TAG = "AdminReviewsFragment";
-    private RecyclerView rvReviews;
+    private RecyclerView recyclerViewReviews;
     private ProgressBar progressBar;
+    private EditText edtSearch;
     private FirebaseFirestore db;
     private AdminReviewAdapter adapter;
-    private List<Map<String, Object>> reviewList = new ArrayList<>();
+    private List<Review> reviewList = new ArrayList<>();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_reviews, container, false);
 
-        rvReviews = view.findViewById(R.id.rvReviews);
+        recyclerViewReviews = view.findViewById(R.id.recyclerViewReviews);
         progressBar = view.findViewById(R.id.progressBar);
+        edtSearch = view.findViewById(R.id.edtSearch);
 
         db = FirebaseFirestore.getInstance();
-        rvReviews.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewReviews.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new AdminReviewAdapter(getContext(), reviewList);
-        rvReviews.setAdapter(adapter);
+        recyclerViewReviews.setAdapter(adapter);
 
         loadReviews();
+
+        // tìm kiếm theo tên user hoặc tour
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.filter(s.toString());
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
 
         return view;
     }
 
     private void loadReviews() {
         progressBar.setVisibility(View.VISIBLE);
-
         db.collection("reviews")
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     reviewList.clear();
-
                     if (querySnapshot.isEmpty()) {
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Chưa có đánh giá nào.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Chưa có đánh giá nào", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    Log.d(TAG, "Total reviews: " + querySnapshot.size());
+                    List<Task<Review>> tasks = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        Review review = new Review();
+                        review.setId(doc.getId());
+                        review.setComment(doc.getString("comment"));
+                        review.setUserId(doc.getString("userId"));
+                        review.setTourId(doc.getString("tourId"));
+                        review.setRating(doc.get("rating"));
+                        review.setCreatedAt(doc.getTimestamp("createdAt"));
 
-                    List<Task<Map<String, Object>>> tasks = new ArrayList<>();
-
-                    for (var doc : querySnapshot) {
-                        Map<String, Object> review = doc.getData();
-                        review.put("id", doc.getId());
-
-                        String tourId = (String) review.get("tourId");
-                        String userId = (String) review.get("userId");
-
-                        Log.d(TAG, "Processing review - tourId: " + tourId + ", userId: " + userId);
-
-                        // Kiểm tra null trước khi query
-                        if (tourId == null || tourId.isEmpty()) {
-                            Log.w(TAG, "Review " + doc.getId() + " has null/empty tourId");
-                            review.put("tourName", "(Không có tourId)");
-                        }
-
-                        if (userId == null || userId.isEmpty()) {
-                            Log.w(TAG, "Review " + doc.getId() + " has null/empty userId");
-                            review.put("userName", "(Không có userId)");
-                        }
-
-                        // Tạo các tasks để fetch dữ liệu
-                        Task<DocumentSnapshot> tourTask = (tourId != null && !tourId.isEmpty())
-                                ? db.collection("tours").document(tourId).get()
+                        Task<DocumentSnapshot> tourTask = (review.getTourId() != null)
+                                ? db.collection("tours").document(review.getTourId()).get()
                                 : Tasks.forResult(null);
 
-                        Task<DocumentSnapshot> userTask = (userId != null && !userId.isEmpty())
-                                ? db.collection("users").document(userId).get()
+                        Task<DocumentSnapshot> userTask = (review.getUserId() != null)
+                                ? db.collection("users").document(review.getUserId()).get()
                                 : Tasks.forResult(null);
 
-                        Task<Map<String, Object>> reviewTask = Tasks.whenAllSuccess(tourTask, userTask)
+                        Task<Review> combined = Tasks.whenAllSuccess(tourTask, userTask)
                                 .continueWith(task -> {
-                                    if (task.isSuccessful()) {
-                                        List<Object> results = task.getResult();
-                                        DocumentSnapshot tourDoc = (DocumentSnapshot) results.get(0);
-                                        DocumentSnapshot userDoc = (DocumentSnapshot) results.get(1);
+                                    List<Object> results = task.getResult();
+                                    DocumentSnapshot tourDoc = (DocumentSnapshot) results.get(0);
+                                    DocumentSnapshot userDoc = (DocumentSnapshot) results.get(1);
 
-                                        // Lấy tên tour
-                                        if (tourDoc != null && tourDoc.exists()) {
-                                            String tourName = tourDoc.getString("title");
-                                            Log.d(TAG, "Tour found - ID: " + tourId + ", Title: " + tourName);
-                                            review.put("tourName", tourName != null ? tourName : "(Không có tên tour)");
-                                        } else {
-                                            Log.w(TAG, "Tour not found - ID: " + tourId);
-                                            if (!review.containsKey("tourName")) {
-                                                review.put("tourName", "(Tour không tồn tại)");
-                                            }
-                                        }
-
-                                        // Lấy tên user
-                                        if (userDoc != null && userDoc.exists()) {
-                                            String firstname = userDoc.getString("firstname");
-                                            String lastname = userDoc.getString("lastname");
-
-                                            Log.d(TAG, "User found - ID: " + userId + ", Firstname: " + firstname + ", Lastname: " + lastname);
-
-                                            String fullName = "";
-                                            if (firstname != null && !firstname.isEmpty()) {
-                                                fullName = firstname;
-                                            }
-                                            if (lastname != null && !lastname.isEmpty()) {
-                                                fullName = fullName.isEmpty() ? lastname : fullName + " " + lastname;
-                                            }
-
-                                            if (fullName.isEmpty()) {
-                                                fullName = "(Không có tên)";
-                                            }
-
-                                            review.put("userName", fullName);
-                                        } else {
-                                            Log.w(TAG, "User not found - ID: " + userId);
-                                            if (!review.containsKey("userName")) {
-                                                review.put("userName", "(User không tồn tại)");
-                                            }
-                                        }
+                                    if (tourDoc != null && tourDoc.exists()) {
+                                        review.setTourName(tourDoc.getString("title"));
                                     } else {
-                                        Log.e(TAG, "Error fetching data", task.getException());
-                                        if (!review.containsKey("tourName")) {
-                                            review.put("tourName", "(Lỗi tải tour)");
-                                        }
-                                        if (!review.containsKey("userName")) {
-                                            review.put("userName", "(Lỗi tải user)");
-                                        }
+                                        review.setTourName("(Tour không tồn tại)");
+                                    }
+
+                                    if (userDoc != null && userDoc.exists()) {
+                                        String firstname = userDoc.getString("firstname");
+                                        String lastname = userDoc.getString("lastname");
+                                        String fullName = "";
+                                        if (firstname != null) fullName += firstname;
+                                        if (lastname != null)
+                                            fullName = fullName.isEmpty() ? lastname : fullName + " " + lastname;
+
+                                        review.setUserName(fullName.isEmpty() ? "(Không có tên)" : fullName);
+                                        review.setUserAvatar(userDoc.getString("avatar"));
+                                    } else {
+                                        review.setUserName("(User không tồn tại)");
+                                        review.setUserAvatar(null);
                                     }
                                     return review;
                                 });
 
-                        tasks.add(reviewTask);
+                        tasks.add(combined);
                     }
 
-                    // Đợi tất cả tasks hoàn thành
-                    Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> {
-                        for (int i = 0; i < tasks.size(); i++) {
-                            if (tasks.get(i).isSuccessful()) {
-                                reviewList.add(tasks.get(i).getResult());
-                            } else {
-                                Log.e(TAG, "Task " + i + " failed", tasks.get(i).getException());
-                            }
+                    Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
+                        for (Task<Review> rTask : tasks) {
+                            if (rTask.isSuccessful()) reviewList.add(rTask.getResult());
                         }
-
-                        Log.d(TAG, "Final review list size: " + reviewList.size());
                         adapter.notifyDataSetChanged();
                         progressBar.setVisibility(View.GONE);
                     });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error loading reviews", e);
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Lỗi tải review: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 }
