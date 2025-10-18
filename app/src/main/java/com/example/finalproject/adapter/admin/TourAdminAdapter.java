@@ -1,4 +1,4 @@
-package com.example.finalproject.adapter;
+package com.example.finalproject.adapter.admin;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
-import com.example.finalproject.activity.TourDetailAdminActivity;
+import com.example.finalproject.activity.admin.TourDetailAdminActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.finalproject.activity.EditTourAdminActivity;
+import com.example.finalproject.activity.admin.EditTourAdminActivity;
 
 public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.TourViewHolder> {
 

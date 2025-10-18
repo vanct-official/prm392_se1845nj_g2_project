@@ -21,10 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.AddPromotionAdminActivity;
-import com.example.finalproject.activity.EditPromotionAdminActivity;
-import com.example.finalproject.activity.ViewPromotionAdminActivity;
-import com.example.finalproject.adapter.PromotionAdminAdapter;
+import com.example.finalproject.activity.admin.AddPromotionAdminActivity;
+import com.example.finalproject.activity.admin.EditPromotionAdminActivity;
+import com.example.finalproject.activity.admin.ViewPromotionAdminActivity;
+import com.example.finalproject.adapter.admin.PromotionAdminAdapter;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;

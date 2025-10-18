@@ -35,12 +35,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AddPromotionAdminActivity" />
-        <activity android:name=".activity.ViewPromotionAdminActivity" />
-        <activity android:name=".activity.EditPromotionAdminActivity" />
-        <activity android:name=".activity.AddTourAdminActivity" />
-        <activity android:name=".activity.TourDetailAdminActivity" />
-        <activity android:name=".activity.EditTourAdminActivity" />
+        <activity android:name=".activity.admin.AddPromotionAdminActivity" />
+        <activity android:name=".activity.admin.ViewPromotionAdminActivity" />
+        <activity android:name=".activity.admin.EditPromotionAdminActivity" />
+        <activity android:name=".activity.admin.AddTourAdminActivity" />
+        <activity android:name=".activity.admin.TourDetailAdminActivity" />
+        <activity android:name=".activity.admin.EditTourAdminActivity" />
     </application>
 
 </manifest>

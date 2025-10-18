@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.finalproject.R;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -23,12 +22,12 @@ import java.util.Locale;
 import java.util.Map;
 import android.view.View;
 
-public class ReportDetailDialog extends Dialog {
+public class ReportDetailDialogAdmin extends Dialog {
 
     private final Map<String, Object> report;
     private final FirebaseFirestore db;
 
-    public ReportDetailDialog(@NonNull Context context, Map<String, Object> report) {
+    public ReportDetailDialogAdmin(@NonNull Context context, Map<String, Object> report) {
         super(context);
         this.report = report;
         this.db = FirebaseFirestore.getInstance();

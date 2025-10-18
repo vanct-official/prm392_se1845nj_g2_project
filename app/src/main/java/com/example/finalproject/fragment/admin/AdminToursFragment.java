@@ -19,9 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.AddTourAdminActivity;
-import com.example.finalproject.activity.EditTourAdminActivity;
-import com.example.finalproject.adapter.TourAdminAdapter;
+import com.example.finalproject.activity.admin.AddTourAdminActivity;
+import com.example.finalproject.activity.admin.EditTourAdminActivity;
+import com.example.finalproject.adapter.admin.TourAdminAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
