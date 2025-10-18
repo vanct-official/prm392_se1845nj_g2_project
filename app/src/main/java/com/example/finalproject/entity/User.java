@@ -18,6 +18,7 @@ public class User {
     private boolean isActive;
     private boolean isEmailVerify;
     private String role;
+    private String imageUrl;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -26,7 +27,7 @@ public class User {
 
     public User(String userid, String username, String firstname, String lastname, String email,
                 String phone, String passwordHash, Timestamp dob, boolean gender, boolean isActive,
-                boolean isEmailVerify, String role, Timestamp createdAt, Timestamp updatedAt) {
+                boolean isEmailVerify, String role, String imageUrl, Timestamp createdAt, Timestamp updatedAt) {
         this.userid = userid;
         this.username = username;
         this.firstname = firstname;
@@ -39,6 +40,7 @@ public class User {
         this.isActive = isActive;
         this.isEmailVerify = isEmailVerify;
         this.role = role;
+        this.imageUrl = imageUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -159,6 +161,16 @@ public class User {
     @PropertyName("role")
     public void setRole(String role) {
         this.role = role;
+    }
+
+    @PropertyName("imageUrl")
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    @PropertyName("imageUrl")
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @PropertyName("createdAt")

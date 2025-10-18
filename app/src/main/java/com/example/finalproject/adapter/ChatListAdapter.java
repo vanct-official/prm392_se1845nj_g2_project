@@ -36,11 +36,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     // Cache thông tin user để tránh load lại nhiều lần
     private final Map<String, UserInfo> userCache = new HashMap<>();
 
+    // Constructor
     public ChatListAdapter(List<Chat> chatList, OnChatClickListener listener) {
         this.chatList = chatList;
         this.listener = listener;
     }
 
+    // Tạo ViewHolder cho từng item
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,6 +51,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    // Liên kết dữ liệu với ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chat chat = chatList.get(position);
@@ -97,6 +100,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         });
     }
 
+    // Tải thông tin user từ Firestore hoặc cache
     private void loadUserInfo(String uid, ViewHolder holder) {
         // Kiểm tra cache trước
         if (userCache.containsKey(uid)) {
@@ -125,6 +129,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 .addOnFailureListener(e -> setDefaultUser(holder));
     }
 
+    // Liên kết thông tin user vào ViewHolder
     private void bindUserInfo(ViewHolder holder, UserInfo userInfo) {
         holder.txtName.setText(userInfo.displayName);
 
@@ -148,12 +153,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         }
     }
 
+    // Thiết lập thông tin mặc định khi không lấy được user
     private void setDefaultUser(ViewHolder holder) {
         holder.txtName.setText("Người dùng");
         holder.txtRole.setVisibility(View.GONE);
         holder.imgAvatar.setImageResource(R.drawable.ic_account);
     }
 
+    // Tạo tên hiển thị từ các trường tên
     private String getDisplayName(String fullName, String firstName, String lastName) {
         if (fullName != null && !fullName.trim().isEmpty()) return fullName.trim();
         StringBuilder sb = new StringBuilder();
@@ -165,6 +172,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         return sb.length() > 0 ? sb.toString() : "Người dùng";
     }
 
+    // Lấy badge tương ứng với role
     private int getRoleBadge(String role) {
         if (role == null) return R.drawable.badge_customer;
         switch (role.toLowerCase(Locale.ROOT)) {
@@ -177,35 +185,43 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         }
     }
 
+    // Định dạng thời gian hiển thị
     private String formatTime(Date date) {
         long diffInMillis = System.currentTimeMillis() - date.getTime();
         long diffInHours = diffInMillis / (1000 * 60 * 60);
         long diffInDays = diffInMillis / (1000 * 60 * 60 * 24);
 
         if (diffInHours < 24) {
+            // Hiển thị giờ và phút
             return new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date);
         } else if (diffInDays < 7) {
+            // Hiển thị ngày trong tuần
             return new SimpleDateFormat("EEE", Locale.getDefault()).format(date);
         } else {
+            // Hiển thị ngày/tháng
             return new SimpleDateFormat("dd/MM", Locale.getDefault()).format(date);
         }
     }
 
+    // Tổng số item trong danh sách
     @Override
     public int getItemCount() {
         return chatList != null ? chatList.size() : 0;
     }
 
+    // Cập nhật danh sách chat
     public void updateChatList(List<Chat> newChatList) {
         chatList.clear();
         chatList.addAll(newChatList);
         notifyDataSetChanged();
     }
 
+    // Xóa cache user
     public void clearCache() {
         userCache.clear();
     }
 
+    // Lớp lưu trữ thông tin user
     private static class UserInfo {
         String displayName, role, avatarUrl;
         UserInfo(String name, String role, String avatar) {
@@ -215,6 +231,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         }
     }
 
+    // ViewHolder cho item chat
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAvatar;
         TextView txtName, txtLastMessage, txtTime, txtRole;
@@ -228,4 +245,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             txtRole = itemView.findViewById(R.id.txtRole);
         }
     }
+
+    // Tìm kiếm chat theo tên người dùng
 }

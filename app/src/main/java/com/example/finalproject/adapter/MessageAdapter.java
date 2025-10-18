@@ -66,7 +66,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         // Timestamp
         if (msg.getTimestamp() != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm - dd/MM/yyyy", Locale.getDefault());
             holder.txtTime.setText(sdf.format(msg.getTimestamp().toDate()));
         }
     }
