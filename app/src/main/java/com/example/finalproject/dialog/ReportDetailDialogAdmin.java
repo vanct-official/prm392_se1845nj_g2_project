@@ -128,7 +128,7 @@ public class ReportDetailDialogAdmin extends Dialog {
                         statusContainer.setBackgroundColor(Color.parseColor("#E6F9EC"));
                     })
                     .addOnFailureListener(e ->
-                            Toast.makeText(getContext(), "❌ Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(getContext(), "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                     );
         });
     }

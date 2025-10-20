@@ -135,7 +135,7 @@ public class TourDetailAdminActivity extends AppCompatActivity {
                             }
                         }
 
-                        // ✅ Xóa trùng lặp nếu có
+                        // Xóa trùng lặp nếu có
                         List<String> uniqueNames = new ArrayList<>(new LinkedHashSet<>(guideNames));
 
                         if (!uniqueNames.isEmpty()) {

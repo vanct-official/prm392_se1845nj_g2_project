@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EditTourAdminActivity extends AppCompatActivity {
 
@@ -91,7 +92,13 @@ public class EditTourAdminActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         spStatus = findViewById(R.id.spStatus);
 
-        // ✅ Thêm vào cuối hàm mapViews():
+        // ko cho edit tiêu đề tour
+        etTitle.setFocusable(false);
+        etTitle.setClickable(false);
+        etTitle.setLongClickable(false);
+        etTitle.setEnabled(false);
+
+        // ko cho edit start và end date
         etStartDate.setFocusable(false);
         etStartDate.setClickable(false);
         etStartDate.setLongClickable(false);
@@ -206,7 +213,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
     }
 
     /**
-     * ✅ Lấy danh sách hướng dẫn viên từ bảng USERS (role = guide)
+     * Lấy danh sách hướng dẫn viên từ bảng USERS (role = guide)
      */
     private void loadGuidesFromUsers() {
         db.collection("users")
@@ -328,21 +335,21 @@ public class EditTourAdminActivity extends AppCompatActivity {
 
             if (title.isEmpty() || desc.isEmpty() || dest.isEmpty() || duration.isEmpty()
                     || itinerary.isEmpty() || startStr.isEmpty() || endStr.isEmpty() || priceStr.isEmpty()) {
-                Toast.makeText(this, "⚠️ Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(android.view.View.GONE);
                 return;
             }
 
-            // ✅ Kiểm tra bắt buộc chọn ít nhất 1 hướng dẫn viên
+            // Kiểm tra bắt buộc chọn ít nhất 1 hướng dẫn viên
             if (selectedGuideIds.isEmpty()) {
-                Toast.makeText(this, "⚠️ Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(android.view.View.GONE);
                 return;
             }
 
             double price = Double.parseDouble(priceStr);
             if (price <= 0) {
-                Toast.makeText(this, "⚠️ Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(android.view.View.GONE);
                 return;
             }
@@ -352,7 +359,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
             Date endDate = sdf.parse(endStr);
 
             if (endDate.before(startDate)) {
-                Toast.makeText(this, "⚠️ Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(android.view.View.GONE);
                 return;
             }
@@ -372,7 +379,6 @@ public class EditTourAdminActivity extends AppCompatActivity {
             data.put("price", price);
             data.put("start_date", new Timestamp(startDate));
             data.put("end_date", new Timestamp(endDate));
-            data.put("guideIds", selectedGuideIds);
             data.put("images", imageUrls);
             data.put("status", status);
             data.put("updatedAt", new Timestamp(new Date()));
@@ -380,18 +386,50 @@ public class EditTourAdminActivity extends AppCompatActivity {
             db.collection("tours").document(tourId)
                     .update(data)
                     .addOnSuccessListener(aVoid -> {
+                        AtomicInteger newRequestsCount = new AtomicInteger(0); // Đếm số yêu cầu mới
+
+                        for (String guideId : selectedGuideIds) {
+                            db.collection("guide_requests")
+                                    .whereEqualTo("tourId", tourId)
+                                    .whereEqualTo("guideId", guideId)
+                                    .get()
+                                    .addOnSuccessListener(querySnapshot -> {
+                                        if (querySnapshot.isEmpty()) {
+                                            // 🔹 Chưa có yêu cầu nào, tạo mới
+                                            Map<String, Object> request = new HashMap<>();
+                                            request.put("tourId", tourId);
+                                            request.put("guideId", guideId);
+                                            request.put("status", "pending");
+                                            request.put("createdAt", new Timestamp(new Date()));
+
+                                            db.collection("guide_requests").add(request);
+                                            newRequestsCount.incrementAndGet(); // +1 khi có yêu cầu mới
+                                        }
+                                    });
+                        }
+
                         progressBar.setVisibility(android.view.View.GONE);
-                        Toast.makeText(this, "✅ Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-                        finish();
+
+                        // Chờ một chút để các query trên hoàn tất
+                        new android.os.Handler().postDelayed(() -> {
+                            if (newRequestsCount.get() > 0) {
+                                Toast.makeText(this, "Đã gửi " + newRequestsCount.get() + " yêu cầu mới tới hướng dẫn viên!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(this, "Đã gửi yêu cầu cho hướng dẫn viên này rồi", Toast.LENGTH_SHORT).show();
+                            }
+                            finish();
+                        }, 800);
                     })
+
                     .addOnFailureListener(e -> {
                         progressBar.setVisibility(android.view.View.GONE);
-                        Toast.makeText(this, "❌ Lỗi khi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Lỗi khi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
+
 
         } catch (Exception e) {
             progressBar.setVisibility(android.view.View.GONE);
-            Toast.makeText(this, "❌ Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
