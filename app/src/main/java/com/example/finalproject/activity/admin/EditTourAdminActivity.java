@@ -366,7 +366,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
             data.put("guideIds", selectedGuideIds);
             data.put("images", imageUrls);
             data.put("status", status);
-            data.put("updated_at", new Timestamp(new Date()));
+            data.put("updatedAt", new Timestamp(new Date()));
 
             db.collection("tours").document(tourId)
                     .update(data)
