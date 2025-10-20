@@ -90,6 +90,15 @@ public class EditTourAdminActivity extends AppCompatActivity {
         imageSlider = findViewById(R.id.imageSlider);
         progressBar = findViewById(R.id.progressBar);
         spStatus = findViewById(R.id.spStatus);
+
+        // ✅ Thêm vào cuối hàm mapViews():
+        etStartDate.setFocusable(false);
+        etStartDate.setClickable(false);
+        etStartDate.setLongClickable(false);
+
+        etEndDate.setFocusable(false);
+        etEndDate.setClickable(false);
+        etEndDate.setLongClickable(false);
     }
 
     private void setupStatusSpinner() {
@@ -106,8 +115,8 @@ public class EditTourAdminActivity extends AppCompatActivity {
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
         btnChooseImages.setOnClickListener(v -> openGallery());
-        etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
-        etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
+        //etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
+        //etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
         btnSave.setOnClickListener(v -> saveChanges());
     }
 

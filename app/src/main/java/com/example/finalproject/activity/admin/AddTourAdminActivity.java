@@ -301,6 +301,13 @@ public class AddTourAdminActivity extends AppCompatActivity {
         // So sánh ngày đã chuẩn hóa
         Date normalizedStart = normalizeDate(startDate);
         Date normalizedEnd = normalizeDate(endDate);
+        Date today = normalizeDate(new Date());
+
+// 🔹 Thêm validate: ngày bắt đầu phải là hôm nay hoặc sau hôm nay
+        if (normalizedStart.before(today)) {
+            Toast.makeText(this, "⚠️ Ngày bắt đầu phải là hôm nay hoặc sau hôm nay!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (normalizedEnd.before(normalizedStart)) {
             Toast.makeText(this, "⚠️ Ngày kết thúc phải sau hoặc bằng ngày bắt đầu!", Toast.LENGTH_SHORT).show();

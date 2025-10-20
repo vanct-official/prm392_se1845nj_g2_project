@@ -35,7 +35,6 @@ public class AdminToursFragment extends Fragment {
     private TextView tvAddTour;
     private ProgressBar progressBar;
     private SearchView searchView;
-
     private FirebaseFirestore db;
     private TourAdminAdapter adapter;
     private final List<DocumentSnapshot> tours = new ArrayList<>();
