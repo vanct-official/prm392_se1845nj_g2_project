@@ -38,13 +38,11 @@ import java.util.List;
 import java.util.Map;
 
 public class AdminDashboardFragment extends Fragment {
-
     // Các thành phần hiển thị
     private TextView tvTotalUsers, tvTotalBookings, tvTotalTours, tvTotalGuides, tvTotalReviews, tvTotalPromotions;
     private TextView tvTotalRevenue, tvTopTours;
     private BarChart barChart;
     private ProgressBar progressBar;
-
     private FirebaseFirestore db;
 
     @Nullable
@@ -101,26 +99,38 @@ public class AdminDashboardFragment extends Fragment {
     // 📦 Thống kê số lượng các đối tượng cơ bản
     // ===========================================================
     private void loadBasicStats() {
+        // Tổng user
         db.collection("users").get().addOnSuccessListener(snap ->
                 tvTotalUsers.setText(String.valueOf(snap.size()))
         );
 
+        // Tổng booking
         db.collection("bookings").get().addOnSuccessListener(snap ->
                 tvTotalBookings.setText(String.valueOf(snap.size()))
         );
 
+        // Tổng tour
         db.collection("tours").get().addOnSuccessListener(snap ->
                 tvTotalTours.setText(String.valueOf(snap.size()))
         );
 
-        db.collection("guides").get().addOnSuccessListener(snap ->
-                tvTotalGuides.setText(String.valueOf(snap.size()))
-        );
+        // ✅ Tổng hướng dẫn viên (lấy từ users có role = "guide")
+        db.collection("users")
+                .whereEqualTo("role", "guide")
+                .get()
+                .addOnSuccessListener(snap ->
+                        tvTotalGuides.setText(String.valueOf(snap.size()))
+                )
+                .addOnFailureListener(e ->
+                        Log.e("GUIDE_COUNT", "Lỗi khi lấy hướng dẫn viên: " + e.getMessage())
+                );
 
+        // Tổng review
         db.collection("reviews").get().addOnSuccessListener(snap ->
                 tvTotalReviews.setText(String.valueOf(snap.size()))
         );
 
+        // Tổng promotion
         db.collection("promotions").get().addOnSuccessListener(snap ->
                 tvTotalPromotions.setText(String.valueOf(snap.size()))
         );
