@@ -22,6 +22,7 @@ public class User {
     private String imageUrl;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private String avatarUrl;
 
     public User() {
     }
@@ -193,4 +194,7 @@ public class User {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getAvatarUrl() { return avatarUrl; }     // ✅ thêm getter
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; } //
 }
