@@ -33,17 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminPromotionsFragment extends Fragment {
-
     private RecyclerView recyclerPromotions;
     private EditText etSearch;
     private ProgressBar loadingProgress;
     private TextView tvAddPromotion;
-
     private FirebaseFirestore db;
     private PromotionAdminAdapter adapter;
     private List<DocumentSnapshot> allPromotions = new ArrayList<>();
     private List<DocumentSnapshot> promotions = new ArrayList<>();
-
 
     public AdminPromotionsFragment() {}
 

@@ -37,6 +37,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import android.text.Editable;
+import android.text.TextWatcher;
+import java.text.NumberFormat;
 
 
 public class AddTourAdminActivity extends AppCompatActivity {
@@ -72,6 +75,37 @@ public class AddTourAdminActivity extends AppCompatActivity {
         etDuration = findViewById(R.id.etAvailableSeats);
         etItinerary = findViewById(R.id.etDepositPercent);
         etPrice = findViewById(R.id.etPrice);
+        // ====== Format hiển thị tiền tệ khi nhập ======
+        etPrice.addTextChangedListener(new TextWatcher() {
+            private boolean isFormatting = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isFormatting) return;
+                isFormatting = true;
+
+                String input = s.toString().replace(".", "").replace(",", "");
+                if (!input.isEmpty()) {
+                    try {
+                        long value = Long.parseLong(input);
+                        String formatted = NumberFormat.getNumberInstance(Locale.US).format(value);
+                        etPrice.setText(formatted.replace(",", "."));
+                        etPrice.setSelection(etPrice.getText().length());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                isFormatting = false;
+            }
+        });
+
         etStartDate = findViewById(R.id.etStartDate);
         etEndDate = findViewById(R.id.etEndDate);
         btnChooseImages = findViewById(R.id.btnChooseImages);
@@ -276,7 +310,8 @@ public class AddTourAdminActivity extends AppCompatActivity {
         Date startDate, endDate;
 
         try {
-            price = Double.parseDouble(priceStr);
+//            price = Double.parseDouble(priceStr);
+            price = Double.parseDouble(priceStr.replace(".", "").replace(",", ""));
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
 

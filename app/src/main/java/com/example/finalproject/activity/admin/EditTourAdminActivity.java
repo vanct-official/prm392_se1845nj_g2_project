@@ -85,6 +85,35 @@ public class EditTourAdminActivity extends AppCompatActivity {
         etStartDate = findViewById(R.id.etStartDate);
         etEndDate = findViewById(R.id.etEndDate);
         etPrice = findViewById(R.id.etPrice);
+        // Format giá khi người dùng nhập
+        etPrice.addTextChangedListener(new android.text.TextWatcher() {
+            private String current = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                if (!s.toString().equals(current)) {
+                    etPrice.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[^\\d]", "");
+                    if (!cleanString.isEmpty()) {
+                        double parsed = Double.parseDouble(cleanString);
+                        java.text.NumberFormat formatter = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+                        String formatted = formatter.format(parsed);
+                        current = formatted;
+                        etPrice.setText(formatted);
+                        etPrice.setSelection(formatted.length());
+                    }
+
+                    etPrice.addTextChangedListener(this);
+                }
+            }
+        });
         tvGuideNames = findViewById(R.id.tvGuideNames);
         btnChooseImages = findViewById(R.id.btnChooseImages);
         btnSave = findViewById(R.id.btnSave);
