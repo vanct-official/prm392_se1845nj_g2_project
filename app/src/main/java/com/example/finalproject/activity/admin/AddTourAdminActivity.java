@@ -415,7 +415,7 @@ public class AddTourAdminActivity extends AppCompatActivity {
                 tour.put("guideIds", selectedGuideIds);
                 tour.put("images", imageUrls);
                 tour.put("status", status);
-                tour.put("createdAt", new Timestamp(new Date()));
+//                tour.put("createdAt", new Timestamp(new Date()));
 
                 // Lưu vào Firestore
                 db.collection("tours")
