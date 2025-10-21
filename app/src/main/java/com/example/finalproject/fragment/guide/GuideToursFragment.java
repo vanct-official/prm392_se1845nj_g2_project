@@ -51,8 +51,7 @@ public class GuideToursFragment extends Fragment {
 
         Query q = FirebaseFirestore.getInstance()
                 .collection("tours")
-                .whereArrayContains("guideIds", uid)
-                .orderBy("createdAt", Query.Direction.DESCENDING);
+                .whereArrayContains("guideIds", uid);
 
         FirestoreRecyclerOptions<Tour> options = new FirestoreRecyclerOptions.Builder<Tour>()
                 .setQuery(q, snapshot -> {
