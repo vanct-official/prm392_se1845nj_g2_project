@@ -182,32 +182,77 @@ public class AdminPromotionsFragment extends Fragment {
     // ===========================================================
     // ❌ XÓA KHUYẾN MÃI
     // ===========================================================
+//    private void confirmDelete(DocumentSnapshot doc) {
+//        String name = doc.getString("name");
+//
+//        new AlertDialog.Builder(getContext())
+//                .setTitle("Xóa khuyến mãi")
+//                .setMessage("Bạn có chắc muốn xóa \"" + name + "\" không?")
+//                .setPositiveButton("Xóa", (dialog, which) -> {
+//                    db.collection("promotions").document(doc.getId())
+//                            .delete()
+//                            .addOnSuccessListener(aVoid -> {
+//                                // ✅ Xóa đúng cách dựa vào id
+//                                String deletedId = doc.getId();
+//                                promotions.removeIf(p -> p.getId().equals(deletedId));
+//                                allPromotions.removeIf(p -> p.getId().equals(deletedId));
+//
+//                                adapter.updateData(promotions);
+//
+//                                Toast.makeText(getContext(), "Đã xóa!", Toast.LENGTH_SHORT).show();
+//                            })
+//                            .addOnFailureListener(e ->
+//                                    Toast.makeText(getContext(), "Lỗi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+//                })
+//                .setNegativeButton("Hủy", null)
+//                .show();
+//    }
+
+    // ===========================================================
+    // ❌ XÓA KHUYẾN MÃI — CÓ KIỂM TRA RÀNG BUỘC VỚI BOOKINGS
+    // ===========================================================
     private void confirmDelete(DocumentSnapshot doc) {
         String name = doc.getString("name");
+        String promoId = doc.getId();
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Xóa khuyến mãi")
-                .setMessage("Bạn có chắc muốn xóa \"" + name + "\" không?")
-                .setPositiveButton("Xóa", (dialog, which) -> {
-                    db.collection("promotions").document(doc.getId())
-                            .delete()
-                            .addOnSuccessListener(aVoid -> {
-                                // ✅ Xóa đúng cách dựa vào id
-                                String deletedId = doc.getId();
-                                promotions.removeIf(p -> p.getId().equals(deletedId));
-                                allPromotions.removeIf(p -> p.getId().equals(deletedId));
+        // Bước 1: kiểm tra xem có booking nào đang dùng promotionId này không
+        db.collection("bookings")
+                .whereEqualTo("promotionId", promoId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        // Có ít nhất 1 booking đang dùng -> không cho xóa
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("Không thể xóa")
+                                .setMessage("Khuyến mãi \"" + name + "\" đang được áp dụng. Không thể xóa")
+                                .setPositiveButton("OK", null)
+                                .show();
+                    } else {
+                        // Không có booking nào dùng -> cho phép xóa
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("Xóa khuyến mãi")
+                                .setMessage("Bạn có chắc muốn xóa \"" + name + "\" không?")
+                                .setPositiveButton("Xóa", (dialog, which) -> {
+                                    db.collection("promotions").document(promoId)
+                                            .delete()
+                                            .addOnSuccessListener(aVoid -> {
+                                                // ✅ Xóa thành công
+                                                promotions.removeIf(p -> p.getId().equals(promoId));
+                                                allPromotions.removeIf(p -> p.getId().equals(promoId));
+                                                adapter.updateData(promotions);
 
-                                adapter.updateData(promotions);
-
-                                Toast.makeText(getContext(), "Đã xóa!", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(getContext(), "Lỗi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                                Toast.makeText(getContext(), "Đã xóa!", Toast.LENGTH_SHORT).show();
+                                            })
+                                            .addOnFailureListener(e ->
+                                                    Toast.makeText(getContext(), "Lỗi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                })
+                                .setNegativeButton("Hủy", null)
+                                .show();
+                    }
                 })
-                .setNegativeButton("Hủy", null)
-                .show();
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Lỗi kiểm tra bookings: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-
 
     // ===========================================================
     // ⏪ NHẬN KẾT QUẢ SAU KHI THÊM MỚI

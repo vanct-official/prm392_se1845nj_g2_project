@@ -15,8 +15,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PromotionAdminAdapter extends RecyclerView.Adapter<PromotionAdminAdapter.PromoViewHolder> {
 
@@ -56,12 +58,16 @@ public class PromotionAdminAdapter extends RecyclerView.Adapter<PromotionAdminAd
         boolean active = Boolean.TRUE.equals(doc.getBoolean("isActive"));
         Long discountObj = doc.getLong("discountPercent");
         Double minValueObj = doc.getDouble("minimumValue");
-        String endDateStr = doc.getString("endDate"); // ví dụ: "2025-10-20"
+        String endDateStr = doc.getString("endDate");
 
         int discount = (discountObj != null) ? discountObj.intValue() : 0;
         double minValue = (minValueObj != null) ? minValueObj : 0;
 
-        String condition = "Giảm " + discount + "% • Tối thiểu " + (int) minValue + "đ";
+        // ✅ Định dạng giá trị tiền
+        String formattedMinValue = formatCurrency(minValue);
+
+        // ✅ Hiển thị điều kiện với tiền tệ được format
+        String condition = "Giảm " + discount + "% • Tối thiểu " + formattedMinValue;
 
         // --- Kiểm tra hết hạn ---
         boolean expired = false;
@@ -82,16 +88,16 @@ public class PromotionAdminAdapter extends RecyclerView.Adapter<PromotionAdminAd
         String status;
         if (expired) {
             status = "Đã hết hạn";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#FFF3CD")); // vàng nhạt
-            holder.tvStatus.setTextColor(Color.parseColor("#B45309")); // nâu vàng
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#FFF3CD"));
+            holder.tvStatus.setTextColor(Color.parseColor("#B45309"));
         } else if (!active) {
             status = "Tạm ngưng";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#FEE2E2")); // đỏ nhạt
-            holder.tvStatus.setTextColor(Color.parseColor("#DC2626")); // đỏ
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#FEE2E2"));
+            holder.tvStatus.setTextColor(Color.parseColor("#DC2626"));
         } else {
             status = "Hoạt động";
             holder.cardView.setCardBackgroundColor(Color.WHITE);
-            holder.tvStatus.setTextColor(Color.parseColor("#16A34A")); // xanh lá
+            holder.tvStatus.setTextColor(Color.parseColor("#16A34A"));
         }
 
         holder.tvCode.setText(name != null ? name : id);
@@ -99,12 +105,10 @@ public class PromotionAdminAdapter extends RecyclerView.Adapter<PromotionAdminAd
         holder.tvCondition.setText(condition);
         holder.tvStatus.setText(status);
 
-        // Gán sự kiện
         holder.btnView.setOnClickListener(v -> listener.onView(doc));
         holder.btnEdit.setOnClickListener(v -> listener.onEdit(doc));
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(doc));
     }
-
 
     @Override
     public int getItemCount() {
@@ -129,10 +133,15 @@ public class PromotionAdminAdapter extends RecyclerView.Adapter<PromotionAdminAd
         }
     }
 
-    // Cập nhật dữ liệu mới
     public void updateData(List<DocumentSnapshot> newList) {
         this.promotions = new ArrayList<>(newList);
         android.util.Log.d("PROMO_DEBUG", "Adapter cập nhật " + promotions.size() + " item");
         notifyDataSetChanged();
+    }
+
+    // ✅ Hàm định dạng tiền tệ Việt Nam
+    private String formatCurrency(double value) {
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+        return formatter.format(value) + " đ";
     }
 }

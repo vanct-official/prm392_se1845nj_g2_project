@@ -11,6 +11,7 @@ import com.example.finalproject.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
     }
 
     // ===========================================================
-    // HIỂN THỊ DATE PICKER
+    // HIỂN THỊ DATE PICKER (nếu cần dùng trong tương lai)
     // ===========================================================
     private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();
@@ -74,8 +75,7 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
         String minValueStr = etMinOrderValue.getText().toString().trim();
         boolean isActive = switchActive.isChecked();
 
-        if (code.isEmpty() || desc.isEmpty() || discountStr.isEmpty() || minValueStr.isEmpty()
-                ) {
+        if (code.isEmpty() || desc.isEmpty() || discountStr.isEmpty() || minValueStr.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -93,14 +93,15 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
             return;
         }
 
-        // Kiểm tra trùng tên khuyến mãi
-        db.collection("promotions").document(code)
+        // Kiểm tra trùng mã khuyến mãi (field "name")
+        db.collection("promotions")
+                .whereEqualTo("name", code)
                 .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        Toast.makeText(this, "Tên mã khuyến mãi đã tồn tại!", Toast.LENGTH_SHORT).show();
+                .addOnSuccessListener((QuerySnapshot snapshot) -> {
+                    if (!snapshot.isEmpty()) {
+                        Toast.makeText(this, "Mã khuyến mãi này đã tồn tại!", Toast.LENGTH_SHORT).show();
                     } else {
-                        // Thêm khuyến mãi
+                        // Thêm khuyến mãi mới với ID tự động
                         Map<String, Object> promo = new HashMap<>();
                         promo.put("name", code);
                         promo.put("description", desc);
@@ -108,18 +109,18 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
                         promo.put("minimumValue", minValue);
                         promo.put("isActive", isActive);
 
-                        db.collection("promotions").document(code)
-                                .set(promo)
-                                .addOnSuccessListener(aVoid -> {
+                        db.collection("promotions")
+                                .add(promo)
+                                .addOnSuccessListener(docRef -> {
                                     Toast.makeText(this, "Thêm khuyến mãi thành công!", Toast.LENGTH_SHORT).show();
                                     setResult(RESULT_OK);
-                                    finish(); // Quay lại danh sách
+                                    finish();
                                 })
                                 .addOnFailureListener(e ->
                                         Toast.makeText(this, "Lỗi khi thêm: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                     }
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Lỗi khi kiểm tra: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this, "Lỗi khi kiểm tra mã: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }
