@@ -2,6 +2,8 @@ package com.example.finalproject.activity.admin;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -13,6 +15,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -25,6 +28,7 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
     private MaterialButton btnCancel, btnCreate;
 
     private FirebaseFirestore db;
+    private boolean isFormatting = false; // tránh vòng lặp TextWatcher
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,27 +46,40 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
+        // ====== Format hiển thị giá trị tiền có dấu chấm ======
+        etMinOrderValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isFormatting) return;
+                isFormatting = true;
+
+                String input = s.toString().replace(".", "").replace(",", "");
+                if (!input.isEmpty()) {
+                    try {
+                        long value = Long.parseLong(input);
+                        String formatted = NumberFormat.getNumberInstance(Locale.US).format(value);
+                        etMinOrderValue.setText(formatted.replace(",", "."));
+                        etMinOrderValue.setSelection(etMinOrderValue.getText().length());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                isFormatting = false;
+            }
+        });
+
         // Hủy
         btnCancel.setOnClickListener(v -> finish());
 
         // Tạo khuyến mãi
         btnCreate.setOnClickListener(v -> validateAndCreate());
-    }
-
-    // ===========================================================
-    // HIỂN THỊ DATE PICKER (nếu cần dùng trong tương lai)
-    // ===========================================================
-    private void showDatePicker(EditText target) {
-        Calendar calendar = Calendar.getInstance();
-        DatePickerDialog dialog = new DatePickerDialog(this,
-                (view, year, month, dayOfMonth) -> {
-                    String date = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, month + 1, year);
-                    target.setText(date);
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
-        dialog.show();
     }
 
     // ===========================================================
@@ -72,7 +89,7 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
         String code = etPromotionCode.getText().toString().trim();
         String desc = etDescription.getText().toString().trim();
         String discountStr = etDiscountPercent.getText().toString().trim();
-        String minValueStr = etMinOrderValue.getText().toString().trim();
+        String minValueStr = etMinOrderValue.getText().toString().trim().replace(".", "").replace(",", "");
         boolean isActive = switchActive.isChecked();
 
         if (code.isEmpty() || desc.isEmpty() || discountStr.isEmpty() || minValueStr.isEmpty()) {
@@ -93,7 +110,7 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
             return;
         }
 
-        // Kiểm tra trùng mã khuyến mãi (field "name")
+        // Kiểm tra trùng mã khuyến mãi
         db.collection("promotions")
                 .whereEqualTo("name", code)
                 .get()
@@ -101,7 +118,6 @@ public class AddPromotionAdminActivity extends AppCompatActivity {
                     if (!snapshot.isEmpty()) {
                         Toast.makeText(this, "Mã khuyến mãi này đã tồn tại!", Toast.LENGTH_SHORT).show();
                     } else {
-                        // Thêm khuyến mãi mới với ID tự động
                         Map<String, Object> promo = new HashMap<>();
                         promo.put("name", code);
                         promo.put("description", desc);
