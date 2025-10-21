@@ -79,15 +79,29 @@ public class TourDetailAdminActivity extends AppCompatActivity {
 
         // Trạng thái
         String status = doc.getString("status");
-        if (status != null) {
-            switch (status) {
-                case "completed": tvStatus.setText("✅ Hoàn thành"); break;
-                case "in_progress": tvStatus.setText("🚩 Đang diễn ra"); break;
-                case "upcoming": tvStatus.setText("🕓 Chưa bắt đầu"); break;
-                case "cancelled": tvStatus.setText("❌ Hủy"); break;
-                default: tvStatus.setText("Không xác định"); break;
+        // ======= ✅ Tính trạng thái dựa trên ngày thực tế =======
+        Object startObj = doc.get("start_date");
+        Object endObj = doc.get("end_date");
+
+        Date startDate = null, endDate = null;
+        if (startObj instanceof Timestamp) startDate = ((Timestamp) startObj).toDate();
+        if (endObj instanceof Timestamp) endDate = ((Timestamp) endObj).toDate();
+
+        if (startDate != null && endDate != null) {
+            Date today = new Date();
+
+            if (today.before(startDate)) {
+                tvStatus.setText("🕓 Chưa bắt đầu");
+            } else if (!today.before(startDate) && !today.after(endDate)) {
+                tvStatus.setText("🚩 Đang diễn ra");
+            } else if (today.after(endDate)) {
+                tvStatus.setText("✅ Hoàn thành");
+            } else {
+                tvStatus.setText("⚪ Không xác định");
             }
-        } else tvStatus.setText("Không xác định");
+        } else {
+            tvStatus.setText("⚪ Không có dữ liệu ngày");
+        }
 
         // Giá
         Double price = doc.getDouble("price");
@@ -135,7 +149,7 @@ public class TourDetailAdminActivity extends AppCompatActivity {
                             }
                         }
 
-                        // Xóa trùng lặp nếu có
+                        // ✅ Xóa trùng lặp nếu có
                         List<String> uniqueNames = new ArrayList<>(new LinkedHashSet<>(guideNames));
 
                         if (!uniqueNames.isEmpty()) {

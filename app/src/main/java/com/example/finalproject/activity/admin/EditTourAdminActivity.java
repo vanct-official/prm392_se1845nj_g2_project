@@ -5,34 +5,35 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
+import android.os.Handler;
+import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
-import com.google.android.material.textfield.TextInputEditText;
+import com.example.finalproject.utils.CloudinaryManager;
+import com.example.finalproject.utils.RealPathUtil;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import com.example.finalproject.utils.CloudinaryManager;
+import java.io.File;
+import java.io.InputStream;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 public class EditTourAdminActivity extends AppCompatActivity {
 
@@ -92,20 +93,9 @@ public class EditTourAdminActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         spStatus = findViewById(R.id.spStatus);
 
-        // ko cho edit tiêu đề tour
-        etTitle.setFocusable(false);
-        etTitle.setClickable(false);
-        etTitle.setLongClickable(false);
         etTitle.setEnabled(false);
-
-        // ko cho edit start và end date
-        etStartDate.setFocusable(false);
-        etStartDate.setClickable(false);
-        etStartDate.setLongClickable(false);
-
-        etEndDate.setFocusable(false);
-        etEndDate.setClickable(false);
-        etEndDate.setLongClickable(false);
+        etStartDate.setEnabled(false);
+        etEndDate.setEnabled(false);
     }
 
     private void setupStatusSpinner() {
@@ -116,30 +106,24 @@ public class EditTourAdminActivity extends AppCompatActivity {
         );
         spStatus.setAdapter(statusAdapter);
         spStatus.setEnabled(false);
-        spStatus.setClickable(false);
     }
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
         btnChooseImages.setOnClickListener(v -> openGallery());
-        //etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
-        //etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
-        btnSave.setOnClickListener(v -> saveChanges());
-    }
-
-    private void showDatePicker(TextInputEditText target) {
-        Calendar c = Calendar.getInstance();
-        new DatePickerDialog(this, (view, year, month, day) -> {
-            String date = String.format(Locale.getDefault(), "%02d/%02d/%04d", day, month + 1, year);
-            target.setText(date);
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        btnSave.setOnClickListener(v -> {
+            if (newImageUris.isEmpty()) {
+                saveChangesToFirestore();
+            } else {
+                uploadImagesToCloudinary(this::saveChangesToFirestore);
+            }
+        });
     }
 
     private void openGallery() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Chọn ảnh"), PICK_IMAGES_REQUEST);
     }
 
@@ -155,7 +139,7 @@ public class EditTourAdminActivity extends AppCompatActivity {
             } else if (data.getData() != null) {
                 newImageUris.add(data.getData());
             }
-            Toast.makeText(this, "Đã chọn " + newImageUris.size() + " ảnh", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Đã chọn " + newImageUris.size() + " ảnh mới", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -179,14 +163,13 @@ public class EditTourAdminActivity extends AppCompatActivity {
 
                     Double price = doc.getDouble("price");
                     if (price != null) {
-                        java.text.NumberFormat nf = java.text.NumberFormat.getInstance(new Locale("vi", "VN"));
+                        NumberFormat nf = NumberFormat.getInstance(new Locale("vi", "VN"));
                         etPrice.setText(nf.format(price));
                     }
 
                     etStartDate.setText(formatDate(doc.get("start_date")));
                     etEndDate.setText(formatDate(doc.get("end_date")));
 
-                    // Ảnh
                     imageUrls = (List<String>) doc.get("images");
                     List<SlideModel> slides = new ArrayList<>();
                     if (imageUrls != null && !imageUrls.isEmpty()) {
@@ -199,7 +182,6 @@ public class EditTourAdminActivity extends AppCompatActivity {
 
                     updateStatusBasedOnDates();
 
-                    // ====== Hướng dẫn viên ======
                     List<String> gids = (List<String>) doc.get("guideIds");
                     selectedGuideIds.clear();
                     if (gids != null) selectedGuideIds.addAll(gids);
@@ -212,12 +194,8 @@ public class EditTourAdminActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * Lấy danh sách hướng dẫn viên từ bảng USERS (role = guide)
-     */
     private void loadGuidesFromUsers() {
-        db.collection("users")
-                .whereEqualTo("role", "guide")
+        db.collection("users").whereEqualTo("role", "guide")
                 .get()
                 .addOnSuccessListener(query -> {
                     guideIds.clear();
@@ -226,37 +204,26 @@ public class EditTourAdminActivity extends AppCompatActivity {
 
                     for (DocumentSnapshot d : query) {
                         String id = d.getId();
-                        String firstName = d.getString("firstname");
-                        String lastName = d.getString("lastname");
-                        String fullName = (firstName != null ? firstName : "") + " " +
-                                (lastName != null ? lastName : "");
-                        fullName = fullName.trim().isEmpty() ? id : fullName.trim();
+                        String name = (d.getString("firstname") + " " + d.getString("lastname")).trim();
+                        if (name.isEmpty()) name = id;
 
                         guideIds.add(id);
-                        guideNames.add(fullName);
-
-                        if (selectedGuideIds.contains(id)) {
-                            selectedGuideNames.add(fullName);
-                        }
+                        guideNames.add(name);
+                        if (selectedGuideIds.contains(id))
+                            selectedGuideNames.add(name);
                     }
 
-                    // Hiển thị danh sách đã chọn
-                    if (selectedGuideNames.isEmpty()) {
-                        tvGuideNames.setText("(Chưa chọn hướng dẫn viên)");
-                    } else {
-                        tvGuideNames.setText(String.join(", ", selectedGuideNames));
-                    }
+                    tvGuideNames.setText(selectedGuideNames.isEmpty()
+                            ? "(Chưa chọn hướng dẫn viên)"
+                            : String.join(", ", selectedGuideNames));
 
-                    // Cho phép chọn lại
                     tvGuideNames.setOnClickListener(v -> showGuideSelectDialog());
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Lỗi tải hướng dẫn viên: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                });
     }
 
     private void showGuideSelectDialog() {
         if (guideNames.isEmpty()) {
-            Toast.makeText(this, "Danh sách hướng dẫn viên trống!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Chưa có hướng dẫn viên!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -281,14 +248,123 @@ public class EditTourAdminActivity extends AppCompatActivity {
                     }
                 })
                 .setPositiveButton("Xong", (dialog, which) -> {
-                    if (selectedGuideNames.isEmpty()) {
-                        tvGuideNames.setText("(Chưa chọn hướng dẫn viên)");
-                    } else {
-                        tvGuideNames.setText(String.join(", ", selectedGuideNames));
-                    }
+                    tvGuideNames.setText(selectedGuideNames.isEmpty()
+                            ? "(Chưa chọn hướng dẫn viên)"
+                            : String.join(", ", selectedGuideNames));
                 })
-                .setNegativeButton("Hủy", null)
                 .show();
+    }
+
+    private void uploadImagesToCloudinary(Runnable onComplete) {
+        progressBar.setVisibility(android.view.View.VISIBLE);
+        new Thread(() -> {
+            try {
+                Cloudinary cloudinary = CloudinaryManager.getInstance();
+
+                // 🔹 Xóa ảnh cũ trên Cloudinary trước
+                if (imageUrls != null && !imageUrls.isEmpty()) {
+                    for (String oldUrl : imageUrls) {
+                        try {
+                            // Tách public_id từ link Cloudinary
+                            String publicId = oldUrl.substring(oldUrl.lastIndexOf("/") + 1, oldUrl.lastIndexOf("."));
+                            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+                        } catch (Exception ignored) {}
+                    }
+                }
+
+                // 🔹 Upload ảnh mới
+                List<String> uploadedUrls = new ArrayList<>();
+                for (Uri uri : newImageUris) {
+                    try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+                        Map upload = cloudinary.uploader().upload(inputStream, ObjectUtils.emptyMap());
+                        uploadedUrls.add(upload.get("secure_url").toString());
+                    }
+                }
+
+                runOnUiThread(() -> {
+                    imageUrls.clear(); // Xóa danh sách cũ
+                    imageUrls.addAll(uploadedUrls); // Thêm link ảnh mới
+                    onComplete.run(); // Tiếp tục lưu Firestore
+                });
+
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(android.view.View.GONE);
+                    Toast.makeText(this, "Lỗi upload Cloudinary: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+    }
+
+    private void saveChangesToFirestore() {
+        try {
+            String title = etTitle.getText().toString().trim();
+            String desc = etDescription.getText().toString().trim();
+            String dest = etDestination.getText().toString().trim();
+            String duration = etDuration.getText().toString().trim();
+            String itinerary = etItinerary.getText().toString().trim();
+            String startStr = etStartDate.getText().toString().trim();
+            String endStr = etEndDate.getText().toString().trim();
+            String priceStr = etPrice.getText().toString().trim().replace(".", "");
+
+            if (title.isEmpty() || desc.isEmpty() || dest.isEmpty() || priceStr.isEmpty()) {
+                Toast.makeText(this, "Điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            double price = Double.parseDouble(priceStr);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Date start = sdf.parse(startStr);
+            Date end = sdf.parse(endStr);
+            Date now = new Date();
+
+            String status;
+            if (now.before(start)) status = "upcoming";
+            else if (!now.before(start) && !now.after(end)) status = "in_progress";
+            else status = "completed";
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", title);
+            data.put("description", desc);
+            data.put("destination", dest);
+            data.put("duration", duration);
+            data.put("itinerary", itinerary);
+            data.put("price", price);
+            data.put("start_date", new Timestamp(start));
+            data.put("end_date", new Timestamp(end));
+            data.put("images", imageUrls);
+            data.put("status", status);
+            data.put("guideIds", selectedGuideIds);
+            data.put("updatedAt", new Timestamp(new Date()));
+
+            db.collection("tours").document(tourId)
+                    .update(data)
+                    .addOnSuccessListener(aVoid -> {
+                        progressBar.setVisibility(android.view.View.GONE);
+                        Toast.makeText(this, "✅ Cập nhật tour thành công!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        progressBar.setVisibility(android.view.View.GONE);
+                        Toast.makeText(this, "❌ Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+
+        } catch (Exception e) {
+            progressBar.setVisibility(android.view.View.GONE);
+            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String formatDate(Object obj) {
+        if (obj == null) return "";
+        try {
+            if (obj instanceof Timestamp) {
+                Date d = ((Timestamp) obj).toDate();
+                return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(d);
+            }
+            if (obj instanceof String) return (String) obj;
+        } catch (Exception ignored) {}
+        return "";
     }
 
     private void updateStatusBasedOnDates() {
@@ -320,134 +396,6 @@ public class EditTourAdminActivity extends AppCompatActivity {
         }
     }
 
-    private void saveChanges() {
-        try {
-            progressBar.setVisibility(android.view.View.VISIBLE);
-
-            String title = etTitle.getText().toString().trim();
-            String desc = etDescription.getText().toString().trim();
-            String dest = etDestination.getText().toString().trim();
-            String duration = etDuration.getText().toString().trim();
-            String itinerary = etItinerary.getText().toString().trim();
-            String startStr = etStartDate.getText().toString().trim();
-            String endStr = etEndDate.getText().toString().trim();
-            String priceStr = etPrice.getText().toString().trim().replace(".", "");
-
-            if (title.isEmpty() || desc.isEmpty() || dest.isEmpty() || duration.isEmpty()
-                    || itinerary.isEmpty() || startStr.isEmpty() || endStr.isEmpty() || priceStr.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(android.view.View.GONE);
-                return;
-            }
-
-            // Kiểm tra bắt buộc chọn ít nhất 1 hướng dẫn viên
-            if (selectedGuideIds.isEmpty()) {
-                Toast.makeText(this, "Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(android.view.View.GONE);
-                return;
-            }
-
-            double price = Double.parseDouble(priceStr);
-            if (price <= 0) {
-                Toast.makeText(this, "Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(android.view.View.GONE);
-                return;
-            }
-
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            Date startDate = sdf.parse(startStr);
-            Date endDate = sdf.parse(endStr);
-
-            if (endDate.before(startDate)) {
-                Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu!", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(android.view.View.GONE);
-                return;
-            }
-
-            String status;
-            Date now = new Date();
-            if (now.before(startDate)) status = "upcoming";
-            else if (!now.before(startDate) && !now.after(endDate)) status = "in_progress";
-            else status = "completed";
-
-            Map<String, Object> data = new HashMap<>();
-            data.put("title", title);
-            data.put("description", desc);
-            data.put("destination", dest);
-            data.put("duration", duration);
-            data.put("itinerary", itinerary);
-            data.put("price", price);
-            data.put("start_date", new Timestamp(startDate));
-            data.put("end_date", new Timestamp(endDate));
-            data.put("images", imageUrls);
-            data.put("status", status);
-            data.put("updatedAt", new Timestamp(new Date()));
-
-            db.collection("tours").document(tourId)
-                    .update(data)
-                    .addOnSuccessListener(aVoid -> {
-                        AtomicInteger newRequestsCount = new AtomicInteger(0); // Đếm số yêu cầu mới
-
-                        for (String guideId : selectedGuideIds) {
-                            db.collection("guide_requests")
-                                    .whereEqualTo("tourId", tourId)
-                                    .whereEqualTo("guideId", guideId)
-                                    .get()
-                                    .addOnSuccessListener(querySnapshot -> {
-                                        if (querySnapshot.isEmpty()) {
-                                            // 🔹 Chưa có yêu cầu nào, tạo mới
-                                            Map<String, Object> request = new HashMap<>();
-                                            request.put("tourId", tourId);
-                                            request.put("guideId", guideId);
-                                            request.put("status", "pending");
-                                            request.put("createdAt", new Timestamp(new Date()));
-
-                                            db.collection("guide_requests").add(request);
-                                            newRequestsCount.incrementAndGet(); // +1 khi có yêu cầu mới
-                                        }
-                                    });
-                        }
-
-                        progressBar.setVisibility(android.view.View.GONE);
-
-                        // Chờ một chút để các query trên hoàn tất
-                        new android.os.Handler().postDelayed(() -> {
-                            if (newRequestsCount.get() > 0) {
-                                Toast.makeText(this, "Đã gửi " + newRequestsCount.get() + " yêu cầu mới tới hướng dẫn viên!", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(this, "Đã gửi yêu cầu cho hướng dẫn viên này rồi", Toast.LENGTH_SHORT).show();
-                            }
-                            finish();
-                        }, 800);
-                    })
-
-                    .addOnFailureListener(e -> {
-                        progressBar.setVisibility(android.view.View.GONE);
-                        Toast.makeText(this, "Lỗi khi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-
-
-        } catch (Exception e) {
-            progressBar.setVisibility(android.view.View.GONE);
-            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String formatDate(Object obj) {
-        if (obj == null) return "";
-        try {
-            if (obj instanceof Timestamp) {
-                Date d = ((Timestamp) obj).toDate();
-                return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(d);
-            }
-            if (obj instanceof String) return (String) obj;
-        } catch (Exception ignored) {}
-        return "";
-    }
-
-    /**
-     * 📍 Chọn địa điểm từ bảng locations (Firestore)
-     */
     private void setupLocationSelector() {
         etDestination.setOnClickListener(v -> {
             FirebaseFirestore.getInstance().collection("locations")
@@ -464,19 +412,13 @@ public class EditTourAdminActivity extends AppCompatActivity {
                                 .setTitle("Chọn tỉnh/thành phố")
                                 .setItems(provinceNames.toArray(new String[0]), (dialog, index) -> {
                                     String provinceCode = provinceCodes.get(index);
-
-                                    // Khi chọn xong, load danh sách phường/xã trong tỉnh
                                     FirebaseFirestore.getInstance()
-                                            .collection("locations")
-                                            .document(provinceCode)
-                                            .collection("wards")
-                                            .get()
+                                            .collection("locations").document(provinceCode)
+                                            .collection("wards").get()
                                             .addOnSuccessListener(wardSnap -> {
                                                 List<String> wardNames = new ArrayList<>();
-                                                for (DocumentSnapshot w : wardSnap) {
+                                                for (DocumentSnapshot w : wardSnap)
                                                     wardNames.add(w.getString("name"));
-                                                }
-
                                                 new AlertDialog.Builder(this)
                                                         .setTitle("Chọn phường/xã")
                                                         .setItems(wardNames.toArray(new String[0]), (d2, idx) -> {
@@ -484,15 +426,9 @@ public class EditTourAdminActivity extends AppCompatActivity {
                                                             etDestination.setText(full);
                                                         })
                                                         .show();
-                                            })
-                                            .addOnFailureListener(e ->
-                                                    Toast.makeText(this, "Lỗi tải danh sách phường/xã: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                                })
-                                .show();
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Lỗi tải danh sách tỉnh/thành: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                            });
+                                }).show();
+                    });
         });
     }
-
 }

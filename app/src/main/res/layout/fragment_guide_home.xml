@@ -1,36 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp"
     tools:context=".fragment.guide.GuideHomeFragment">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="🏠 Đây là trang chủ của Hướng dẫn viên"
+        android:text="Đây là Home Fragment (cho Guide)"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#0F172A"
-        android:layout_marginBottom="24dp"/>
+        android:layout_gravity="center"
+        android:textStyle="bold" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnViewRequests"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📩 Xem lời mời tham gia tour"
-        android:textAllCaps="false"
-        android:textSize="16sp"
-        android:textColor="#FFFFFF"
-        app:backgroundTint="#0284C7"
-        android:paddingVertical="12dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="center"/>
-
-</LinearLayout>
+</FrameLayout>

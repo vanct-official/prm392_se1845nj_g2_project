@@ -246,7 +246,5 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         }
     }
 
-    public void updateList(List<Chat> newList) {
-        notifyDataSetChanged();
-    }
+    // Tìm kiếm chat theo tên người dùng
 }

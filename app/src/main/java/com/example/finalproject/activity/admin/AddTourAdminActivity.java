@@ -244,7 +244,7 @@ public class AddTourAdminActivity extends AppCompatActivity {
     }
 
     // ===========================================================
-    // Validate trước khi lưu
+    // ✅ Validate trước khi lưu
     // ===========================================================
     private void validateAndSaveTour() {
         String title = etTitle.getText().toString().trim();
@@ -258,17 +258,17 @@ public class AddTourAdminActivity extends AppCompatActivity {
 
         if (title.isEmpty() || desc.isEmpty() || dest.isEmpty() || duration.isEmpty() ||
                 itinerary.isEmpty() || priceStr.isEmpty() || startStr.isEmpty() || endStr.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (selectedGuideIds.isEmpty()) {
-            Toast.makeText(this, "Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Vui lòng chọn ít nhất một hướng dẫn viên!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (selectedImageUris.isEmpty()) {
-            Toast.makeText(this, "Vui lòng chọn ít nhất một ảnh tour!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Vui lòng chọn ít nhất một ảnh tour!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -288,13 +288,13 @@ public class AddTourAdminActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-            Toast.makeText(this, "Dữ liệu nhập không hợp lệ! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Dữ liệu nhập không hợp lệ! " + e.getMessage(), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Parse error", e);
             return;
         }
 
         if (price <= 0) {
-            Toast.makeText(this, "Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Giá tour phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -303,14 +303,20 @@ public class AddTourAdminActivity extends AppCompatActivity {
         Date normalizedEnd = normalizeDate(endDate);
         Date today = normalizeDate(new Date());
 
-// 🔹 Thêm validate: ngày bắt đầu phải là hôm nay hoặc sau hôm nay
-        if (normalizedStart.before(today)) {
-            Toast.makeText(this, "Ngày bắt đầu phải là hôm nay hoặc sau hôm nay!", Toast.LENGTH_SHORT).show();
+        // Kiểm tra startDate phải cách hiện tại ít nhất 4 ngày
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_MONTH, 4);
+        Date minStartDate = cal.getTime();
+
+        if (normalizedStart.before(minStartDate)) {
+            Toast.makeText(this, "⚠️ Ngày bắt đầu phải cách hiện tại ít nhất 4 ngày!", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Kiểm tra endDate > startDate
         if (normalizedEnd.before(normalizedStart)) {
-            Toast.makeText(this, "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "⚠️ Ngày kết thúc phải sau hoặc bằng ngày bắt đầu!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -322,7 +328,7 @@ public class AddTourAdminActivity extends AppCompatActivity {
                 .addOnSuccessListener(query -> {
                     if (!query.isEmpty()) {
                         progressBar.setVisibility(android.view.View.GONE);
-                        Toast.makeText(this, "Tiêu đề tour đã tồn tại!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "⚠️ Tiêu đề tour đã tồn tại!", Toast.LENGTH_SHORT).show();
                     } else {
                         saveTour(title, desc, dest, duration, itinerary, price, startDate, endDate);
                     }
@@ -371,7 +377,7 @@ public class AddTourAdminActivity extends AppCompatActivity {
                 tour.put("price", price);
                 tour.put("start_date", new Timestamp(startDate));
                 tour.put("end_date", new Timestamp(endDate));
-                tour.put("guideIds", new ArrayList<>()); // ban đầu để trống
+                tour.put("guideIds", selectedGuideIds);
                 tour.put("images", imageUrls);
                 tour.put("status", status);
                 tour.put("createdAt", new Timestamp(new Date()));
@@ -379,36 +385,22 @@ public class AddTourAdminActivity extends AppCompatActivity {
                 // Lưu vào Firestore
                 db.collection("tours")
                         .add(tour)
-                        .addOnSuccessListener(doc -> {
-                            String tourId = doc.getId();
-
-                            // 🔹 Tạo yêu cầu pending cho từng hướng dẫn viên được chọn
-                            for (String guideId : selectedGuideIds) {
-                                Map<String, Object> request = new HashMap<>();
-                                request.put("tourId", tourId);
-                                request.put("guideId", guideId);
-                                request.put("status", "pending");
-                                request.put("createdAt", new Timestamp(new Date()));
-
-                                db.collection("guide_requests").add(request);
-                            }
-
-                            runOnUiThread(() -> {
-                                progressBar.setVisibility(android.view.View.GONE);
-                                Toast.makeText(this, "Gửi yêu cầu tới hướng dẫn viên!", Toast.LENGTH_LONG).show();
-                                Log.d(TAG, "Tour saved successfully, guide requests created!");
-                                finish();
-                            });
-                        })
+                        .addOnSuccessListener(doc -> runOnUiThread(() -> {
+                            progressBar.setVisibility(android.view.View.GONE);
+                            Toast.makeText(this, "✅ Thêm tour thành công! Status: " + status, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "Tour saved successfully with status: " + status);
+                            finish();
+                        }))
                         .addOnFailureListener(e -> runOnUiThread(() -> {
                             progressBar.setVisibility(android.view.View.GONE);
-                            Toast.makeText(this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "❌ Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             Log.e(TAG, "Failed to save tour", e);
                         }));
+
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     progressBar.setVisibility(android.view.View.GONE);
-                    Toast.makeText(this, "Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "❌ Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Upload error", e);
                 });
             }

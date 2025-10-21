@@ -9,20 +9,16 @@ public class Chat {
     private List<String> members;
     private String lastMessage;
     private Timestamp lastMessageTime;
-    private String partnerRole;
-    private String partnerName;
 
     public Chat() {
     }
 
-    public Chat(String id, String type, List<String> members, String lastMessage, Timestamp lastMessageTime, String partnerRole, String partnerName) {
+    public Chat(String id, String type, List<String> members, String lastMessage, Timestamp lastMessageTime) {
         this.id = id;
         this.type = type;
         this.members = members;
         this.lastMessage = lastMessage;
         this.lastMessageTime = lastMessageTime;
-        this.partnerRole = partnerRole;
-        this.partnerName = partnerName;
     }
 
     // Getters & Setters
@@ -64,17 +60,5 @@ public class Chat {
 
     public void setLastMessageTime(Timestamp lastMessageTime) {
         this.lastMessageTime = lastMessageTime;
-    }
-    public String getPartnerRole() {
-        return partnerRole;
-    }
-    public void setPartnerRole(String partnerRole) {
-        this.partnerRole = partnerRole;
-    }
-    public String getPartnerName() {
-        return partnerName;
-    }
-    public void setPartnerName(String partnerName) {
-        this.partnerName = partnerName;
     }
 }
