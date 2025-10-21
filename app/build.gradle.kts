@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.coordinatorlayout)
+    implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
 
     // Firebase BOM (bom = Bill of Materials -> quản lý version đồng bộ)
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
