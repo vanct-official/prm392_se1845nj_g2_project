@@ -48,7 +48,6 @@ dependencies {
 
     // Firebase modules bạn cần
     implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore") // 🔥 thêm dòng này, vì bạn dùng Java
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.2.0")
@@ -67,7 +66,7 @@ dependencies {
 
     // Thư viện slide ảnh tự động
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
-    implementation("com.google.firebase:firebase-firestore:25.1.1")
+    implementation("com.google.firebase:firebase-firestore")
 
     // Firebase Storage
     implementation("com.google.firebase:firebase-storage:21.0.0")

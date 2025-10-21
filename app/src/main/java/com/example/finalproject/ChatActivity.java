@@ -17,12 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.finalproject.adapter.MessageAdapter;
-import com.example.finalproject.adapter.SelectedImagesAdapter;
+import com.example.finalproject.adapter.handlepicture.SelectedImagesAdapter;
 import com.example.finalproject.entity.Message;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import com.cloudinary.utils.ObjectUtils;
 import com.example.finalproject.utils.CloudinaryManager;

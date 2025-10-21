@@ -1,8 +1,7 @@
-package com.example.finalproject.adapter;
+package com.example.finalproject.adapter.handlepicture;
 
 import android.content.Context;
 
-import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.interfaces.ItemClickListener;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
