@@ -1,8 +1,7 @@
-package com.example.finalproject.adapter;
+package com.example.finalproject.adapter.handlepicture;
 
 import android.content.Context;
 import android.net.Uri;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
