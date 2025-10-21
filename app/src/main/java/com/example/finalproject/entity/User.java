@@ -5,6 +5,7 @@ import com.google.firebase.firestore.PropertyName;
 
 // Đây là entity về User, bao gồm các thuộc tính cơ bản của user
 
+// Đại LOL
 public class User {
     private String userid;
     private String username;
