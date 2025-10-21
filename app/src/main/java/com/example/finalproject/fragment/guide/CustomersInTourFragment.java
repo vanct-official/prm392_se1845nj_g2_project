@@ -18,9 +18,9 @@ import com.example.finalproject.entity.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,6 @@ public class CustomersInTourFragment extends Fragment {
     private TextView tvEmpty;
     private CustomersInTourAdapter adapter;
     private FirebaseFirestore db;
-    private String currentGuideId;
 
     @Nullable
     @Override
@@ -41,80 +40,72 @@ public class CustomersInTourFragment extends Fragment {
 
         rvCustomers = view.findViewById(R.id.rvCustomers);
         tvEmpty = view.findViewById(R.id.tvEmpty);
-
         rvCustomers.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
         db = FirebaseFirestore.getInstance();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() == null) {
-            showEmpty("Bạn chưa đăng nhập hoặc phiên làm việc đã hết hạn.");
-            Log.e("DEBUG_GUIDE", "❌ FirebaseAuth currentUser is NULL!");
-            return view;
+
+        // 🔹 Nhận tourId được truyền từ adapter
+        Bundle args = getArguments();
+        String selectedTourId = null;
+        if (args != null) {
+            selectedTourId = args.getString("tourId");
+            Log.d("DEBUG_TOUR", "📦 Nhận tourId: " + selectedTourId);
         }
-        currentGuideId = auth.getCurrentUser().getUid();
-        Log.d("DEBUG_GUIDE", "👉 Current logged UID: " + currentGuideId);
-        loadCustomersForGuide(currentGuideId);
+
+        if (selectedTourId != null) {
+            loadCustomersForTour(selectedTourId);
+        } else {
+            showEmpty("Không tìm thấy tour được chọn.");
+        }
+
         return view;
     }
 
-    private void loadCustomersForGuide(String guideId) {
-        CollectionReference toursRef = db.collection("tours");
+    // 🔹 Load khách hàng chỉ cho tour cụ thể
+    private void loadCustomersForTour(String tourId) {
         CollectionReference bookingsRef = db.collection("bookings");
         CollectionReference usersRef = db.collection("users");
 
-        // 1️⃣ Tìm các tour mà hướng dẫn viên này đang phụ trách
-        toursRef.whereArrayContains("guideIds", guideId).get()
-                .addOnSuccessListener(tourSnapshots -> {
-                    List<String> tourIds = new ArrayList<>();
-                    for (QueryDocumentSnapshot tourDoc : tourSnapshots) {
-                        tourIds.add(tourDoc.getId());
+        bookingsRef.whereEqualTo("tourId", tourId)
+                .whereEqualTo("status", "confirmed")
+                .get()
+                .addOnSuccessListener(bookingSnapshots -> {
+                    List<String> customerIds = new ArrayList<>();
+                    for (QueryDocumentSnapshot bookingDoc : bookingSnapshots) {
+                        String userId = bookingDoc.getString("userId");
+                        if (userId != null && !customerIds.contains(userId)) {
+                            customerIds.add(userId);
+                        }
                     }
 
-                    if (tourIds.isEmpty()) {
-                        showEmpty("Bạn chưa có tour nào được giao.");
+                    if (customerIds.isEmpty()) {
+                        showEmpty("Không có khách hàng nào xác nhận tham gia tour này.");
                         return;
                     }
 
-                    // 2️⃣ Tìm các booking thuộc các tour này có status = confirmed
-                    bookingsRef.whereIn("tourId", tourIds)
-                            .whereEqualTo("status", "confirmed")
+                    // 🔹 Lấy thông tin user
+                    usersRef.whereIn(FieldPath.documentId(), customerIds)
+                            .whereEqualTo("role", "customer")
                             .get()
-                            .addOnSuccessListener(bookingSnapshots -> {
-                                List<String> customerIds = new ArrayList<>();
-                                for (QueryDocumentSnapshot bookingDoc : bookingSnapshots) {
-                                    String userId = bookingDoc.getString("userId");
-                                    if (userId != null && !customerIds.contains(userId)) {
-                                        customerIds.add(userId);
-                                    }
+                            .addOnSuccessListener(userSnapshots -> {
+                                List<User> customerList = new ArrayList<>();
+                                for (DocumentSnapshot userDoc : userSnapshots) {
+                                    User u = userDoc.toObject(User.class);
+                                    customerList.add(u);
                                 }
 
-                                if (customerIds.isEmpty()) {
-                                    showEmpty("Không có khách hàng nào xác nhận tham gia tour.");
-                                    return;
+                                if (customerList.isEmpty()) {
+                                    showEmpty("Không có khách hàng hợp lệ.");
+                                } else {
+                                    tvEmpty.setVisibility(View.GONE);
+                                    rvCustomers.setVisibility(View.VISIBLE);
+                                    adapter = new CustomersInTourAdapter(customerList);
+                                    rvCustomers.setAdapter(adapter);
                                 }
-
-                                // 3️⃣ Lấy thông tin user theo ID
-                                usersRef.get().addOnSuccessListener(userSnapshots -> {
-                                    List<User> customerList = new ArrayList<>();
-                                    for (DocumentSnapshot userDoc : userSnapshots) {
-                                        if (customerIds.contains(userDoc.getId())
-                                                && "customer".equals(userDoc.getString("role"))) {
-                                            User u = userDoc.toObject(User.class);
-                                            customerList.add(u);
-                                        }
-                                    }
-
-                                    if (customerList.isEmpty()) {
-                                        showEmpty("Không có khách hàng hợp lệ.");
-                                    } else {
-                                        tvEmpty.setVisibility(View.GONE);
-                                        rvCustomers.setVisibility(View.VISIBLE);
-                                        adapter = new CustomersInTourAdapter(customerList);
-                                        rvCustomers.setAdapter(adapter);
-                                    }
-                                });
-                            });
+                            })
+                            .addOnFailureListener(e -> showEmpty("Lỗi tải user: " + e.getMessage()));
                 })
-                .addOnFailureListener(e -> showEmpty("Lỗi tải dữ liệu: " + e.getMessage()));
+                .addOnFailureListener(e -> showEmpty("Lỗi tải bookings: " + e.getMessage()));
     }
 
     private void showEmpty(String msg) {

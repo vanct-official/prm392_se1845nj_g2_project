@@ -13,7 +13,9 @@
         android:id="@+id/fragment_container_guide"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="56dp" /> <!-- padding để nội dung không bị che bởi BottomNavigationView -->
+        android:paddingBottom="56dp"
+
+        /> <!-- padding để nội dung không bị che bởi BottomNavigationView -->
 
     <!-- Footer BottomNavigationView -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
