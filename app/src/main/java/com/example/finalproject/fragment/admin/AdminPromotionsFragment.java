@@ -21,28 +21,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.AddPromotionActivity;
-import com.example.finalproject.adapter.PromotionAdapter;
+import com.example.finalproject.activity.admin.AddPromotionAdminActivity;
+import com.example.finalproject.activity.admin.EditPromotionAdminActivity;
+import com.example.finalproject.activity.admin.ViewPromotionAdminActivity;
+import com.example.finalproject.adapter.admin.PromotionAdminAdapter;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdminPromotionsFragment extends Fragment {
-
     private RecyclerView recyclerPromotions;
     private EditText etSearch;
     private ProgressBar loadingProgress;
     private TextView tvAddPromotion;
-
     private FirebaseFirestore db;
-    private PromotionAdapter adapter;
+    private PromotionAdminAdapter adapter;
     private List<DocumentSnapshot> allPromotions = new ArrayList<>();
     private List<DocumentSnapshot> promotions = new ArrayList<>();
-
 
     public AdminPromotionsFragment() {}
 
@@ -62,17 +60,17 @@ public class AdminPromotionsFragment extends Fragment {
         recyclerPromotions.setLayoutManager(new LinearLayoutManager(getContext()));
         db = FirebaseFirestore.getInstance();
 
-        adapter = new PromotionAdapter(getContext(), promotions, new PromotionAdapter.OnPromotionActionListener() {
+        adapter = new PromotionAdminAdapter(getContext(), promotions, new PromotionAdminAdapter.OnPromotionActionListener() {
             @Override
             public void onView(DocumentSnapshot doc) {
-                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.ViewPromotionActivity.class);
+                Intent intent = new Intent(requireContext(), ViewPromotionAdminActivity.class);
                 intent.putExtra("promotionId", doc.getId());
                 startActivity(intent);
             }
 
             @Override
             public void onEdit(DocumentSnapshot doc) {
-                Intent intent = new Intent(requireContext(), com.example.finalproject.activity.EditPromotionActivity.class);
+                Intent intent = new Intent(requireContext(), EditPromotionAdminActivity.class);
                 intent.putExtra("promotionId", doc.getId());
                 startActivity(intent);
             }
@@ -92,7 +90,7 @@ public class AdminPromotionsFragment extends Fragment {
         // ✅ Nút "+ Thêm mới"
         tvAddPromotion.setOnClickListener(v -> {
             android.util.Log.d("PROMO_DEBUG", "👉 Nút 'Thêm mới' được bấm!");
-            Intent intent = new Intent(getContext(), AddPromotionActivity.class);
+            Intent intent = new Intent(getContext(), AddPromotionAdminActivity.class);
             startActivityForResult(intent, 100);
         });
 
@@ -181,32 +179,77 @@ public class AdminPromotionsFragment extends Fragment {
     // ===========================================================
     // ❌ XÓA KHUYẾN MÃI
     // ===========================================================
+//    private void confirmDelete(DocumentSnapshot doc) {
+//        String name = doc.getString("name");
+//
+//        new AlertDialog.Builder(getContext())
+//                .setTitle("Xóa khuyến mãi")
+//                .setMessage("Bạn có chắc muốn xóa \"" + name + "\" không?")
+//                .setPositiveButton("Xóa", (dialog, which) -> {
+//                    db.collection("promotions").document(doc.getId())
+//                            .delete()
+//                            .addOnSuccessListener(aVoid -> {
+//                                // ✅ Xóa đúng cách dựa vào id
+//                                String deletedId = doc.getId();
+//                                promotions.removeIf(p -> p.getId().equals(deletedId));
+//                                allPromotions.removeIf(p -> p.getId().equals(deletedId));
+//
+//                                adapter.updateData(promotions);
+//
+//                                Toast.makeText(getContext(), "Đã xóa!", Toast.LENGTH_SHORT).show();
+//                            })
+//                            .addOnFailureListener(e ->
+//                                    Toast.makeText(getContext(), "Lỗi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+//                })
+//                .setNegativeButton("Hủy", null)
+//                .show();
+//    }
+
+    // ===========================================================
+    // ❌ XÓA KHUYẾN MÃI — CÓ KIỂM TRA RÀNG BUỘC VỚI BOOKINGS
+    // ===========================================================
     private void confirmDelete(DocumentSnapshot doc) {
         String name = doc.getString("name");
+        String promoId = doc.getId();
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Xóa khuyến mãi")
-                .setMessage("Bạn có chắc muốn xóa \"" + name + "\" không?")
-                .setPositiveButton("Xóa", (dialog, which) -> {
-                    db.collection("promotions").document(doc.getId())
-                            .delete()
-                            .addOnSuccessListener(aVoid -> {
-                                // ✅ Xóa đúng cách dựa vào id
-                                String deletedId = doc.getId();
-                                promotions.removeIf(p -> p.getId().equals(deletedId));
-                                allPromotions.removeIf(p -> p.getId().equals(deletedId));
+        // Bước 1: kiểm tra xem có booking nào đang dùng promotionId này không
+        db.collection("bookings")
+                .whereEqualTo("promotionId", promoId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        // Có ít nhất 1 booking đang dùng -> không cho xóa
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("Không thể xóa")
+                                .setMessage("Khuyến mãi \"" + name + "\" đang được áp dụng. Không thể xóa")
+                                .setPositiveButton("OK", null)
+                                .show();
+                    } else {
+                        // Không có booking nào dùng -> cho phép xóa
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("Xóa khuyến mãi")
+                                .setMessage("Bạn có chắc muốn xóa \"" + name + "\" không?")
+                                .setPositiveButton("Xóa", (dialog, which) -> {
+                                    db.collection("promotions").document(promoId)
+                                            .delete()
+                                            .addOnSuccessListener(aVoid -> {
+                                                // ✅ Xóa thành công
+                                                promotions.removeIf(p -> p.getId().equals(promoId));
+                                                allPromotions.removeIf(p -> p.getId().equals(promoId));
+                                                adapter.updateData(promotions);
 
-                                adapter.updateData(promotions);
-
-                                Toast.makeText(getContext(), "Đã xóa!", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(getContext(), "Lỗi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                                Toast.makeText(getContext(), "Đã xóa!", Toast.LENGTH_SHORT).show();
+                                            })
+                                            .addOnFailureListener(e ->
+                                                    Toast.makeText(getContext(), "Lỗi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                })
+                                .setNegativeButton("Hủy", null)
+                                .show();
+                    }
                 })
-                .setNegativeButton("Hủy", null)
-                .show();
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Lỗi kiểm tra bookings: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-
 
     // ===========================================================
     // ⏪ NHẬN KẾT QUẢ SAU KHI THÊM MỚI

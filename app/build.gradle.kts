@@ -41,13 +41,13 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.coordinatorlayout)
+    implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
 
     // Firebase BOM (bom = Bill of Materials -> quản lý version đồng bộ)
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
 
     // Firebase modules bạn cần
     implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore") // 🔥 thêm dòng này, vì bạn dùng Java
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.2.0")
@@ -66,7 +66,7 @@ dependencies {
 
     // Thư viện slide ảnh tự động
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
-    implementation("com.google.firebase:firebase-firestore:25.1.1")
+    implementation("com.google.firebase:firebase-firestore")
 
     // Firebase Storage
     implementation("com.google.firebase:firebase-storage:21.0.0")

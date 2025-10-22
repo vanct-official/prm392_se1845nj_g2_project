@@ -5,6 +5,7 @@ import com.google.firebase.firestore.PropertyName;
 
 // Đây là entity về User, bao gồm các thuộc tính cơ bản của user
 
+// Đại LOL
 public class User {
     private String userid;
     private String username;
@@ -18,15 +19,17 @@ public class User {
     private boolean isActive;
     private boolean isEmailVerify;
     private String role;
+    private String imageUrl;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private String avatarUrl;
 
     public User() {
     }
 
     public User(String userid, String username, String firstname, String lastname, String email,
                 String phone, String passwordHash, Timestamp dob, boolean gender, boolean isActive,
-                boolean isEmailVerify, String role, Timestamp createdAt, Timestamp updatedAt) {
+                boolean isEmailVerify, String role, String imageUrl, Timestamp createdAt, Timestamp updatedAt) {
         this.userid = userid;
         this.username = username;
         this.firstname = firstname;
@@ -39,6 +42,7 @@ public class User {
         this.isActive = isActive;
         this.isEmailVerify = isEmailVerify;
         this.role = role;
+        this.imageUrl = imageUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -132,12 +136,12 @@ public class User {
     }
 
     @PropertyName("isActive")
-    public boolean isActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 
     @PropertyName("isActive")
-    public void setActive(boolean active) {
+    public void setIsActive(boolean active) {
         isActive = active;
     }
 
@@ -161,6 +165,16 @@ public class User {
         this.role = role;
     }
 
+    @PropertyName("imageUrl")
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    @PropertyName("imageUrl")
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     @PropertyName("createdAt")
     public Timestamp getCreatedAt() {
         return createdAt;
@@ -180,4 +194,7 @@ public class User {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getAvatarUrl() { return avatarUrl; }     // ✅ thêm getter
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; } //
 }

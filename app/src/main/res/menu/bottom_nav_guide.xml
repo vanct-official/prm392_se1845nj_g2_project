@@ -1,4 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/nav_guide_home"
         android:icon="@drawable/ic_home"
@@ -6,8 +7,13 @@
 
     <item
         android:id="@+id/nav_guide_tours"
-        android:icon="@drawable/ic_event_note"
+        android:icon="@drawable/ic_tour"
         android:title="Tour của tôi" />
+
+    <item
+        android:id="@+id/nav_guide_customers"
+        android:icon="@drawable/ic_people"
+        android:title="Khách hàng" /> <!-- ✅ mục mới -->
 
     <item
         android:id="@+id/nav_guide_chat"
@@ -16,6 +22,6 @@
 
     <item
         android:id="@+id/nav_guide_profile"
-        android:icon="@drawable/ic_account"
+        android:icon="@drawable/ic_people"
         android:title="Hồ sơ" />
 </menu>

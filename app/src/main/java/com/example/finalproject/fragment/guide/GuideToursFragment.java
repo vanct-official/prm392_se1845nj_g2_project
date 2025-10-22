@@ -1,66 +1,83 @@
 package com.example.finalproject.fragment.guide;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
+import com.example.finalproject.adapter.guide.ToursAdapter;
+import com.example.finalproject.entity.Tour;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link GuideToursFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class GuideToursFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private ToursAdapter adapter;
+    private TextView tvEmpty;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public GuideToursFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GuideToursFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GuideToursFragment newInstance(String param1, String param2) {
-        GuideToursFragment fragment = new GuideToursFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_guide_tours, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
+        RecyclerView rv = v.findViewById(R.id.rvTours);
+        tvEmpty = v.findViewById(R.id.tvEmpty);
+        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                : null;
+
+        if (uid == null) {
+            tvEmpty.setText("Bạn chưa đăng nhập.");
+            tvEmpty.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        Query q = FirebaseFirestore.getInstance()
+                .collection("tours")
+                .whereArrayContains("guideIds", uid);
+
+        FirestoreRecyclerOptions<Tour> options = new FirestoreRecyclerOptions.Builder<Tour>()
+                .setQuery(q, snapshot -> {
+                    Tour t = snapshot.toObject(Tour.class);
+                    if (t != null) t.setId(snapshot.getId());
+                    return t;
+                })
+                .build();
+
+        adapter = new ToursAdapter(options, (id, model) -> {
+            // TODO: mở TourDetailActivity nếu có
+        });
+
+        rv.setAdapter(adapter);
+
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            private void check() {
+                boolean empty = adapter.getItemCount() == 0;
+                tvEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
+            }
+            @Override public void onChanged() { check(); }
+            @Override public void onItemRangeInserted(int positionStart, int itemCount) { check(); }
+            @Override public void onItemRangeRemoved(int positionStart, int itemCount) { check(); }
+        });
+    }
+
+    @Override public void onStart() { super.onStart(); if (adapter != null) adapter.startListening(); }
+    @Override public void onStop()  { if (adapter != null) adapter.stopListening(); super.onStop(); }
 }

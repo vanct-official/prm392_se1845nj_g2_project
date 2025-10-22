@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalProject">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
@@ -41,13 +44,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AddPromotionActivity" />
-        <activity android:name=".activity.ViewPromotionActivity" />
-        <activity android:name=".activity.EditPromotionActivity" />
-        <activity android:name=".activity.AddTourActivity" />
-        <activity android:name=".activity.TourDetailActivity" />
-        <activity android:name=".activity.EditTourActivity" />
-
+        <activity android:name=".activity.admin.AddPromotionAdminActivity" />
+        <activity android:name=".activity.admin.ViewPromotionAdminActivity" />
+        <activity android:name=".activity.admin.EditPromotionAdminActivity" />
+        <activity android:name=".activity.admin.AddTourAdminActivity" />
+        <activity android:name=".activity.admin.TourDetailAdminActivity" />
+        <activity android:name=".activity.admin.EditTourAdminActivity" />
     </application>
 
 </manifest>

@@ -1,8 +1,11 @@
+// java
+// File: `app/src/main/java/com/example/finalproject/MainActivity.java`
 package com.example.finalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finalproject.entity.User;
@@ -43,10 +46,18 @@ public class MainActivity extends AppCompatActivity {
             if (documentSnapshot.exists()) {
                 User user = documentSnapshot.toObject(User.class);
                 if (user != null && user.getRole() != null) {
-                    redirectByRole(user.getRole());
+                    Boolean isActive = user.getIsActive(); // tránh null
+                    if (isActive != null && isActive) {
+                        redirectByRole(user.getRole());
+                    } else {
+                        Toast.makeText(this, "Account is locked or inactive", Toast.LENGTH_SHORT).show();
+                        mAuth.signOut();
+                        goToLogin();
+                    }
                 } else {
                     goToLogin();
                 }
+
             } else {
                 goToLogin();
             }
@@ -59,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
     private void redirectByRole(String role) {
         Intent intent;
         switch (role) {
-            case "ADMIN":
+            case "admin":
                 intent = new Intent(this, AdminActivity.class);
                 break;
-            case "GUIDE":
+            case "guide":
                 intent = new Intent(this, GuideActivity.class);
                 break;
             default:

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.finalproject.fragment.ChatListFragment;
 import com.example.finalproject.fragment.customer.CustomerBookingsFragment;
 import com.example.finalproject.fragment.customer.CustomerHomeFragment;
 import com.example.finalproject.fragment.ProfileFragment;
@@ -36,7 +37,7 @@ public class CustomerActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_customer_bookings) {
                 selectedFragment = new CustomerBookingsFragment();
             } else if (itemId == R.id.nav_customer_chat) {
-                selectedFragment = new CustomerChatFragment();
+                selectedFragment = new ChatListFragment();
             } else if (itemId == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
             }

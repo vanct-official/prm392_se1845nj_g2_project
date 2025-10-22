@@ -7,16 +7,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.finalproject.fragment.admin.AdminHomeFragment;
+import com.example.finalproject.fragment.ChatListFragment;
+import com.example.finalproject.fragment.admin.AdminDashboardFragment;
+import com.example.finalproject.fragment.admin.AdminReportsFragment;
+import com.example.finalproject.fragment.admin.AdminReviewsFragment;
 import com.example.finalproject.fragment.admin.AdminToursFragment;
 import com.example.finalproject.fragment.admin.AdminManageUsersFragment;
-import com.example.finalproject.fragment.admin.AdminBookingsFragment;
+//import com.example.finalproject.fragment.admin.AdminBookingsFragment;
 import com.example.finalproject.fragment.admin.AdminPromotionsFragment;
-import com.example.finalproject.fragment.admin.AdminChatFragment;
+//import com.example.finalproject.fragment.admin.AdminChatFragment;
 import com.example.finalproject.fragment.admin.AdminFeedbackFragment;
 import com.example.finalproject.fragment.ProfileFragment;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import android.view.MenuItem;
 
@@ -55,6 +57,13 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        // Nút FloatingActionButton quay về trang Home dashboard
+        findViewById(R.id.fab_admin).setOnClickListener(v -> {
+            replaceFragment(new AdminDashboardFragment());
+            navigationView.setCheckedItem(R.id.nav_admin_home);
+        });
+
+
         // ✅ Sử dụng OnBackPressedDispatcher thay cho onBackPressed()
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -69,18 +78,9 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        FloatingActionButton fab = findViewById(R.id.fab_admin);
-        fab.setOnClickListener(v -> {
-            // Thay fragment_container_admin bằng AdminHomeFragment
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container_admin, new AdminHomeFragment())
-                    .commit();
-        });
-
         // Fragment mặc định khi khởi động
         if (savedInstanceState == null) {
-            replaceFragment(new AdminHomeFragment());
+            replaceFragment(new AdminDashboardFragment());
             navigationView.setCheckedItem(R.id.nav_admin_home);
         }
     }
@@ -92,28 +92,37 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         int id = item.getItemId();
 
         if (id == R.id.nav_admin_home) {
-            selectedFragment = new AdminHomeFragment();
+            selectedFragment = new AdminDashboardFragment();
 
         } else if (id == R.id.nav_admin_users) {
             selectedFragment = new AdminManageUsersFragment();
 
         } else if (id == R.id.nav_admin_tours) {
             selectedFragment = new AdminToursFragment();
-
-        } else if (id == R.id.nav_admin_bookings) {
-            selectedFragment = new AdminBookingsFragment();
-
+//
+//        } else if (id == R.id.nav_admin_bookings) {
+//            selectedFragment = new AdminBookingsFragment();
+//
         } else if (id == R.id.nav_admin_promotions) {
             selectedFragment = new AdminPromotionsFragment();
-
+//
         } else if (id == R.id.nav_admin_chat) {
-            selectedFragment = new AdminChatFragment();
+            selectedFragment = new ChatListFragment();
 
-        } else if (id == R.id.nav_admin_feedback) {
-            selectedFragment = new AdminFeedbackFragment();
+//        } else if (id == R.id.nav_admin_feedback) {
+//            selectedFragment = new AdminFeedbackFragment();
 
         } else if (id == R.id.nav_profile) {
             selectedFragment = new ProfileFragment();
+        }
+        else if (id == R.id.nav_admin_reviews) {
+            selectedFragment = new AdminReviewsFragment();
+        }
+        else if (id == R.id.nav_admin_reviews) {
+            selectedFragment = new AdminReviewsFragment();
+        }
+        else if (id == R.id.nav_admin_reports) {
+            selectedFragment = new AdminReportsFragment();
         }
 
         if (selectedFragment != null) {

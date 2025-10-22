@@ -88,6 +88,18 @@ public class AuthController {
      * Chuyển sang Activity theo role
      */
     private void redirectByRole(User user) {
+        if (user == null) {
+            Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Boolean active = user.getIsActive(); // hoặc user.isActive() nếu field là boolean
+        if (active == null || !active) {
+            Toast.makeText(context, "Account is locked or inactive", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+            return;
+        }
+
         Intent intent = null;
         switch (user.getRole()) {
             case "customer":
