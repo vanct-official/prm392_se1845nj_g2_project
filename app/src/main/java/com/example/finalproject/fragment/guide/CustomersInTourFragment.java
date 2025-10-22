@@ -1,26 +1,27 @@
 package com.example.finalproject.fragment.guide;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
 
 import com.example.finalproject.R;
 import com.example.finalproject.adapter.guide.CustomersInTourAdapter;
 import com.example.finalproject.entity.User;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ public class CustomersInTourFragment extends Fragment {
     private TextView tvEmpty;
     private CustomersInTourAdapter adapter;
     private FirebaseFirestore db;
+    private String currentGuideId;
+    private List<User> customerList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -40,77 +43,134 @@ public class CustomersInTourFragment extends Fragment {
 
         rvCustomers = view.findViewById(R.id.rvCustomers);
         tvEmpty = view.findViewById(R.id.tvEmpty);
-        rvCustomers.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        rvCustomers.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new CustomersInTourAdapter(getContext(), customerList);
+        rvCustomers.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
+        currentGuideId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // 🔹 Nhận tourId được truyền từ adapter
-        Bundle args = getArguments();
-        String selectedTourId = null;
-        if (args != null) {
-            selectedTourId = args.getString("tourId");
-            Log.d("DEBUG_TOUR", "📦 Nhận tourId: " + selectedTourId);
-        }
-
-        if (selectedTourId != null) {
-            loadCustomersForTour(selectedTourId);
-        } else {
-            showEmpty("Không tìm thấy tour được chọn.");
-        }
+        loadCustomersInMyTours();
 
         return view;
     }
 
-    // 🔹 Load khách hàng chỉ cho tour cụ thể
-    private void loadCustomersForTour(String tourId) {
-        CollectionReference bookingsRef = db.collection("bookings");
-        CollectionReference usersRef = db.collection("users");
+    private void loadCustomersInMyTours() {
+        Log.d("GuideDebug", "Current Guide UID: " + currentGuideId);
 
-        bookingsRef.whereEqualTo("tourId", tourId)
-                .whereEqualTo("status", "confirmed")
+        db.collection("tours")
+                .whereArrayContains("guideIds", currentGuideId)
                 .get()
-                .addOnSuccessListener(bookingSnapshots -> {
-                    List<String> customerIds = new ArrayList<>();
-                    for (QueryDocumentSnapshot bookingDoc : bookingSnapshots) {
-                        String userId = bookingDoc.getString("userId");
-                        if (userId != null && !customerIds.contains(userId)) {
-                            customerIds.add(userId);
-                        }
+                .addOnSuccessListener(tourSnapshots -> {
+                    List<String> myTourIds = new ArrayList<>();
+                    for (DocumentSnapshot tourDoc : tourSnapshots.getDocuments()) {
+                        myTourIds.add(tourDoc.getId());
                     }
 
-                    if (customerIds.isEmpty()) {
-                        showEmpty("Không có khách hàng nào xác nhận tham gia tour này.");
+                    Log.d("GuideDebug", "Tour IDs: " + myTourIds);
+
+                    if (myTourIds.isEmpty()) {
+                        showEmptyState("Không tìm thấy tour của bạn.");
                         return;
                     }
 
-                    // 🔹 Lấy thông tin user
-                    usersRef.whereIn(FieldPath.documentId(), customerIds)
-                            .whereEqualTo("role", "customer")
+                    db.collection("bookings")
+                            .whereIn("tourId", myTourIds)
+                            .whereEqualTo("status", "confirmed") // ✅ sửa lại chỗ này
                             .get()
-                            .addOnSuccessListener(userSnapshots -> {
-                                List<User> customerList = new ArrayList<>();
-                                for (DocumentSnapshot userDoc : userSnapshots) {
-                                    User u = userDoc.toObject(User.class);
-                                    customerList.add(u);
+                            .addOnSuccessListener(bookingSnapshots -> {
+                                List<String> customerIds = new ArrayList<>();
+                                for (QueryDocumentSnapshot bookingDoc : bookingSnapshots) {
+                                    String userId = bookingDoc.getString("userId");
+                                    if (userId != null && !customerIds.contains(userId)) {
+                                        customerIds.add(userId);
+                                    }
                                 }
 
-                                if (customerList.isEmpty()) {
-                                    showEmpty("Không có khách hàng hợp lệ.");
-                                } else {
-                                    tvEmpty.setVisibility(View.GONE);
-                                    rvCustomers.setVisibility(View.VISIBLE);
-                                    adapter = new CustomersInTourAdapter(customerList);
-                                    rvCustomers.setAdapter(adapter);
+                                Log.d("GuideDebug", "Customer IDs: " + customerIds);
+
+                                if (customerIds.isEmpty()) {
+                                    showEmptyState("Không có khách hàng tham gia tour nào.");
+                                    return;
                                 }
+
+                                db.collection("users")
+                                        .whereIn(FieldPath.documentId(), customerIds)
+                                        .get()
+                                        .addOnSuccessListener(userSnapshots -> {
+                                            customerList.clear();
+                                            for (DocumentSnapshot userDoc : userSnapshots) {
+                                                String role = userDoc.getString("role");
+                                                if ("customer".equals(role)) {
+                                                    User user = userDoc.toObject(User.class);
+                                                    customerList.add(user);
+                                                }
+                                            }
+
+                                            Log.d("GuideDebug", "Loaded customers: " + customerList.size());
+
+                                            if (customerList.isEmpty()) {
+                                                showEmptyState("Không tìm thấy khách hàng phù hợp.");
+                                            } else {
+                                                tvEmpty.setVisibility(View.GONE);
+                                                rvCustomers.setVisibility(View.VISIBLE);
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> showEmptyState("Lỗi tải khách hàng: " + e.getMessage()));
                             })
-                            .addOnFailureListener(e -> showEmpty("Lỗi tải user: " + e.getMessage()));
+                            .addOnFailureListener(e -> showEmptyState("Lỗi tải bookings: " + e.getMessage()));
                 })
-                .addOnFailureListener(e -> showEmpty("Lỗi tải bookings: " + e.getMessage()));
+                .addOnFailureListener(e -> showEmptyState("Lỗi tải tour: " + e.getMessage()));
     }
 
-    private void showEmpty(String msg) {
+
+    private void handleBookingResults(QuerySnapshot bookingSnapshots) {
+        List<String> customerIds = new ArrayList<>();
+        for (QueryDocumentSnapshot bookingDoc : bookingSnapshots) {
+            String userId = bookingDoc.getString("userId");
+            if (userId != null && !customerIds.contains(userId)) {
+                customerIds.add(userId);
+            }
+        }
+
+        Log.d("GuideDebug", "Customer IDs: " + customerIds);
+
+        if (customerIds.isEmpty()) {
+            showEmptyState("Không có khách hàng tham gia tour nào.");
+            return;
+        }
+
+        db.collection("users")
+                .whereIn(FieldPath.documentId(), customerIds)
+                .get()
+                .addOnSuccessListener(userSnapshots -> {
+                    customerList.clear();
+                    for (DocumentSnapshot userDoc : userSnapshots) {
+                        String role = userDoc.getString("role");
+                        if ("customer".equals(role)) {
+                            User user = userDoc.toObject(User.class);
+                            customerList.add(user);
+                        }
+                    }
+
+                    Log.d("GuideDebug", "Loaded customers: " + customerList.size());
+
+                    if (customerList.isEmpty()) {
+                        showEmptyState("Không tìm thấy khách hàng phù hợp.");
+                    } else {
+                        tvEmpty.setVisibility(View.GONE);
+                        rvCustomers.setVisibility(View.VISIBLE);
+                        adapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(e -> showEmptyState("Lỗi tải khách hàng: " + e.getMessage()));
+    }
+
+    private void showEmptyState(String message) {
         rvCustomers.setVisibility(View.GONE);
         tvEmpty.setVisibility(View.VISIBLE);
-        tvEmpty.setText(msg);
+        tvEmpty.setText(message);
+        Log.w("GuideDebug", message);
     }
 }

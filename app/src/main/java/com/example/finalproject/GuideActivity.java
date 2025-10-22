@@ -10,7 +10,6 @@ import com.example.finalproject.fragment.guide.GuideHomeFragment;
 import com.example.finalproject.fragment.guide.GuideToursFragment;
 import com.example.finalproject.fragment.ChatListFragment;
 import com.example.finalproject.fragment.guide.CustomersInTourFragment;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class GuideActivity extends AppCompatActivity {
@@ -25,6 +24,7 @@ public class GuideActivity extends AppCompatActivity {
 
         bottomNav = findViewById(R.id.bottom_nav_guide);
 
+        // --- Mặc định hiển thị HomeFragment khi mở Activity ---
         if (savedInstanceState == null) {
             currentFragment = new GuideHomeFragment();
             getSupportFragmentManager().beginTransaction()
@@ -32,6 +32,7 @@ public class GuideActivity extends AppCompatActivity {
                     .commit();
         }
 
+        // --- Gán listener cho bottom navigation ---
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             Fragment selectedFragment = null;
@@ -48,13 +49,30 @@ public class GuideActivity extends AppCompatActivity {
                 selectedFragment = new ProfileFragment();
             }
 
+            // --- Khi chọn tab mới ---
             if (selectedFragment != null) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container_guide, selectedFragment)
+                        // thêm vào backstack để nút Back quay lại fragment trước
+                        .addToBackStack(null)
                         .commit();
             }
             return true;
         });
 
+        // --- Chọn tab mặc định là Home ---
+        bottomNav.setSelectedItemId(R.id.nav_guide_home);
+    }
+
+    // --- Xử lý nút Back vật lý ---
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            // Nếu còn fragment trong backstack thì quay lại fragment trước
+            getSupportFragmentManager().popBackStack();
+        } else {
+            // Nếu không còn fragment nào, thì thoát activity như bình thường
+            super.onBackPressed();
+        }
     }
 }

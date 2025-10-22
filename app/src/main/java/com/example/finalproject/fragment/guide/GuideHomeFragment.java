@@ -1,66 +1,107 @@
 package com.example.finalproject.fragment.guide;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
+import com.example.finalproject.adapter.guide.GuideTourAdapter;
+import com.example.finalproject.entity.Tour;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link GuideHomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class GuideHomeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private TextView tvWelcome, tvTotalTours, tvOngoing, tvUpcoming, tvReports;
+    private RecyclerView rvUpcomingTours;
+    private GuideTourAdapter adapter;
+    private FirebaseFirestore db;
+    private String guideId;
+    private List<Tour> upcomingTours = new ArrayList<>();
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public GuideHomeFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GuideHomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GuideHomeFragment newInstance(String param1, String param2) {
-        GuideHomeFragment fragment = new GuideHomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_guide_home, container, false);
+
+        tvWelcome = view.findViewById(R.id.tvWelcome);
+        tvTotalTours = view.findViewById(R.id.tvTotalTours);
+        tvOngoing = view.findViewById(R.id.tvOngoing);
+        tvUpcoming = view.findViewById(R.id.tvUpcoming);
+        tvReports = view.findViewById(R.id.tvReports);
+        rvUpcomingTours = view.findViewById(R.id.rvUpcomingTours);
+
+        rvUpcomingTours.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        db = FirebaseFirestore.getInstance();
+        guideId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        loadGuideInfo();
+        loadDashboardData();
+        loadUpcomingTours();
+
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_guide_home, container, false);
+    private void loadGuideInfo() {
+        db.collection("users").document(guideId).get().addOnSuccessListener(doc -> {
+            String name = doc.getString("fullName");
+            tvWelcome.setText("Xin chào, " + name + " 👋");
+        });
+    }
+
+    private void loadDashboardData() {
+        db.collection("tours").whereEqualTo("guideId", guideId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    int total = snapshot.size();
+                    int ongoing = 0;
+                    int upcoming = 0;
+
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        String status = doc.getString("status");
+                        if ("Ongoing".equalsIgnoreCase(status)) ongoing++;
+                        if ("Upcoming".equalsIgnoreCase(status)) upcoming++;
+                    }
+
+                    tvTotalTours.setText(String.valueOf(total));
+                    tvOngoing.setText(String.valueOf(ongoing));
+                    tvUpcoming.setText(String.valueOf(upcoming));
+                });
+
+        db.collection("reports").whereEqualTo("guideId", guideId)
+                .get().addOnSuccessListener(snapshot -> {
+                    tvReports.setText(String.valueOf(snapshot.size()));
+                });
+    }
+
+    private void loadUpcomingTours() {
+        db.collection("tours")
+                .whereEqualTo("guideId", guideId)
+                .whereEqualTo("status", "Upcoming")
+                .limit(3)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    upcomingTours.clear();
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        Tour tour = doc.toObject(Tour.class);
+                        upcomingTours.add(tour);
+                    }
+                    adapter = new GuideTourAdapter(getContext(), upcomingTours);
+                    rvUpcomingTours.setAdapter(adapter);
+                });
     }
 }

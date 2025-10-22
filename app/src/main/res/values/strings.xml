@@ -5,5 +5,8 @@
     <string name="navigation_drawer_open">Mở menu</string>
     <string name="navigation_drawer_close">Đóng menu</string>
     <string name="tour_image">Ảnh của tour</string>
+    <string name="guide_welcome_text">Xin chào, Hướng dẫn viên 👋</string>
+    <string name="upcoming_tours">Tour sắp tới</string>
+
 
 </resources>
