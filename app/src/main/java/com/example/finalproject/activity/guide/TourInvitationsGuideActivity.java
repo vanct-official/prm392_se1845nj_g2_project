@@ -17,7 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TourInvitationsActivity extends AppCompatActivity {
+public class TourInvitationsGuideActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private FirebaseFirestore db;
@@ -29,7 +29,7 @@ public class TourInvitationsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tour_invitations);
+        setContentView(R.layout.activity_tour_invitations_guide);
 
         recyclerView = findViewById(R.id.recyclerInvitations);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
