@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,11 +52,35 @@ public class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.
                 .addOnSuccessListener(tour -> {
                     if (tour.exists()) {
                         String title = tour.getString("title");
+                        String destination = tour.getString("destination");
+
+                        Object startDateObj = tour.get("start_date");
+                        Object endDateObj = tour.get("end_date");
+
+                        String startDateText = "—";
+                        String endDateText = "—";
+
+                        if (startDateObj instanceof com.google.firebase.Timestamp) {
+                            java.util.Date date = ((com.google.firebase.Timestamp) startDateObj).toDate();
+                            startDateText = new java.text.SimpleDateFormat("dd/MM/yyyy").format(date);
+                        } else if (startDateObj instanceof String) {
+                            startDateText = (String) startDateObj;
+                        }
+
+                        if (endDateObj instanceof com.google.firebase.Timestamp) {
+                            java.util.Date date = ((com.google.firebase.Timestamp) endDateObj).toDate();
+                            endDateText = new java.text.SimpleDateFormat("dd/MM/yyyy").format(date);
+                        } else if (endDateObj instanceof String) {
+                            endDateText = (String) endDateObj;
+                        }
+
                         List<String> images = (List<String>) tour.get("images");
 
-                        h.tvTourTitle.setText(title != null ? title : "Tour không xác định");
+                        h.tvTourTitle.setText("Tên tour: " + (title != null ? title : "Tour không xác định"));
+                        h.tvDestination.setText("Điểm đến: " + (destination != null ? destination : "Chưa rõ"));
+                        h.tvStartDate.setText("Ngày bắt đầu: " + startDateText);
+                        h.tvEndDate.setText("Ngày kết thúc: " + endDateText);
 
-                        // 🔹 Hiển thị danh sách ảnh ngang
                         if (images != null && !images.isEmpty()) {
                             h.rvTourImages.setLayoutManager(
                                     new LinearLayoutManager(h.itemView.getContext(),
@@ -66,7 +91,28 @@ public class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.
                     }
                 });
 
-        h.tvStatus.setText("Trạng thái: " + doc.getString("status"));
+        //dịch trạng thái sang tiếng việt
+        String status = doc.getString("status");
+        String statusText;
+        int statusColor;
+
+        if ("pending".equals(status)) {
+            statusText = "Đang chờ xác nhận";
+            statusColor = 0xFFF59E0B; // cam
+        } else if ("accepted".equals(status)) {
+            statusText = "Đã chấp nhận";
+            statusColor = 0xFF10B981; // xanh lá
+        } else if ("declined".equals(status)) {
+            statusText = "Đã từ chối";
+            statusColor = 0xFFEF4444; // đỏ
+        } else {
+            statusText = "Không xác định";
+            statusColor = 0xFF6B7280; // xám
+        }
+
+        h.tvStatus.setText("Trạng thái: " + statusText);
+        h.tvStatus.setTextColor(statusColor);
+
 
         h.btnAccept.setOnClickListener(v ->
                 listener.onRespond(doc.getId(), tourId, true));
@@ -92,7 +138,7 @@ public class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.
 
     // 🔹 ViewHolder chính
     static class InviteVH extends RecyclerView.ViewHolder {
-        TextView tvTourTitle, tvStatus;
+        TextView tvTourTitle, tvStatus, tvDestination, tvStartDate, tvEndDate;
         RecyclerView rvTourImages;
         Button btnAccept, btnDecline;
 
@@ -103,6 +149,9 @@ public class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.
             rvTourImages = v.findViewById(R.id.rvTourImages);
             btnAccept = v.findViewById(R.id.btnAccept);
             btnDecline = v.findViewById(R.id.btnDecline);
+            tvDestination = v.findViewById(R.id.tvDestination);
+            tvStartDate = v.findViewById(R.id.tvStartDate);
+            tvEndDate = v.findViewById(R.id.tvEndDate);
         }
     }
 

@@ -23,6 +23,8 @@ public class TourInvitationsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private InvitationsAdapter adapter;
     private String guideId;
+    private boolean isEmptyNotified = false;
+    private boolean isFirstLoad = true; // ✅ Chỉ hiển thị toast "Không có lời mời" lần đầu
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,19 +36,15 @@ public class TourInvitationsActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        // ✅ Lấy guideId hiện tại
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             guideId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else {
-            // 🔧 ID test nếu chưa đăng nhập
             guideId = "KbQBzkRgGbQNcc0XtRobyqwSlhN2";
         }
 
-        // ✅ Nút quay lại
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
 
-        // ✅ Tải lời mời
         loadInvitationsRealtime();
     }
 
@@ -61,11 +59,21 @@ public class TourInvitationsActivity extends AppCompatActivity {
                     }
 
                     if (snap != null && !snap.isEmpty()) {
+                        isEmptyNotified = false;
+                        isFirstLoad = false; // ✅ Đã có dữ liệu rồi
+
                         List<DocumentSnapshot> list = new ArrayList<>(snap.getDocuments());
                         adapter = new InvitationsAdapter(list, this::respondToInvitation);
                         recyclerView.setAdapter(adapter);
                     } else {
-                        Toast.makeText(this, "📭 Không có lời mời nào.", Toast.LENGTH_SHORT).show();
+                        // ✅ Chỉ hiển thị toast nếu:
+                        // - Chưa từng thông báo (isEmptyNotified = false)
+                        // - VÀ đây là lần load đầu tiên (isFirstLoad = true)
+                        if (!isEmptyNotified && isFirstLoad) {
+                            Toast.makeText(this, "📭 Không có lời mời nào.", Toast.LENGTH_SHORT).show();
+                            isEmptyNotified = true;
+                        }
+                        isFirstLoad = false;
                         recyclerView.setAdapter(null);
                     }
                 });
@@ -73,6 +81,9 @@ public class TourInvitationsActivity extends AppCompatActivity {
 
     private void respondToInvitation(String invitationId, String tourId, boolean accepted) {
         String newStatus = accepted ? "accepted" : "declined";
+
+        // ✅ Đánh dấu đã xử lý → không hiện toast "Không có lời mời" nữa
+        isEmptyNotified = true;
 
         db.collection("tour_invitations").document(invitationId)
                 .update("status", newStatus)
@@ -82,12 +93,16 @@ public class TourInvitationsActivity extends AppCompatActivity {
                                 .update("guideIds", FieldValue.arrayUnion(guideId))
                                 .addOnSuccessListener(a -> {
                                     Toast.makeText(this, "✅ Đã xác nhận tham gia tour", Toast.LENGTH_SHORT).show();
-                                    adapter.removeInvitation(invitationId);
+                                    if (adapter != null) {
+                                        adapter.removeInvitation(invitationId);
+                                    }
                                 })
                                 .addOnFailureListener(e -> Toast.makeText(this, "⚠️ Lỗi khi thêm hướng dẫn viên", Toast.LENGTH_SHORT).show());
                     } else {
                         Toast.makeText(this, "🚫 Đã từ chối lời mời", Toast.LENGTH_SHORT).show();
-                        adapter.removeInvitation(invitationId);
+                        if (adapter != null) {
+                            adapter.removeInvitation(invitationId);
+                        }
                     }
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "❌ Lỗi cập nhật lời mời", Toast.LENGTH_SHORT).show());
