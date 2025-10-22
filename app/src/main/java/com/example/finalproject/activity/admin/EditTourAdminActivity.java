@@ -246,7 +246,8 @@ public class EditTourAdminActivity extends AppCompatActivity {
                             ? "(Chưa chọn hướng dẫn viên)"
                             : String.join(", ", selectedGuideNames));
 
-                    tvGuideNames.setOnClickListener(v -> showGuideSelectDialog());
+                    // ❌ Không cho click để thay đổi hướng dẫn viên
+                    tvGuideNames.setEnabled(false);
                 });
     }
 

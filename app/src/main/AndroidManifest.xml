@@ -50,6 +50,8 @@
         <activity android:name=".activity.admin.AddTourAdminActivity" />
         <activity android:name=".activity.admin.TourDetailAdminActivity" />
         <activity android:name=".activity.admin.EditTourAdminActivity" />
+        <activity android:name=".activity.guide.TourInvitationsActivity" />
+
     </application>
 
 </manifest>

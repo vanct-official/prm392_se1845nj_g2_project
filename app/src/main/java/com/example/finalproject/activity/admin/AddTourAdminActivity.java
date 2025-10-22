@@ -412,19 +412,28 @@ public class AddTourAdminActivity extends AppCompatActivity {
                 tour.put("price", price);
                 tour.put("start_date", new Timestamp(startDate));
                 tour.put("end_date", new Timestamp(endDate));
-                tour.put("guideIds", selectedGuideIds);
+                //tour.put("guideIds", selectedGuideIds);
+                // Không thêm hướng dẫn viên vào tour khi tạo
+                tour.put("guideIds", new ArrayList<>()); // danh sách rỗng
+
                 tour.put("images", imageUrls);
                 tour.put("status", status);
 
                 // Lưu vào Firestore
                 db.collection("tours")
                         .add(tour)
-                        .addOnSuccessListener(doc -> runOnUiThread(() -> {
-                            progressBar.setVisibility(android.view.View.GONE);
-                            Toast.makeText(this, "✅ Thêm tour thành công! Status: " + status, Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "Tour saved successfully with status: " + status);
-                            finish();
-                        }))
+                        .addOnSuccessListener(doc -> {
+                            runOnUiThread(() -> {
+                                progressBar.setVisibility(android.view.View.GONE);
+                                Toast.makeText(this, "✅ Thêm tour thành công! Status: " + status, Toast.LENGTH_LONG).show();
+                            });
+
+                            // 🔹 Gửi lời mời ra ngoài thread UI
+                            sendGuideInvitations(doc.getId(), selectedGuideIds);
+
+                            runOnUiThread(this::finish);
+                        })
+
                         .addOnFailureListener(e -> runOnUiThread(() -> {
                             progressBar.setVisibility(android.view.View.GONE);
                             Toast.makeText(this, "❌ Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -484,6 +493,26 @@ public class AddTourAdminActivity extends AppCompatActivity {
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "Lỗi tải danh sách địa điểm: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });
+    }
+
+    /**
+     * Gửi lời mời tour đến danh sách hướng dẫn viên
+     */
+    private void sendGuideInvitations(String tourId, List<String> guideIds) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        for (String guideId : guideIds) {
+            Map<String, Object> invitation = new HashMap<>();
+            invitation.put("tourId", tourId);
+            invitation.put("guideId", guideId);
+            invitation.put("status", "pending");
+            invitation.put("createdAt", new Timestamp(new Date()));
+
+            db.collection("tour_invitations")
+                    .add(invitation)
+                    .addOnSuccessListener(docRef -> Log.d("Invite", "✅ Đã gửi lời mời cho " + guideId))
+                    .addOnFailureListener(e -> Log.e("Invite", "❌ Lỗi gửi lời mời: " + e.getMessage()));
+        }
     }
 
 }

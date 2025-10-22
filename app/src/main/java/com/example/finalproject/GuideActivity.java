@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.finalproject.fragment.ProfileFragment;
 import com.example.finalproject.fragment.guide.GuideHomeFragment;
-import com.example.finalproject.adapter.guide.GuideRequestAdapter;
 import com.example.finalproject.fragment.guide.GuideToursFragment;
 import com.example.finalproject.fragment.ChatListFragment;
 import com.example.finalproject.fragment.guide.CustomersInTourFragment;

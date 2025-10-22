@@ -1,9 +1,11 @@
 package com.example.finalproject.fragment.guide;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
+import com.example.finalproject.activity.guide.TourInvitationsActivity;
 import com.example.finalproject.adapter.guide.ToursAdapter;
 import com.example.finalproject.entity.Tour;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -24,6 +27,7 @@ public class GuideToursFragment extends Fragment {
 
     private ToursAdapter adapter;
     private TextView tvEmpty;
+    private RecyclerView rv;
 
     @Nullable
     @Override
@@ -35,9 +39,18 @@ public class GuideToursFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
-        RecyclerView rv = v.findViewById(R.id.rvTours);
+        rv = v.findViewById(R.id.rvTours);
         tvEmpty = v.findViewById(R.id.tvEmpty);
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+        rv.setItemAnimator(null); // ⚡ tránh lỗi "Inconsistency detected"
+
+        // 🔹 Nút xem danh sách lời mời
+        ImageButton btnInvitations = v.findViewById(R.id.btnInvitations);
+        btnInvitations.setOnClickListener(view -> {
+            if (adapter != null) adapter.stopListening(); // tạm dừng lắng nghe trước khi chuyển màn
+            Intent intent = new Intent(requireContext(), TourInvitationsActivity.class);
+            startActivity(intent);
+        });
 
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -78,6 +91,30 @@ public class GuideToursFragment extends Fragment {
         });
     }
 
-    @Override public void onStart() { super.onStart(); if (adapter != null) adapter.startListening(); }
-    @Override public void onStop()  { if (adapter != null) adapter.stopListening(); super.onStop(); }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (adapter != null) adapter.startListening();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adapter != null) adapter.startListening(); // đảm bảo cập nhật lại sau khi quay về
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adapter != null) adapter.stopListening();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (adapter != null) {
+            adapter.stopListening();
+            adapter = null;
+        }
+    }
 }
