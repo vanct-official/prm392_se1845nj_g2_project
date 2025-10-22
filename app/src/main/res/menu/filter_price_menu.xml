@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item
+        android:id="@+id/sort_price_asc"
+        android:title="Giá: Tăng dần" />
+    <item
+        android:id="@+id/sort_price_desc"
+        android:title="Giá: Giảm dần" />
 </menu>

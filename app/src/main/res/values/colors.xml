@@ -11,5 +11,6 @@
     <color name="surface">#FFFFFF</color>
     <color name="accent">#10B981</color>
     <color name="nav_item_background">#E5E7EB</color>
+    <color name="star_color">#FFCA28</color>
 
 </resources>

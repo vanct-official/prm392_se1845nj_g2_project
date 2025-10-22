@@ -24,6 +24,15 @@
             android:name=".AdminActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.CustomerTourDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CustomerReviewsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CustomerFavoriteToursActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
