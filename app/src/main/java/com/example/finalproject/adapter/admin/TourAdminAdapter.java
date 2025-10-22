@@ -57,7 +57,16 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
         Double price = doc.getDouble("price");
         String duration = doc.getString("duration");
 
-        List<String> images = (List<String>) doc.get("images");
+        // ✅ Lấy images an toàn
+        List<String> images = new ArrayList<>();
+        Object imagesObj = doc.get("images");
+        if (imagesObj instanceof List<?>) {
+            for (Object o : (List<?>) imagesObj) {
+                if (o instanceof String) {
+                    images.add((String) o);
+                }
+            }
+        }
 
         holder.tvTourTitle.setText(title != null ? title : "Không có tiêu đề");
         holder.tvDescription.setText(desc != null ? desc : "(Không có mô tả)");
@@ -70,10 +79,18 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
             holder.tvPrice.setText("Giá: Đang cập nhật");
         }
 
-        // 🔹 Hiển thị danh sách hướng dẫn viên được gán cho tour
-        List<String> guideIds = (List<String>) doc.get("guideIds");
+        // ✅ Hiển thị danh sách hướng dẫn viên (check null trước khi query)
+        Object guidesObj = doc.get("guideIds");
+        List<String> guideIds = new ArrayList<>();
+        if (guidesObj instanceof List<?>) {
+            for (Object o : (List<?>) guidesObj) {
+                if (o instanceof String) {
+                    guideIds.add((String) o);
+                }
+            }
+        }
 
-        if (guideIds != null && !guideIds.isEmpty()) {
+        if (!guideIds.isEmpty()) {
             FirebaseFirestore.getInstance()
                     .collection("users")
                     .whereIn(com.google.firebase.firestore.FieldPath.documentId(), guideIds)
@@ -82,35 +99,28 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
                         List<String> guideNames = new ArrayList<>();
 
                         for (DocumentSnapshot userDoc : querySnapshot) {
-                            // Chỉ hiển thị nếu user có role = "guide"
                             if ("guide".equals(userDoc.getString("role"))) {
                                 String firstName = userDoc.getString("firstname");
                                 String lastName = userDoc.getString("lastname");
-                                String fullName = (firstName != null ? firstName : "") + " " +
-                                        (lastName != null ? lastName : "");
-                                guideNames.add(fullName.trim());
+                                String fullName = ((firstName != null ? firstName : "") + " " +
+                                        (lastName != null ? lastName : "")).trim();
+                                if (!fullName.isEmpty()) guideNames.add(fullName);
                             }
                         }
 
-                        // ✅ Xóa trùng lặp (phòng khi Firestore có lỗi hoặc ID trùng)
                         List<String> unique = new ArrayList<>(new java.util.LinkedHashSet<>(guideNames));
-
-                        if (!unique.isEmpty()) {
-                            holder.tvGuides.setText("Hướng dẫn viên: " + String.join(", ", unique));
-                        } else {
-                            holder.tvGuides.setText("Hướng dẫn viên: (Không rõ)");
-                        }
+                        holder.tvGuides.setText(!unique.isEmpty()
+                                ? "Hướng dẫn viên: " + String.join(", ", unique)
+                                : "Hướng dẫn viên: (Không rõ)");
                     })
-                    .addOnFailureListener(e ->
-                            holder.tvGuides.setText("Hướng dẫn viên: (Lỗi tải)")
-                    );
+                    .addOnFailureListener(e -> holder.tvGuides.setText("Hướng dẫn viên: (Lỗi tải)"));
         } else {
             holder.tvGuides.setText("Hướng dẫn viên: (Chưa gán)");
         }
 
-        // Ảnh
+        // ✅ Ảnh (nếu rỗng thì thêm placeholder)
         List<SlideModel> slideModels = new ArrayList<>();
-        if (images != null && !images.isEmpty()) {
+        if (!images.isEmpty()) {
             for (String url : images) {
                 slideModels.add(new SlideModel(url, ScaleTypes.CENTER_CROP));
             }
@@ -119,7 +129,7 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
         }
         holder.imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
 
-        // Nút
+        // ✅ Nút
         holder.btnView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TourDetailAdminActivity.class);
             intent.putExtra("tourId", doc.getId());
