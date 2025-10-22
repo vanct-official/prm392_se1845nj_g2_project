@@ -15,8 +15,7 @@ import com.example.finalproject.fragment.admin.AdminToursFragment;
 import com.example.finalproject.fragment.admin.AdminManageUsersFragment;
 //import com.example.finalproject.fragment.admin.AdminBookingsFragment;
 import com.example.finalproject.fragment.admin.AdminPromotionsFragment;
-//import com.example.finalproject.fragment.admin.AdminChatFragment;
-import com.example.finalproject.fragment.admin.AdminFeedbackFragment;
+import com.example.finalproject.fragment.admin.AdminInvitationsFragment;
 import com.example.finalproject.fragment.ProfileFragment;
 
 import com.google.android.material.navigation.NavigationView;
@@ -63,7 +62,6 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
             navigationView.setCheckedItem(R.id.nav_admin_home);
         });
 
-
         // ✅ Sử dụng OnBackPressedDispatcher thay cho onBackPressed()
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -93,36 +91,30 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
 
         if (id == R.id.nav_admin_home) {
             selectedFragment = new AdminDashboardFragment();
-
-        } else if (id == R.id.nav_admin_users) {
-            selectedFragment = new AdminManageUsersFragment();
-
-        } else if (id == R.id.nav_admin_tours) {
-            selectedFragment = new AdminToursFragment();
-//
-//        } else if (id == R.id.nav_admin_bookings) {
-//            selectedFragment = new AdminBookingsFragment();
-//
-        } else if (id == R.id.nav_admin_promotions) {
-            selectedFragment = new AdminPromotionsFragment();
-//
-        } else if (id == R.id.nav_admin_chat) {
-            selectedFragment = new ChatListFragment();
-
-//        } else if (id == R.id.nav_admin_feedback) {
-//            selectedFragment = new AdminFeedbackFragment();
-
-        } else if (id == R.id.nav_profile) {
-            selectedFragment = new ProfileFragment();
         }
-        else if (id == R.id.nav_admin_reviews) {
-            selectedFragment = new AdminReviewsFragment();
+        else if (id == R.id.nav_admin_users) {
+            selectedFragment = new AdminManageUsersFragment();
+        }
+        else if (id == R.id.nav_admin_tours) {
+            selectedFragment = new AdminToursFragment();
+        }
+        else if (id == R.id.nav_admin_promotions) {
+            selectedFragment = new AdminPromotionsFragment();
+        }
+        else if (id == R.id.nav_admin_chat) {
+            selectedFragment = new ChatListFragment();
+        }
+        else if (id == R.id.nav_profile) {
+            selectedFragment = new ProfileFragment();
         }
         else if (id == R.id.nav_admin_reviews) {
             selectedFragment = new AdminReviewsFragment();
         }
         else if (id == R.id.nav_admin_reports) {
             selectedFragment = new AdminReportsFragment();
+        }
+        else if (id == R.id.nav_admin_invitation) {
+            selectedFragment = new AdminInvitationsFragment();
         }
 
         if (selectedFragment != null) {
