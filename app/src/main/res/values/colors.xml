@@ -19,4 +19,40 @@
     <color name="warning">#F59E0B</color>
     <color name="error">#EF4444</color>
     <color name="info">#0284C7</color>
+
+
+    <!-- Primary Colors -->
+    <color name="primary_blue">#1F6FEB</color>
+    <color name="primary_blue_dark">#1557C0</color>
+    <color name="primary_blue_light">#E3F2FD</color>
+
+    <!-- Background Colors -->
+    <color name="background_light">#F8F9FA</color>
+    <color name="background_white">#FFFFFF</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_tertiary">#999999</color>
+    <color name="text_hint">#CCCCCC</color>
+
+    <!-- Status Colors -->
+    <color name="error_red">#E53935</color>
+    <color name="success_green">#43A047</color>
+    <color name="warning_orange">#FB8C00</color>
+    <color name="info_blue">#1F6FEB</color>
+
+    <!-- Neutral Colors -->
+    <color name="gray_light">#E8E8E8</color>
+    <color name="gray_medium">#D0D0D0</color>
+    <color name="gray_dark">#808080</color>
+
+    <!-- Divider & Border -->
+    <color name="divider">#E0E0E0</color>
+    <color name="border">#D0D0D0</color>
+
+    <!-- Overlay -->
+    <color name="overlay_dark">#1A000000</color>
+    <color name="overlay_light">#0DFFFFFF</color>
+
 </resources>

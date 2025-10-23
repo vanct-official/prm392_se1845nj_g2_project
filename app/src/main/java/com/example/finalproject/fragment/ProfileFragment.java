@@ -23,6 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.button.MaterialButton;
+
 public class ProfileFragment extends Fragment {
 
     private FirebaseAuth mAuth;
@@ -30,8 +33,8 @@ public class ProfileFragment extends Fragment {
 
     private ImageView imgAvatar;
     private TextView tvUserName, tvUserEmail, tvUserPhone, tvUserDob;
-    private Button btnLogout, btnGoToFavorites;
-    private Button btnPersonalInfo, btnChangePassword, btnHistory, btnTerms, btnHelp;
+    private MaterialButton btnLogout; // vì XML là MaterialButton
+    private MaterialCardView btnGoToFavorites, btnPersonalInfo, btnChangePassword, btnHistory, btnTerms, btnHelp;
 
     public ProfileFragment() {
         // Required empty public constructor

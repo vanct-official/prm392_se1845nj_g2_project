@@ -157,7 +157,7 @@
                         android:focusable="false"
                         android:clickable="true"
                         android:inputType="none"
-                        android:drawableEnd="@drawable/ic_account"
+                        android:drawableEnd="@drawable/ic_place"
                         android:drawablePadding="8dp"
                         android:hint="Chọn địa điểm từ danh sách"
                         android:padding="14dp"

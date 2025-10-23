@@ -137,7 +137,7 @@
                         android:focusable="false"
                         android:clickable="true"
                         android:inputType="none"
-                        android:drawableEnd="@drawable/ic_account"
+                        android:drawableEnd="@drawable/ic_place"
                         android:drawablePadding="8dp"
                         android:padding="16dp"
                         android:textSize="16sp"
