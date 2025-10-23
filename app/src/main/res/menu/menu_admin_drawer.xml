@@ -41,10 +41,10 @@
         android:icon="@drawable/ic_feedback"
         android:title="Báo cáo tour" />
 
-<!--    <item-->
-<!--        android:id="@+id/nav_admin_feedback"-->
-<!--        android:icon="@drawable/ic_feedback"-->
-<!--        android:title="Phản hồi" />-->
+    <item
+        android:id="@+id/nav_admin_invitation"
+        android:icon="@drawable/ic_invation"
+        android:title="Lời mời" />
 
     <item
         android:id="@+id/nav_profile"

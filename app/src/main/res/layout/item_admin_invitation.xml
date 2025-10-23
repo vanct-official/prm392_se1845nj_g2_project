@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/tvGuideName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hướng dẫn viên: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvTourName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tour: " />
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Trạng thái: " />
+</LinearLayout>
