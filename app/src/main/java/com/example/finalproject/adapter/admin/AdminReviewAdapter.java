@@ -4,12 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.finalproject.R;
 
 import java.util.List;
@@ -39,6 +42,7 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
         String comment = review.get("comment") != null ? review.get("comment").toString() : "(Không có bình luận)";
         String tourName = review.get("tourName") != null ? review.get("tourName").toString() : "(Không có tên tour)";
         String userName = review.get("userName") != null ? review.get("userName").toString() : "(Không có tên user)";
+        String avatarUrl = review.get("avatarUrl") != null ? review.get("avatarUrl").toString() : "";
         double rating = review.get("rating") != null ? Double.parseDouble(review.get("rating").toString()) : 0.0;
 
         holder.tvComment.setText(comment);
@@ -46,6 +50,18 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
         holder.tvUserName.setText(userName);
         holder.ratingBar.setRating((float) rating);
         holder.tvRatingValue.setText(String.valueOf(rating));
+
+        // Load avatar với Glide
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            Glide.with(context)
+                    .load(avatarUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_user_placeholder)
+                    .error(R.drawable.ic_user_placeholder)
+                    .into(holder.imgAvatar);
+        } else {
+            holder.imgAvatar.setImageResource(R.drawable.ic_user_placeholder);
+        }
     }
 
     @Override
@@ -53,7 +69,6 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
         return reviewList.size();
     }
 
-    // ✅ Hàm dùng để cập nhật danh sách sau khi lọc
     public void filterList(List<Map<String, Object>> filteredList) {
         reviewList.clear();
         reviewList.addAll(filteredList);
@@ -63,6 +78,7 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTourName, tvUserName, tvComment, tvRatingValue;
         RatingBar ratingBar;
+        ImageView imgAvatar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +87,7 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
             tvComment = itemView.findViewById(R.id.tvComment);
             tvRatingValue = itemView.findViewById(R.id.tvRatingValue);
             ratingBar = itemView.findViewById(R.id.ratingBar);
+            imgAvatar = itemView.findViewById(R.id.imgAvatar);
         }
     }
 }
