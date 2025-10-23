@@ -42,6 +42,12 @@
         android:title="Báo cáo tour" />
 
     <item
+        android:id="@+id/nav_admin_payments"
+        android:icon="@drawable/ic_money"
+        android:title="Báo cáo Thanh toán" />
+
+
+    <item
         android:id="@+id/nav_admin_invitation"
         android:icon="@drawable/ic_invation"
         android:title="Lời mời" />
