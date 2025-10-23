@@ -2,8 +2,10 @@ package com.example.finalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -35,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private MaterialButton btnLoginEmail, btnLoginGoogle;
+    private ImageView togglePasswordVisibility;
+    private boolean isPasswordVisible = false;
 
     // Launcher cho Google Sign-In
     private final ActivityResultLauncher<Intent> googleSignInLauncher =
@@ -77,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLoginEmail = findViewById(R.id.btnLogin);
         btnLoginGoogle = findViewById(R.id.btnGoogleSignIn);
+        togglePasswordVisibility = findViewById(R.id.togglePasswordVisibility);
     }
 
     /** 🔹 Cấu hình Google Sign-In */
@@ -92,6 +97,25 @@ public class LoginActivity extends AppCompatActivity {
     private void setListeners() {
         btnLoginGoogle.setOnClickListener(v -> signInWithGoogle());
         btnLoginEmail.setOnClickListener(v -> signInWithEmail());
+
+        togglePasswordVisibility.setOnClickListener(v -> togglePasswordVisibility());
+    }
+
+    /** 🔄 Toggle password visibility */
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Hide password
+            etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            togglePasswordVisibility.setImageResource(android.R.drawable.ic_menu_view);
+            isPasswordVisible = false;
+        } else {
+            // Show password
+            etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            togglePasswordVisibility.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
+            isPasswordVisible = true;
+        }
+        // Move cursor to end
+        etPassword.setSelection(etPassword.getText().length());
     }
 
     /** 🟢 Đăng nhập bằng Google */
