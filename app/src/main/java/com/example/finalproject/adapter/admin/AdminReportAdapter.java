@@ -9,11 +9,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.models.SlideModel;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.example.finalproject.R;
 import com.example.finalproject.dialog.AdminReportDetailDialog;
 import com.google.firebase.Timestamp;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -46,11 +50,10 @@ public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.
         Number rating = (Number) report.get("ratingFromGuide");
 
         holder.tvTourName.setText("Tour: " + tourName);
-        holder.tvStatus.setText("Trạng thái: " + status);
         holder.tvParticipants.setText("👥 " + (participants != null ? participants : 0) + " khách");
         holder.tvRating.setText("⭐ " + (rating != null ? rating : 0));
 
-// Đổi sang tiếng Việt khi hiển thị
+        // Đổi sang tiếng Việt khi hiển thị
         String statusDisplay;
         switch (status) {
             case "completed":
@@ -61,7 +64,6 @@ public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.
                 statusDisplay = "Chờ xử lý";
                 break;
         }
-
         holder.tvStatus.setText("Trạng thái: " + statusDisplay);
 
         Object createdAt = report.get("createdAt");
@@ -71,10 +73,21 @@ public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.
             holder.tvDate.setText("🕒 " + sdf.format(date));
         }
 
+        // 🖼️ Hiển thị nhiều ảnh tour
+        List<String> tourImages = (List<String>) report.get("tourImages");
+        List<SlideModel> slideModels = new ArrayList<>();
+        if (tourImages != null && !tourImages.isEmpty()) {
+            for (String imgUrl : tourImages) {
+                slideModels.add(new SlideModel(imgUrl, ScaleTypes.CENTER_CROP));
+            }
+        } else {
+            slideModels.add(new SlideModel(R.drawable.bg_image_border, ScaleTypes.CENTER_CROP));
+        }
+
+        holder.imageSlider.setImageList(slideModels);
+
         // Khi admin bấm vào item → mở dialog chi tiết
-        holder.itemView.setOnClickListener(v -> {
-            new AdminReportDetailDialog(context, report).show();
-        });
+        holder.itemView.setOnClickListener(v -> new AdminReportDetailDialog(context, report).show());
     }
 
     @Override
@@ -84,9 +97,11 @@ public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTourName, tvParticipants, tvRating, tvDate, tvStatus;
+        ImageSlider imageSlider;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            imageSlider = itemView.findViewById(R.id.imageSlider);
             tvTourName = itemView.findViewById(R.id.tvTourName);
             tvParticipants = itemView.findViewById(R.id.tvParticipants);
             tvRating = itemView.findViewById(R.id.tvRating);
