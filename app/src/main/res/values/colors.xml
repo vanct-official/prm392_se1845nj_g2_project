@@ -55,4 +55,6 @@
     <color name="overlay_dark">#1A000000</color>
     <color name="overlay_light">#0DFFFFFF</color>
 
+    <color name="WHITE">#FFFFFF</color>
+
 </resources>

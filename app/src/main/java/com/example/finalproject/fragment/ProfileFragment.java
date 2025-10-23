@@ -15,9 +15,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.finalproject.CustomerActivity;
 import com.example.finalproject.LoginActivity;
 import com.example.finalproject.R;
 import com.example.finalproject.activity.CustomerFavoriteToursActivity;
+import com.example.finalproject.activity.customer.PaymentHistoryActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -86,6 +88,11 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
+        btnHistory.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PaymentHistoryActivity.class);
+            startActivity(intent);
+        });
+
         // 🔹 Các nút còn lại (ví dụ sau này có thể mở activity khác)
         btnPersonalInfo.setOnClickListener(v ->
                 Toast.makeText(getContext(), "Mở trang Thông tin cá nhân", Toast.LENGTH_SHORT).show()
@@ -93,10 +100,6 @@ public class ProfileFragment extends Fragment {
 
         btnChangePassword.setOnClickListener(v ->
                 Toast.makeText(getContext(), "Mở trang Đổi mật khẩu", Toast.LENGTH_SHORT).show()
-        );
-
-        btnHistory.setOnClickListener(v ->
-                Toast.makeText(getContext(), "Xem lịch sử gia hạn vé tháng", Toast.LENGTH_SHORT).show()
         );
 
         btnTerms.setOnClickListener(v ->
@@ -177,8 +180,10 @@ public class ProfileFragment extends Fragment {
         // Nếu là customer → hiển thị nút tour yêu thích
         if ("customer".equalsIgnoreCase(role)) {
             btnGoToFavorites.setVisibility(View.VISIBLE);
+            btnHistory.setVisibility(View.VISIBLE);
         } else {
             btnGoToFavorites.setVisibility(View.GONE);
+            btnHistory.setVisibility(View.GONE);
         }
 
         // Ảnh đại diện

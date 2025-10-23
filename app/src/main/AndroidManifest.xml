@@ -11,6 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalProject">
+
+        <activity
+            android:name=".activity.customer.PaymentHistoryActivity"
+            android:exported="false" />
         <activity
             android:name=".ChatActivity"
             android:exported="false" />
@@ -35,6 +39,12 @@
         <activity
             android:name=".activity.CustomerFavoriteToursActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".activity.customer.PaymentDetailActivity"
+            android:parentActivityName=".activity.customer.PaymentHistoryActivity"
+            tools:ignore="DuplicateActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -44,6 +54,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
         <activity android:name=".activity.admin.AdminAddPromotionActivity" />
         <activity android:name=".activity.admin.AdminPromotionDetailActivity" />
         <activity android:name=".activity.admin.AdminEditPromotionActivity" />
@@ -51,7 +63,6 @@
         <activity android:name=".activity.admin.AdminTourDetailActivity" />
         <activity android:name=".activity.admin.AdminEditTourActivity" />
         <activity android:name=".activity.guide.GuideTourInvitationsActivity" />
-
     </application>
 
 </manifest>
