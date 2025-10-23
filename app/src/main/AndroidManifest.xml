@@ -17,6 +17,10 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
+        <activity android:name=".activity.guide.ChangePasswordActivity"
+            android:exported="false"
+            android:label="Đổi mật khẩu" />
+
         <activity
             android:name=".CustomerActivity"
             android:exported="false" />

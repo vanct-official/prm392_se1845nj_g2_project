@@ -93,9 +93,11 @@ public class ProfileFragment extends Fragment {
         });
 
 
-        btnChangePassword.setOnClickListener(v ->
-                Toast.makeText(getContext(), "Mở trang Đổi mật khẩu", Toast.LENGTH_SHORT).show()
-        );
+        btnChangePassword.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), com.example.finalproject.activity.guide.ChangePasswordActivity.class);
+            startActivity(intent);
+        });
+
 
         btnHistory.setOnClickListener(v ->
                 Toast.makeText(getContext(), "Xem lịch sử gia hạn vé tháng", Toast.LENGTH_SHORT).show()
