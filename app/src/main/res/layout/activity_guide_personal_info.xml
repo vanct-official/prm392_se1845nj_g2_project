@@ -1,72 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#FAFAFA">
+    android:fillViewport="true"
+    android:background="@color/white"
+    tools:context=".activity.guide.GuidePersonalInfoActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:padding="20dp">
 
-        <ImageView
-            android:id="@+id/ivAvatar"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_avatar_circle"
-            android:src="@drawable/ic_user_placeholder"
-            android:padding="6dp"
-            android:contentDescription="Avatar"
-            android:clickable="true"
-            android:focusable="true" />
+        <!-- Back button -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/black"
+            android:contentDescription="Back" />
 
-        <EditText
-            android:id="@+id/etFirstName"
-            android:hint="Họ"
+
+        <!-- Avatar -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
 
+            <ImageView
+                android:id="@+id/imgAvatar"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/bg_circle_gray"
+                android:src="@drawable/ic_user_placeholder"
+                android:contentDescription="Avatar"
+                android:clipToOutline="true"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tvChangeAvatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chạm để thay ảnh"
+                android:textColor="#888888"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- First name -->
         <EditText
-            android:id="@+id/etLastName"
+            android:id="@+id/edtFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="Tên"
+            android:inputType="textPersonName"
+            android:background="@drawable/bg_field"
+            android:padding="12dp"
+            android:layout_marginTop="20dp" />
+
+        <!-- Last name -->
+        <EditText
+            android:id="@+id/edtLastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
+            android:hint="Họ"
+            android:inputType="textPersonName"
+            android:background="@drawable/bg_field"
+            android:padding="12dp"
+            android:layout_marginTop="10dp" />
 
+        <!-- Username -->
         <EditText
-            android:id="@+id/etEmail"
+            android:id="@+id/edtUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên đăng nhập"
+            android:inputType="text"
+            android:background="@drawable/bg_field"
+            android:padding="12dp"
+            android:layout_marginTop="10dp" />
+
+        <!-- Email (disabled) -->
+        <EditText
+            android:id="@+id/tvEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="Email"
+            android:inputType="textEmailAddress"
             android:enabled="false"
+            android:textColorHint="#777777"
+            android:background="@drawable/bg_field_disabled"
+            android:padding="12dp"
+            android:layout_marginTop="10dp" />
+
+        <!-- Phone -->
+        <EditText
+            android:id="@+id/edtPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/etPhone"
             android:hint="Số điện thoại"
             android:inputType="phone"
+            android:background="@drawable/bg_field"
+            android:padding="12dp"
+            android:layout_marginTop="10dp" />
+
+        <!-- DOB -->
+        <EditText
+            android:id="@+id/tvDob"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/etDob"
             android:hint="Ngày sinh"
             android:focusable="false"
+            android:background="@drawable/bg_field_disabled"
+            android:padding="12dp"
+            android:layout_marginTop="10dp" />
+
+        <!-- Gender -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Giới tính"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:layout_marginTop="14dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGenderGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginTop="8dp"
+            app:singleSelection="true"
+            app:selectionRequired="false"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="4dp">
 
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nam"
+                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nữ"
+                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipOther"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Khác"
+                style="@style/Widget.MaterialComponents.Chip.Choice" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Save button -->
         <Button
             android:id="@+id/btnSave"
-            android:text="Lưu thay đổi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#1976D2"
-            android:textColor="@android:color/white" />
+            android:text="Lưu thay đổi"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#7B00FF"
+            android:layout_marginTop="24dp"
+            android:padding="12dp"
+            android:layout_marginBottom="30dp" />
+
     </LinearLayout>
 </ScrollView>

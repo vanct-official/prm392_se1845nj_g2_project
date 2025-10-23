@@ -1,158 +1,223 @@
 package com.example.finalproject.activity.guide;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.finalproject.R;
-import com.example.finalproject.fragment.ProfileFragment;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class GuidePersonalInfoActivity extends AppCompatActivity {
 
-    private ImageView ivAvatar;
-    private EditText etFirstName, etLastName, etEmail, etPhone, etDob;
+    private ImageButton btnBack;
+    private ImageView imgAvatar;
+    private EditText edtFirstName, edtLastName, edtUsername, edtPhone, tvEmail, tvDob;
+    private ChipGroup chipGenderGroup;
     private Button btnSave;
 
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
-    private String uid;
+    private FirebaseAuth auth;
+
+    private Uri selectedImageUri;
+    private String cloudUrl = null;
+    private String gender = "";
+
+    private Cloudinary cloudinary;
+    private static final String CLOUD_NAME = "dvysaf9on";
+    private static final String UPLOAD_PRESET = "xuandai";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide_personal_info);
 
-        ivAvatar = findViewById(R.id.ivAvatar);
-        etFirstName = findViewById(R.id.etFirstName);
-        etLastName = findViewById(R.id.etLastName);
-        etEmail = findViewById(R.id.etEmail);
-        etPhone = findViewById(R.id.etPhone);
-        etDob = findViewById(R.id.etDob);
-        btnSave = findViewById(R.id.btnSave);
-
-        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Toast.makeText(this, "Không có người dùng đăng nhập", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-        uid = currentUser.getUid();
+        // Init Cloudinary
+        cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", CLOUD_NAME
+        ));
 
+        initUI();
         loadUserData();
 
-        etDob.setOnClickListener(v -> showDatePicker());
-        btnSave.setOnClickListener(v -> updateUserData());
+        btnBack.setOnClickListener(v -> onBackPressed());
+        imgAvatar.setOnClickListener(v -> selectImageFromGallery());
+        tvDob.setOnClickListener(v -> showDatePickerDialog());
+        btnSave.setOnClickListener(v -> saveUserData());
     }
 
-    /**
-     * 🔹 Hiển thị thông tin người dùng hiện tại
-     */
+    private void initUI() {
+        btnBack = findViewById(R.id.btnBack);
+        imgAvatar = findViewById(R.id.imgAvatar);
+        edtFirstName = findViewById(R.id.edtFirstName);
+        edtLastName = findViewById(R.id.edtLastName);
+        edtUsername = findViewById(R.id.edtUsername);
+        edtPhone = findViewById(R.id.edtPhone);
+        tvEmail = findViewById(R.id.tvEmail);
+        tvDob = findViewById(R.id.tvDob);
+        chipGenderGroup = findViewById(R.id.chipGenderGroup);
+        btnSave = findViewById(R.id.btnSave);
+
+        chipGenderGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (!checkedIds.isEmpty()) {
+                int checkedId = checkedIds.get(0);
+                Chip selectedChip = group.findViewById(checkedId);
+                gender = selectedChip.getText().toString();
+            }
+        });
+    }
+
     private void loadUserData() {
-        DocumentReference ref = db.collection("users").document(uid);
-        ref.get().addOnSuccessListener(doc -> {
-            if (doc.exists()) {
-                etFirstName.setText(doc.getString("firstname"));
-                etLastName.setText(doc.getString("lastname"));
-                etEmail.setText(doc.getString("email"));
-                etPhone.setText(doc.getString("phone"));
+        String uid = auth.getCurrentUser().getUid();
+        DocumentReference userRef = db.collection("users").document(uid);
 
-                Object dobObj = doc.get("dob");
-                String dob = "";
-                if (dobObj instanceof com.google.firebase.Timestamp) {
-                    java.util.Date date = ((com.google.firebase.Timestamp) dobObj).toDate();
-                    dob = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                edtFirstName.setText(documentSnapshot.getString("firstname"));
+                edtLastName.setText(documentSnapshot.getString("lastname"));
+                edtUsername.setText(documentSnapshot.getString("username"));
+                tvEmail.setText(documentSnapshot.getString("email"));
+                edtPhone.setText(documentSnapshot.getString("phone"));
+
+                // ✅ Handle DOB
+                Object dobObj = documentSnapshot.get("dob");
+                String dobText = "";
+                if (dobObj instanceof Timestamp) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    dobText = sdf.format(((Timestamp) dobObj).toDate());
                 } else if (dobObj instanceof String) {
-                    dob = (String) dobObj;
+                    dobText = (String) dobObj;
                 }
-                etDob.setText(dob);
+                tvDob.setText(dobText);
 
-                String avatarUrl = doc.getString("avatarUrl");
-                if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                    Glide.with(this)
-                            .load(avatarUrl)
-                            .placeholder(R.drawable.ic_person)
-                            .into(ivAvatar);
+                // ✅ Handle Gender (Boolean or String)
+                Object genderObj = documentSnapshot.get("gender");
+                String genderValue = "";
+                if (genderObj instanceof Boolean) {
+                    boolean isMale = (Boolean) genderObj;
+                    genderValue = isMale ? "Nam" : "Nữ";
+                } else if (genderObj != null) {
+                    genderValue = genderObj.toString();
+                }
+
+                if (genderValue.equalsIgnoreCase("Nam")) {
+                    chipGenderGroup.check(R.id.chipMale);
+                } else if (genderValue.equalsIgnoreCase("Nữ")) {
+                    chipGenderGroup.check(R.id.chipFemale);
                 } else {
-                    ivAvatar.setImageResource(R.drawable.ic_person);
+                    chipGenderGroup.check(R.id.chipOther);
+                }
+
+                // ✅ Avatar
+                String avatarUrl = documentSnapshot.getString("avatarUrl");
+                if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                    Glide.with(this).load(avatarUrl).into(imgAvatar);
                 }
             }
         }).addOnFailureListener(e ->
-                Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-        );
+                Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    /**
-     * 🔹 Hiển thị hộp chọn ngày
-     */
-    private void showDatePicker() {
-        Calendar calendar = Calendar.getInstance();
-        DatePickerDialog dialog = new DatePickerDialog(this,
-                (view, year, month, dayOfMonth) -> {
-                    String date = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, month + 1, year);
-                    etDob.setText(date);
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
-        dialog.show();
+    private void selectImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, 101);
     }
 
-    /**
-     * 🔹 Cập nhật dữ liệu người dùng vào Firestore
-     */
-    private void updateUserData() {
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("firstname", etFirstName.getText().toString().trim());
-        updates.put("lastname", etLastName.getText().toString().trim());
-        updates.put("phone", etPhone.getText().toString().trim());
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+            imgAvatar.setImageURI(selectedImageUri);
+            uploadImageToCloudinary();
+        }
+    }
 
-        // 🔹 Chuyển ngày sinh sang Timestamp an toàn
-        String dobStr = etDob.getText().toString().trim();
-        if (!dobStr.isEmpty()) {
+    private void uploadImageToCloudinary() {
+        new Thread(() -> {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                java.util.Date date = sdf.parse(dobStr);
-                updates.put("dob", new Timestamp(date));
+                Map uploadResult = cloudinary.uploader().upload(
+                        getContentResolver().openInputStream(selectedImageUri),
+                        ObjectUtils.asMap("upload_preset", UPLOAD_PRESET)
+                );
+                cloudUrl = uploadResult.get("secure_url").toString();
             } catch (Exception e) {
-                Toast.makeText(this, "Định dạng ngày không hợp lệ (dd/MM/yyyy)", Toast.LENGTH_SHORT).show();
-                return;
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(this, "Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
-        } else {
-            updates.put("dob", null);
+        }).start();
+    }
+
+    private void showDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                (view, year1, month1, dayOfMonth) -> {
+                    String selectedDate = String.format("%02d/%02d/%04d", dayOfMonth, (month1 + 1), year1);
+                    tvDob.setText(selectedDate);
+                }, year, month, day);
+        datePickerDialog.show();
+    }
+
+    private void saveUserData() {
+        String firstName = edtFirstName.getText().toString().trim();
+        String lastName = edtLastName.getText().toString().trim();
+        String username = edtUsername.getText().toString().trim();
+        String phone = edtPhone.getText().toString().trim();
+        String dob = tvDob.getText().toString().trim();
+
+        if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // 🔹 Thực hiện cập nhật Firestore
-        db.collection("users").document(uid)
-                .update(updates)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Đã lưu thay đổi", Toast.LENGTH_SHORT).show();
-                    // ✅ Quay lại trang Hồ sơ sau khi cập nhật thành công
-                    finish();
+        String uid = auth.getCurrentUser().getUid();
+        DocumentReference userRef = db.collection("users").document(uid);
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("firstname", firstName);
+        updates.put("lastname", lastName);
+        updates.put("username", username);
+        updates.put("phone", phone);
+        updates.put("dob", dob);
+        updates.put("gender", gender);
+        if (cloudUrl != null) updates.put("avatarUrl", cloudUrl);
+
+        userRef.update(updates)
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                    finish(); // quay về hồ sơ
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                        Toast.makeText(this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

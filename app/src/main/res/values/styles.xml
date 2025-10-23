@@ -24,6 +24,12 @@
 <!--        <item name="android:fontFamily">@font/poppins_regular</item>-->
         <item name="android:layout_marginBottom">4dp</item>
     </style>
+    <style name="Widget.MaterialComponents.Chip.Choice" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipStrokeColor">@color/purple_200</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 
     <style name="Widget.App.Chip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/chip_bg_selector</item>
