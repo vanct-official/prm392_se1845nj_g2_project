@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.finalproject.fragment.ChatListFragment;
 import com.example.finalproject.fragment.admin.AdminDashboardFragment;
+import com.example.finalproject.fragment.admin.AdminPaymentsFragment;
 import com.example.finalproject.fragment.admin.AdminReportsFragment;
 import com.example.finalproject.fragment.admin.AdminReviewsFragment;
 import com.example.finalproject.fragment.admin.AdminToursFragment;
@@ -112,6 +113,9 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         }
         else if (id == R.id.nav_admin_reports) {
             selectedFragment = new AdminReportsFragment();
+        }
+        else if(id == R.id.nav_admin_payments) {
+            selectedFragment = new AdminPaymentsFragment();
         }
         else if (id == R.id.nav_admin_invitation) {
             selectedFragment = new AdminInvitationsFragment();
