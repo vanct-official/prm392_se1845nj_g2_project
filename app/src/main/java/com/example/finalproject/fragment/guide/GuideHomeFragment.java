@@ -1,6 +1,7 @@
 package com.example.finalproject.fragment.guide;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,95 +14,108 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.adapter.guide.GuideTourAdapter;
+import com.example.finalproject.adapter.guide.TourCardAdapter;
 import com.example.finalproject.entity.Tour;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GuideHomeFragment extends Fragment {
 
-    private TextView tvWelcome, tvTotalTours, tvOngoing, tvUpcoming, tvReports;
-    private RecyclerView rvUpcomingTours;
-    private GuideTourAdapter adapter;
+    private TextView tvWelcome, tvTotal, tvOngoing, tvUpcoming, tvReports, tvEmpty;
+    private RecyclerView rvUpcoming;
     private FirebaseFirestore db;
-    private String guideId;
+    private String currentGuideId;
+    private TourCardAdapter adapter;
     private List<Tour> upcomingTours = new ArrayList<>();
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_guide_home, container, false);
 
         tvWelcome = view.findViewById(R.id.tvWelcome);
-        tvTotalTours = view.findViewById(R.id.tvTotalTours);
+        tvTotal = view.findViewById(R.id.tvTotal);
         tvOngoing = view.findViewById(R.id.tvOngoing);
         tvUpcoming = view.findViewById(R.id.tvUpcoming);
         tvReports = view.findViewById(R.id.tvReports);
-        rvUpcomingTours = view.findViewById(R.id.rvUpcomingTours);
+        tvEmpty = view.findViewById(R.id.tvEmpty);
+        rvUpcoming = view.findViewById(R.id.rvUpcoming);
 
-        rvUpcomingTours.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new TourCardAdapter(getContext(), upcomingTours);
+        rvUpcoming.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
-        guideId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentGuideId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         loadGuideInfo();
-        loadDashboardData();
+        loadTourStats();
         loadUpcomingTours();
 
         return view;
     }
 
     private void loadGuideInfo() {
-        db.collection("users").document(guideId).get().addOnSuccessListener(doc -> {
-            String name = doc.getString("fullName");
-            tvWelcome.setText("Xin chào, " + name + " 👋");
-        });
+        db.collection("users").document(currentGuideId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    String name = doc.getString("firstname");
+                    tvWelcome.setText("Xin chào, " + (name != null ? name : "bạn") + " 👋");
+                });
     }
 
-    private void loadDashboardData() {
-        db.collection("tours").whereEqualTo("guideId", guideId)
+    private void loadTourStats() {
+        db.collection("tours")
+                .whereArrayContains("guideIds", currentGuideId)
                 .get()
-                .addOnSuccessListener(snapshot -> {
-                    int total = snapshot.size();
-                    int ongoing = 0;
-                    int upcoming = 0;
+                .addOnSuccessListener(snapshots -> {
+                    int total = snapshots.size();
+                    int ongoing = 0, upcoming = 0;
 
-                    for (QueryDocumentSnapshot doc : snapshot) {
+                    for (DocumentSnapshot doc : snapshots) {
                         String status = doc.getString("status");
-                        if ("Ongoing".equalsIgnoreCase(status)) ongoing++;
-                        if ("Upcoming".equalsIgnoreCase(status)) upcoming++;
+                        if ("ongoing".equals(status)) ongoing++;
+                        if ("upcoming".equals(status)) upcoming++;
                     }
 
-                    tvTotalTours.setText(String.valueOf(total));
+                    tvTotal.setText(String.valueOf(total));
                     tvOngoing.setText(String.valueOf(ongoing));
                     tvUpcoming.setText(String.valueOf(upcoming));
                 });
 
-        db.collection("reports").whereEqualTo("guideId", guideId)
-                .get().addOnSuccessListener(snapshot -> {
-                    tvReports.setText(String.valueOf(snapshot.size()));
-                });
+        db.collection("reports")
+                .whereEqualTo("guideId", currentGuideId)
+                .whereEqualTo("status", "completed")
+                .get()
+                .addOnSuccessListener(snapshots ->
+                        tvReports.setText(String.valueOf(snapshots.size())));
     }
 
     private void loadUpcomingTours() {
         db.collection("tours")
-                .whereEqualTo("guideId", guideId)
-                .whereEqualTo("status", "Upcoming")
-                .limit(3)
+                .whereArrayContains("guideIds", currentGuideId)
+                .whereEqualTo("status", "upcoming")
                 .get()
-                .addOnSuccessListener(snapshot -> {
+                .addOnSuccessListener(snapshots -> {
                     upcomingTours.clear();
-                    for (QueryDocumentSnapshot doc : snapshot) {
+                    for (DocumentSnapshot doc : snapshots) {
                         Tour tour = doc.toObject(Tour.class);
                         upcomingTours.add(tour);
                     }
-                    adapter = new GuideTourAdapter(getContext(), upcomingTours);
-                    rvUpcomingTours.setAdapter(adapter);
-                });
+
+                    if (upcomingTours.isEmpty()) {
+                        tvEmpty.setVisibility(View.VISIBLE);
+                        rvUpcoming.setVisibility(View.GONE);
+                    } else {
+                        tvEmpty.setVisibility(View.GONE);
+                        rvUpcoming.setVisibility(View.VISIBLE);
+                        adapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("GuideHome", "Error loading tours", e));
     }
 }

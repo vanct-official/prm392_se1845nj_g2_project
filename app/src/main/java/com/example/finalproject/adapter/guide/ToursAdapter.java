@@ -33,7 +33,7 @@ public class ToursAdapter extends FirestoreRecyclerAdapter<Tour, ToursAdapter.To
     protected void onBindViewHolder(@NonNull TourVH holder, int position, @NonNull Tour model) {
         holder.tvDestination.setText(model.getDestination());
         holder.tvDuration.setText(model.getDuration());
-        Long price = model.getPrice();
+        Long price = (long) model.getPrice();
         holder.tvPrice.setText(price != null ? String.format("%,d ₫", price) : "—");
         holder.tvDesc.setText(model.getDescription());
 
@@ -70,4 +70,5 @@ public class ToursAdapter extends FirestoreRecyclerAdapter<Tour, ToursAdapter.To
             tvDesc       = itemView.findViewById(R.id.tvDesc);
         }
     }
+
 }
