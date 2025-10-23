@@ -188,8 +188,6 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
             selectedFragment = new AdminPromotionsFragment();
         } else if (id == R.id.nav_admin_chat) {
             selectedFragment = new ChatListFragment();
-        } else if (id == R.id.nav_profile) {
-            selectedFragment = new ProfileFragment();
         } else if (id == R.id.nav_admin_reviews) {
             selectedFragment = new AdminReviewsFragment();
         } else if (id == R.id.nav_admin_reports) {
@@ -201,7 +199,9 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         } else if (id == R.id.nav_admin_bookings) {
             selectedFragment = new AdminBookingsFragment();
         }
-
+//        else if (id == R.id.nav_profile) {
+//            selectedFragment = new ProfileFragment();
+//        }
         if (selectedFragment != null) {
             replaceFragment(selectedFragment);
         }

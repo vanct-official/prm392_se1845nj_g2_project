@@ -64,11 +64,11 @@
     </group>
 
     <!-- Account Section -->
-    <group android:id="@+id/group_account">
-        <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_account"
-            android:title="Hồ sơ" />
-    </group>
+<!--    <group android:id="@+id/group_account">-->
+<!--        <item-->
+<!--            android:id="@+id/nav_profile"-->
+<!--            android:icon="@drawable/ic_account"-->
+<!--            android:title="Hồ sơ" />-->
+<!--    </group>-->
 
 </menu>
