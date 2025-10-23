@@ -42,9 +42,9 @@ import android.text.TextWatcher;
 import java.text.NumberFormat;
 
 
-public class AddTourAdminActivity extends AppCompatActivity {
+public class AdminAddTourActivity extends AppCompatActivity {
 
-    private static final String TAG = "AddTourAdminActivity";
+    private static final String TAG = "AdminAddTourActivity";
     private EditText etTitle, etDescription, etDestination, etDuration, etItinerary, etPrice, etStartDate, etEndDate;
     private Button btnChooseImages, btnCancel, btnSave;
     private TextView tvImageCount, tvSelectedGuides;

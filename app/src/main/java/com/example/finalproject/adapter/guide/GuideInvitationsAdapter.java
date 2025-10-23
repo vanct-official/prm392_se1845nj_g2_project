@@ -19,7 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.InviteVH> {
+public class GuideInvitationsAdapter extends RecyclerView.Adapter<GuideInvitationsAdapter.InviteVH> {
 
     private final List<DocumentSnapshot> invitations;
     private final OnRespond listener;
@@ -28,7 +28,7 @@ public class InvitationsAdapter extends RecyclerView.Adapter<InvitationsAdapter.
         void onRespond(String invitationId, String tourId, boolean accepted);
     }
 
-    public InvitationsAdapter(List<DocumentSnapshot> invitations, OnRespond listener) {
+    public GuideInvitationsAdapter(List<DocumentSnapshot> invitations, OnRespond listener) {
         this.invitations = invitations;
         this.listener = listener;
     }

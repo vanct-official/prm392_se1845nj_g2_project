@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.dialog.ReportDetailDialogAdmin;
+import com.example.finalproject.dialog.AdminReportDetailDialog;
 import com.google.firebase.Timestamp;
 
 import java.text.SimpleDateFormat;
@@ -73,7 +73,7 @@ public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.
 
         // Khi admin bấm vào item → mở dialog chi tiết
         holder.itemView.setOnClickListener(v -> {
-            new ReportDetailDialogAdmin(context, report).show();
+            new AdminReportDetailDialog(context, report).show();
         });
     }
 

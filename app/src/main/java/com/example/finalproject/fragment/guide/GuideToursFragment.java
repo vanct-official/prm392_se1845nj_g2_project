@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.guide.TourInvitationsGuideActivity;
+import com.example.finalproject.activity.guide.GuideTourInvitationsActivity;
 import com.example.finalproject.adapter.guide.ToursAdapter;
 import com.example.finalproject.entity.Tour;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -48,7 +48,7 @@ public class GuideToursFragment extends Fragment {
         ImageButton btnInvitations = v.findViewById(R.id.btnInvitations);
         btnInvitations.setOnClickListener(view -> {
             if (adapter != null) adapter.stopListening(); // tạm dừng lắng nghe trước khi chuyển màn
-            Intent intent = new Intent(requireContext(), TourInvitationsGuideActivity.class);
+            Intent intent = new Intent(requireContext(), GuideTourInvitationsActivity.class);
             startActivity(intent);
         });
 

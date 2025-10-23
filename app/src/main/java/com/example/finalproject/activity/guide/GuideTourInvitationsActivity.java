@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.adapter.guide.InvitationsAdapter;
+import com.example.finalproject.adapter.guide.GuideInvitationsAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -17,11 +17,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TourInvitationsGuideActivity extends AppCompatActivity {
+public class GuideTourInvitationsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private FirebaseFirestore db;
-    private InvitationsAdapter adapter;
+    private GuideInvitationsAdapter adapter;
     private String guideId;
     private boolean isEmptyNotified = false;
     private boolean isFirstLoad = true; // ✅ Chỉ hiển thị toast "Không có lời mời" lần đầu
@@ -63,7 +63,7 @@ public class TourInvitationsGuideActivity extends AppCompatActivity {
                         isFirstLoad = false; // ✅ Đã có dữ liệu rồi
 
                         List<DocumentSnapshot> list = new ArrayList<>(snap.getDocuments());
-                        adapter = new InvitationsAdapter(list, this::respondToInvitation);
+                        adapter = new GuideInvitationsAdapter(list, this::respondToInvitation);
                         recyclerView.setAdapter(adapter);
                     } else {
                         // ✅ Chỉ hiển thị toast nếu:

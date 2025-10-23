@@ -27,12 +27,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ReportDetailDialogAdmin extends Dialog {
+public class AdminReportDetailDialog extends Dialog {
 
     private final Map<String, Object> report;
     private final FirebaseFirestore db;
 
-    public ReportDetailDialogAdmin(@NonNull Context context, Map<String, Object> report) {
+    public AdminReportDetailDialog(@NonNull Context context, Map<String, Object> report) {
         super(context);
         this.report = report;
         this.db = FirebaseFirestore.getInstance();
@@ -42,7 +42,7 @@ public class ReportDetailDialogAdmin extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.dialog_report_detail);
+        setContentView(R.layout.dialog_report_detail_admin);
 
         // 🔽 Gắn view
         View statusContainer = findViewById(R.id.statusContainer);

@@ -1,6 +1,5 @@
 package com.example.finalproject.activity.admin;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,12 +15,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.NumberFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class AddPromotionAdminActivity extends AppCompatActivity {
+public class AdminAddPromotionActivity extends AppCompatActivity {
 
     private EditText etPromotionCode, etDescription, etDiscountPercent, etMinOrderValue;
     private SwitchMaterial switchActive;

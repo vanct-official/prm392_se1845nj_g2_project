@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class PromotionAdminAdapter extends RecyclerView.Adapter<PromotionAdminAdapter.PromoViewHolder> {
+public class AdminPromotionAdapter extends RecyclerView.Adapter<AdminPromotionAdapter.PromoViewHolder> {
 
     public interface OnPromotionActionListener {
         void onView(DocumentSnapshot doc);
@@ -32,7 +32,7 @@ public class PromotionAdminAdapter extends RecyclerView.Adapter<PromotionAdminAd
     private final OnPromotionActionListener listener;
     private List<DocumentSnapshot> promotions = new ArrayList<>();
 
-    public PromotionAdminAdapter(Context context, List<DocumentSnapshot> promotions, OnPromotionActionListener listener) {
+    public AdminPromotionAdapter(Context context, List<DocumentSnapshot> promotions, OnPromotionActionListener listener) {
         this.context = context;
         this.promotions = new ArrayList<>(promotions);
         this.listener = listener;

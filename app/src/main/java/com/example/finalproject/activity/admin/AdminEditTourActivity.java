@@ -1,11 +1,9 @@
 package com.example.finalproject.activity.admin;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +15,6 @@ import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
 import com.example.finalproject.utils.CloudinaryManager;
-import com.example.finalproject.utils.RealPathUtil;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
@@ -27,15 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import com.example.finalproject.utils.CloudinaryManager;
-import java.io.File;
 import java.io.InputStream;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 
-public class EditTourAdminActivity extends AppCompatActivity {
+public class AdminEditTourActivity extends AppCompatActivity {
 
     private TextInputEditText etTitle, etDescription, etDestination, etDuration,
             etItinerary, etStartDate, etEndDate, etPrice;

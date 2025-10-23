@@ -17,8 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.admin.AddPromotionAdminActivity;
-import com.example.finalproject.activity.admin.AddTourAdminActivity;
+import com.example.finalproject.activity.admin.AdminAddPromotionActivity;
+import com.example.finalproject.activity.admin.AdminAddTourActivity;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.BarData;
@@ -69,12 +69,12 @@ public class AdminDashboardFragment extends Fragment {
         Button btnAddPromotion = view.findViewById(R.id.btnAddPromotion);
 
         btnAddTour.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AddTourAdminActivity.class);
+            Intent intent = new Intent(getActivity(), AdminAddTourActivity.class);
             startActivity(intent);
         });
 
         btnAddPromotion.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AddPromotionAdminActivity.class);
+            Intent intent = new Intent(getActivity(), AdminAddPromotionActivity.class);
             startActivity(intent);
         });
 

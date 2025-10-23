@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class EditPromotionAdminActivity extends AppCompatActivity {
+public class AdminEditPromotionActivity extends AppCompatActivity {
 
     private EditText etPromotionCode, etDescription, etDiscountPercent, etMinValue;
     private SwitchMaterial switchActive;

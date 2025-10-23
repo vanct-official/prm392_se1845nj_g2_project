@@ -17,9 +17,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class TourDetailAdminActivity extends AppCompatActivity {
+public class AdminTourDetailActivity extends AppCompatActivity {
 
-    private static final String TAG = "TourDetailAdminActivity";
+    private static final String TAG = "AdminTourDetailActivity";
 
     private TextView tvTitle, tvDescription, tvDestination, tvDuration, tvPrice,
             tvStartDate, tvEndDate, tvItinerary, tvGuideName, tvStatus;

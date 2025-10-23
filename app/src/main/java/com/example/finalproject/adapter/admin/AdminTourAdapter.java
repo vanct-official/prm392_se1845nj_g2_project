@@ -12,8 +12,8 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.finalproject.R;
-import com.example.finalproject.activity.admin.EditTourAdminActivity;
-import com.example.finalproject.activity.admin.TourDetailAdminActivity;
+import com.example.finalproject.activity.admin.AdminEditTourActivity;
+import com.example.finalproject.activity.admin.AdminTourDetailActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.TourViewHolder> {
+public class AdminTourAdapter extends RecyclerView.Adapter<AdminTourAdapter.TourViewHolder> {
 
     public interface OnTourActionListener {
         void onEdit(DocumentSnapshot doc);
@@ -34,7 +34,7 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
     private final List<DocumentSnapshot> tours;
     private final OnTourActionListener listener;
 
-    public TourAdminAdapter(Context context, List<DocumentSnapshot> tours, OnTourActionListener listener) {
+    public AdminTourAdapter(Context context, List<DocumentSnapshot> tours, OnTourActionListener listener) {
         this.context = context;
         this.tours = tours;
         this.listener = listener;
@@ -131,14 +131,14 @@ public class TourAdminAdapter extends RecyclerView.Adapter<TourAdminAdapter.Tour
 
         // ✅ Nút
         holder.btnView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, TourDetailAdminActivity.class);
+            Intent intent = new Intent(context, AdminTourDetailActivity.class);
             intent.putExtra("tourId", doc.getId());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });
 
         holder.btnEdit.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), EditTourAdminActivity.class);
+            Intent intent = new Intent(v.getContext(), AdminEditTourActivity.class);
             intent.putExtra("tourId", doc.getId());
             v.getContext().startActivity(intent);
         });

@@ -19,9 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.admin.AddTourAdminActivity;
-import com.example.finalproject.activity.admin.EditTourAdminActivity;
-import com.example.finalproject.adapter.admin.TourAdminAdapter;
+import com.example.finalproject.activity.admin.AdminAddTourActivity;
+import com.example.finalproject.activity.admin.AdminEditTourActivity;
+import com.example.finalproject.adapter.admin.AdminTourAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -37,7 +37,7 @@ public class AdminToursFragment extends Fragment {
     private SearchView searchView;
 
     private FirebaseFirestore db;
-    private TourAdminAdapter adapter;
+    private AdminTourAdapter adapter;
     private final List<DocumentSnapshot> tours = new ArrayList<>();
     private final List<DocumentSnapshot> allTours = new ArrayList<>();
 
@@ -54,10 +54,10 @@ public class AdminToursFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         recyclerTours.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new TourAdminAdapter(requireContext(), tours, new TourAdminAdapter.OnTourActionListener() {
+        adapter = new AdminTourAdapter(requireContext(), tours, new AdminTourAdapter.OnTourActionListener() {
             @Override
             public void onEdit(DocumentSnapshot doc) {
-                Intent intent = new Intent(getContext(), EditTourAdminActivity.class);
+                Intent intent = new Intent(getContext(), AdminEditTourActivity.class);
                 intent.putExtra("tourId", doc.getId());
                 startActivity(intent);
             }
@@ -74,7 +74,7 @@ public class AdminToursFragment extends Fragment {
         });
 
         recyclerTours.setAdapter(adapter);
-        tvAddTour.setOnClickListener(v -> startActivity(new Intent(requireActivity(), AddTourAdminActivity.class)));
+        tvAddTour.setOnClickListener(v -> startActivity(new Intent(requireActivity(), AdminAddTourActivity.class)));
 
         setupSearchView();
         loadTours();
