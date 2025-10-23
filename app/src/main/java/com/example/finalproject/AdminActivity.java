@@ -14,11 +14,12 @@ import com.example.finalproject.fragment.admin.AdminReportsFragment;
 import com.example.finalproject.fragment.admin.AdminReviewsFragment;
 import com.example.finalproject.fragment.admin.AdminToursFragment;
 import com.example.finalproject.fragment.admin.AdminManageUsersFragment;
-//import com.example.finalproject.fragment.admin.AdminBookingsFragment;
+import com.example.finalproject.fragment.admin.AdminBookingsFragment;
 import com.example.finalproject.fragment.admin.AdminPromotionsFragment;
 import com.example.finalproject.fragment.admin.AdminInvitationsFragment;
 import com.example.finalproject.fragment.ProfileFragment;
 
+import com.example.finalproject.fragment.customer.CustomerBookingsFragment;
 import com.google.android.material.navigation.NavigationView;
 import android.view.MenuItem;
 
@@ -119,6 +120,9 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         }
         else if (id == R.id.nav_admin_invitation) {
             selectedFragment = new AdminInvitationsFragment();
+        }
+        else if (id == R.id.nav_admin_bookings) {
+            selectedFragment = new AdminBookingsFragment();
         }
 
         if (selectedFragment != null) {
