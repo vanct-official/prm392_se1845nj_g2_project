@@ -42,7 +42,8 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.coordinatorlayout)
     implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
-
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.google.android.material:material:1.12.0")
     // Firebase BOM (bom = Bill of Materials -> quản lý version đồng bộ)
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
 
