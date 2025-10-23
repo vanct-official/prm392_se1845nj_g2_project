@@ -1,60 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/nav_admin_home"
-        android:icon="@drawable/ic_home"
-        android:title="Trang chủ" />
+    <!-- Main Section -->
+    <group android:id="@+id/group_main">
+        <item
+            android:id="@+id/nav_admin_home"
+            android:icon="@drawable/ic_home"
+            android:title="Trang chủ" />
+    </group>
 
-    <item
-        android:id="@+id/nav_admin_users"
-        android:icon="@drawable/ic_group"
-        android:title="Người dùng" />
+    <!-- Management Section -->
+    <group android:id="@+id/group_management">
+        <item
+            android:id="@+id/nav_admin_users"
+            android:icon="@drawable/ic_group"
+            android:title="Người dùng" />
 
-    <item
-        android:id="@+id/nav_admin_tours"
-        android:icon="@drawable/ic_map"
-        android:title="Chuyến tham quan" />
+        <item
+            android:id="@+id/nav_admin_tours"
+            android:icon="@drawable/ic_map"
+            android:title="Chuyến tham quan" />
 
-    <item
-        android:id="@+id/nav_admin_bookings"
-        android:icon="@drawable/ic_travel"
-        android:title="Đặt chỗ booking" />
+        <item
+            android:id="@+id/nav_admin_bookings"
+            android:icon="@drawable/ic_travel"
+            android:title="Đặt chỗ booking" />
 
-    <item
-        android:id="@+id/nav_admin_promotions"
-        android:icon="@drawable/ic_km"
-        android:title="Mã khuyến mãi" />
+        <item
+            android:id="@+id/nav_admin_promotions"
+            android:icon="@drawable/ic_km"
+            android:title="Mã khuyến mãi" />
+    </group>
 
-    <item
-        android:id="@+id/nav_admin_chat"
-        android:icon="@drawable/ic_chat"
-        android:title="Trò chuyện" />
+    <!-- Communication Section -->
+    <group android:id="@+id/group_communication">
+        <item
+            android:id="@+id/nav_admin_chat"
+            android:icon="@drawable/ic_chat"
+            android:title="Trò chuyện" />
 
-    <item
-        android:id="@+id/nav_admin_reviews"
-        android:title="Đánh giá tour"
-        android:icon="@drawable/ic_reviews" />
+        <item
+            android:id="@+id/nav_admin_reviews"
+            android:icon="@drawable/ic_reviews"
+            android:title="Đánh giá tour" />
+    </group>
 
-    <item
-        android:id="@+id/nav_admin_reports"
-        android:icon="@drawable/ic_feedback"
-        android:title="Báo cáo tour" />
+    <!-- Reports Section -->
+    <group android:id="@+id/group_reports">
+        <item
+            android:id="@+id/nav_admin_reports"
+            android:icon="@drawable/ic_feedback"
+            android:title="Báo cáo tour" />
 
-    <item
-        android:id="@+id/nav_admin_payments"
-        android:icon="@drawable/ic_money"
-        android:title="Báo cáo Thanh toán" />
+        <item
+            android:id="@+id/nav_admin_payments"
+            android:icon="@drawable/ic_money"
+            android:title="Báo cáo Thanh toán" />
 
+        <item
+            android:id="@+id/nav_admin_invitation"
+            android:icon="@drawable/ic_invation"
+            android:title="Lời mời" />
+    </group>
 
-    <item
-        android:id="@+id/nav_admin_invitation"
-        android:icon="@drawable/ic_invation"
-        android:title="Lời mời" />
-
-    <item
-        android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_account"
-        android:title="Hồ sơ" />
+    <!-- Account Section -->
+    <group android:id="@+id/group_account">
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_account"
+            android:title="Hồ sơ" />
+    </group>
 
 </menu>

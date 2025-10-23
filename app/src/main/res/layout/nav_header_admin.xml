@@ -1,23 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="#853B9569"
-    android:padding="16dp"
-    android:gravity="bottom">
+    android:layout_height="200dp"
+    android:background="@drawable/bg_nav_header"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:padding="16dp">
 
+    <!-- Avatar -->
     <ImageView
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:contentDescription="Avatar"
-        android:src="@drawable/outline_admin_panel_settings_24" />
+        android:id="@+id/ivAdminAvatar"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_circle"
+        android:contentDescription="Admin Avatar"
+        android:scaleType="centerCrop"
+        android:background="@drawable/bg_avatar_circle"
+        android:layout_marginBottom="12dp" />
 
+    <!-- Admin Name -->
     <TextView
+        android:id="@+id/tvAdminName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:text="Trang quản trị viên"
-        android:textColor="#6F233D"
-        android:textSize="18sp" />
+        android:text="Nguyễn Văn Admin"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Admin Email -->
+    <TextView
+        android:id="@+id/tvAdminEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="admin@example.com"
+        android:textColor="#E0E0E0"
+        android:textSize="12sp"
+        android:layout_marginBottom="4dp" />
+
+    <!-- ✅ Trạng thái Online/Offline -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Offline"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        android:textColor="#9E9E9E"
+        android:layout_marginBottom="8dp" />
+
+    <!-- ✅ Nút Đăng xuất -->
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#FFFFFF40" />
+
 </LinearLayout>

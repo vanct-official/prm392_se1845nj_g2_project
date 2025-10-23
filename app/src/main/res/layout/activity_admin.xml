@@ -9,33 +9,33 @@
     android:fitsSystemWindows="true"
     tools:context=".AdminActivity">
 
-    <!-- Màn hình chính -->
+    <!-- Main Content -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- AppBar với Material Design 3 -->
+        <!-- AppBar with Material Design 3 -->
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.Material3.Dark">
+            android:elevation="0dp"
+            app:liftOnScroll="true">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar_admin"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/primary"
-                android:elevation="0dp"
                 app:title="Quản trị viên"
                 app:titleTextColor="@android:color/white"
                 app:navigationIcon="@drawable/ic_travel"
+                app:menu="@menu/menu_admin_drawer"
                 app:layout_scrollFlags="scroll|enterAlways|snap" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- Container chứa Fragment với padding đẹp hơn -->
+        <!-- Fragment Container -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -46,27 +46,26 @@
                 android:id="@+id/fragment_container_admin"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/background"
-                android:padding="0dp" />
+                android:background="@color/background" />
 
         </androidx.core.widget.NestedScrollView>
 
-        <!-- Floating Action Button (tùy chọn) -->
+        <!-- Floating Action Button -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_admin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_home"
+            android:layout_margin="24dp"
+            android:src="@drawable/ic_feedback"
             app:tint="@android:color/white"
-            app:backgroundTint="#3CCC99"
+            app:backgroundTint="#10B981"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Thanh điều hướng bên với Material Design 3 -->
+    <!-- Navigation Drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view_admin"
         android:layout_width="280dp"
