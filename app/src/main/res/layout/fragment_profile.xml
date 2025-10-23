@@ -1,41 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center_horizontal" tools:context=".fragment.ProfileFragment">
+    android:background="#F6F6F6"
+    tools:context=".fragment.ProfileFragment">
 
-    <TextView
-        android:id="@+id/tvProfileTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thông tin cá nhân"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="50dp"/>
-
-    <Button
-        android:id="@+id/btnGoToFavorites"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Danh sách tour yêu thích"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="16dp"
-        android:padding="12dp"
-        app:iconGravity="textStart"/>
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
-<!--Log out-->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="Đăng xuất"
-        android:backgroundTint="@android:color/holo_red_dark" android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:padding="12dp"/>
+        <!-- Header xanh -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_profile_header"
+            android:padding="16dp"
+            android:gravity="center_vertical">
 
-</LinearLayout>
+            <!-- Ảnh đại diện + tên -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/imgAvatar"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/ic_person"
+                    android:background="@drawable/bg_avatar_circle1"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="16dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chu Thế Văn"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/tvUserEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="chuthevan450@gmail.com"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Thông tin thêm -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_phone"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/tvUserPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0976812898"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_calendar"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/tvUserDob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="25/06/2003"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Danh sách chức năng -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/white"
+            android:elevation="2dp"
+            android:padding="8dp"
+            android:layout_marginBottom="20dp">
+
+            <Button
+                android:id="@+id/btnPersonalInfo"
+                style="@style/ProfileOptionButton"
+                android:text="Thông tin cá nhân"
+                android:drawableStart="@drawable/ic_person_outline" />
+
+            <Button
+                android:id="@+id/btnChangePassword"
+                style="@style/ProfileOptionButton"
+                android:text="Thay đổi mật khẩu"
+                android:drawableStart="@drawable/ic_alarm" />
+
+            <Button
+                android:id="@+id/btnGoToFavorites"
+                style="@style/ProfileOptionButton"
+                android:text="Danh sách tour yêu thích"
+                android:drawableStart="@drawable/ic_favorite_border" />
+
+            <Button
+                android:id="@+id/btnHistory"
+                style="@style/ProfileOptionButton"
+                android:text="Lịch sử gia hạn vé tháng"
+                android:drawableStart="@drawable/ic_feedback" />
+
+            <Button
+                android:id="@+id/btnTerms"
+                style="@style/ProfileOptionButton"
+                android:text="Điều khoản sử dụng dịch vụ"
+                android:drawableStart="@drawable/ic_favorite" />
+
+            <Button
+                android:id="@+id/btnHelp"
+                style="@style/ProfileOptionButton"
+                android:text="Trợ giúp và hỗ trợ"
+                android:drawableStart="@drawable/ic_add_comment" />
+        </LinearLayout>
+
+        <!-- Đăng xuất -->
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đăng xuất"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:layout_marginBottom="40dp" />
+
+        <!-- Phiên bản -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Version: 2.1.2 Powered by VNPASS"
+            android:textColor="#666"
+            android:textSize="12sp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+</ScrollView>
