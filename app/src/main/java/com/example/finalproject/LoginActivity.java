@@ -194,7 +194,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
+        String uid = firebaseUser.getUid();
+
         User newUser = new User();
+        newUser.setUserid(uid);
         newUser.setEmail(firebaseUser.getEmail());
         newUser.setFirstname(firstName);
         newUser.setLastname(lastName);
@@ -208,7 +211,8 @@ public class LoginActivity extends AppCompatActivity {
         newUser.setUpdatedAt(new Timestamp(new java.util.Date()));
 
         db.collection("users")
-                .add(newUser)
+                .document(uid)
+                .set(newUser)
                 .addOnSuccessListener(docRef -> {
                     Log.d(TAG, "Tạo mới user thành công: " + firebaseUser.getEmail());
                     redirectByRole(newUser); // ✅ đổi thành truyền user object
