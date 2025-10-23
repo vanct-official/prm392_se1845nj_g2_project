@@ -87,9 +87,11 @@ public class ProfileFragment extends Fragment {
         });
 
         // 🔹 Các nút còn lại (ví dụ sau này có thể mở activity khác)
-        btnPersonalInfo.setOnClickListener(v ->
-                Toast.makeText(getContext(), "Mở trang Thông tin cá nhân", Toast.LENGTH_SHORT).show()
-        );
+        btnPersonalInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), com.example.finalproject.activity.guide.GuidePersonalInfoActivity.class);
+            startActivity(intent);
+        });
+
 
         btnChangePassword.setOnClickListener(v ->
                 Toast.makeText(getContext(), "Mở trang Đổi mật khẩu", Toast.LENGTH_SHORT).show()
