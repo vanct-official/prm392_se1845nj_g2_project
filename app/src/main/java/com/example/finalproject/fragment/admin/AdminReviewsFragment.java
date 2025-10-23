@@ -55,10 +55,8 @@ public class AdminReviewsFragment extends Fragment {
         adapter = new AdminReviewAdapter(getContext(), reviewList);
         recyclerViewReviews.setAdapter(adapter);
 
-        // ✅ Gọi hàm tải review
         loadReviews();
 
-        // ✅ Gắn sự kiện tìm kiếm
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -115,16 +113,29 @@ public class AdminReviewsFragment extends Fragment {
                                     DocumentSnapshot tourDoc = (DocumentSnapshot) results.get(0);
                                     DocumentSnapshot userDoc = (DocumentSnapshot) results.get(1);
 
+                                    // ✅ Lấy thông tin tour
                                     if (tourDoc != null && tourDoc.exists()) {
                                         String tourName = tourDoc.getString("title");
                                         review.put("tourName", tourName != null ? tourName : "(Không có tên tour)");
+                                    } else {
+                                        review.put("tourName", "(Không có tên tour)");
                                     }
 
+                                    // ✅ Lấy thông tin user (bao gồm avatarUrl)
                                     if (userDoc != null && userDoc.exists()) {
                                         String firstname = userDoc.getString("firstname");
                                         String lastname = userDoc.getString("lastname");
+                                        String avatarUrl = userDoc.getString("avatarUrl"); // ✅ LẤY AVATAR
+
                                         String fullName = (firstname != null ? firstname : "") + " " + (lastname != null ? lastname : "");
                                         review.put("userName", fullName.trim().isEmpty() ? "(Không có tên user)" : fullName.trim());
+                                        review.put("avatarUrl", avatarUrl != null ? avatarUrl : ""); // ✅ THÊM VÀO REVIEW
+
+                                        // ✅ Debug log
+                                        Log.d(TAG, "User: " + fullName + ", Avatar: " + avatarUrl);
+                                    } else {
+                                        review.put("userName", "(Không có tên user)");
+                                        review.put("avatarUrl", ""); // ✅ THÊM TRƯỜNG RỖNG NẾU KHÔNG CÓ USER
                                     }
 
                                     return review;
@@ -142,6 +153,9 @@ public class AdminReviewsFragment extends Fragment {
                         originalList.addAll(reviewList);
                         adapter.notifyDataSetChanged();
                         progressBar.setVisibility(View.GONE);
+
+                        // ✅ Log tổng số review
+                        Log.d(TAG, "Loaded " + reviewList.size() + " reviews");
                     });
                 })
                 .addOnFailureListener(e -> {
@@ -151,7 +165,6 @@ public class AdminReviewsFragment extends Fragment {
                 });
     }
 
-    // ✅ Hàm lọc theo comment, tên user hoặc tour
     private void filterReviews(String query) {
         if (originalList == null || originalList.isEmpty()) return;
 
