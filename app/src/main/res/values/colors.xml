@@ -58,4 +58,6 @@
     <color name="primaryColor">#7B00FF</color>
     <color name="secondaryColor">#FF7C00</color>
 
+    <color name="WHITE">#FFFFFF</color>
+
 </resources>

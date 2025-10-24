@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+FILE: transaction_item.xml
+LOCATION: res/layout/
+PURPOSE: Layout cho mỗi item giao dịch trong danh sách lịch sử giao dịch
+USAGE: Sử dụng trong RecyclerView hoặc ListView để hiển thị từng giao dịch
+STRUCTURE:
+  - Hàng 1: Tiêu đề giao dịch (ví dụ: [2N1D] Hà Nội <> Hạ Long)
+  - Hàng 2: Ngày giao dịch (trái) | Số tiền (phải, màu đỏ)
+  - Hàng 3: Phương thức thanh toán (trái) | Trạng thái (phải, badge màu)
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/transaction_card_background"
+    android:padding="12dp"
+    android:layout_margin="8dp">
+
+    <!-- HÀNG 1: Tiêu đề giao dịch -->
+    <TextView
+        android:id="@+id/txtRef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <!-- HÀNG 2: Ngày và Số tiền -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:textColor="#999999" />
+
+        <TextView
+            android:id="@+id/txtAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#FF0000" />
+    </LinearLayout>
+
+    <!-- HÀNG 3: Phương thức thanh toán và Trạng thái -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/txtMethod"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:textColor="#666666" />
+
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:background="@drawable/status_badge_background"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+</LinearLayout>

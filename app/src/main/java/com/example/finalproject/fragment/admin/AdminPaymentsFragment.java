@@ -1,66 +1,79 @@
 package com.example.finalproject.fragment.admin;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.finalproject.R;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AdminPaymentsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.finalproject.R;
+import com.example.finalproject.adapter.admin.AdminPaymentAdapter;
+import com.example.finalproject.entity.Payment;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class AdminPaymentsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public AdminPaymentsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AdminPaymentsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AdminPaymentsFragment newInstance(String param1, String param2) {
-        AdminPaymentsFragment fragment = new AdminPaymentsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private RecyclerView recyclerAdminPayments;
+    private AdminPaymentAdapter adapter;
+    private List<Payment> paymentList = new ArrayList<>();
+    private Map<String, String> userMap = new HashMap<>();
+    private FirebaseFirestore db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_admin_payments, container, false);
+        View view = inflater.inflate(R.layout.fragment_admin_payments, container, false);
+
+        recyclerAdminPayments = view.findViewById(R.id.recyclerAdminPayments);
+        recyclerAdminPayments.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        db = FirebaseFirestore.getInstance();
+
+        // Gọi hàm load users trước, sau đó mới load payments
+        loadUsersThenPayments();
+
+        return view;
+    }
+
+    private void loadUsersThenPayments() {
+        db.collection("users")
+                .get()
+                .addOnSuccessListener(query -> {
+                    for (DocumentSnapshot doc : query) {
+                        String fullName = doc.getString("firstname") + " " + doc.getString("lastname");
+                        userMap.put(doc.getId(), fullName.trim());
+                    }
+                    loadPayments(); // Sau khi có userMap mới load payment
+                })
+                .addOnFailureListener(e -> e.printStackTrace());
+    }
+
+    private void loadPayments() {
+        db.collection("payments")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    paymentList.clear();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Payment payment = doc.toObject(Payment.class);
+                        paymentList.add(payment);
+                    }
+
+                    // Khởi tạo adapter sau khi có cả payment và userMap
+                    adapter = new AdminPaymentAdapter(paymentList, userMap);
+                    recyclerAdminPayments.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> e.printStackTrace());
     }
 }
