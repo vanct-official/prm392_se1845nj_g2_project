@@ -39,6 +39,23 @@ public class TourCardAdapter extends RecyclerView.Adapter<TourCardAdapter.TourVi
         return new TourViewHolder(view);
     }
 
+    private String getStatusVN(String status) {
+        if (status == null) return "Chưa rõ";
+
+        switch (status.toLowerCase()) {
+            case "upcoming":
+                return "Sắp diễn ra";
+            case "completed":
+                return "Đã hoàn thành";
+            case "cancelled":
+                return "Đã hủy";
+            case "in_progress":
+                return "Đang diễn ra";
+            default:
+                return status; // giữ nguyên nếu chưa map
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull TourViewHolder holder, int position) {
         Tour tour = tourList.get(position);
@@ -46,7 +63,7 @@ public class TourCardAdapter extends RecyclerView.Adapter<TourCardAdapter.TourVi
         // --- Gán dữ liệu cơ bản ---
         holder.tvTitle.setText(tour.getTitle() != null ? tour.getTitle() : "Chưa có tiêu đề");
         holder.tvDestination.setText("Địa điểm: " + (tour.getDestination() != null ? tour.getDestination() : "Chưa cập nhật"));
-        holder.tvStatus.setText("Trạng thái: " + (tour.getStatus() != null ? tour.getStatus() : "Chưa rõ"));
+        holder.tvStatus.setText("Trạng thái: " + getStatusVN(tour.getStatus()));
 
         // --- Ngày khởi hành ---
         Timestamp startDate = tour.getStart_date();
