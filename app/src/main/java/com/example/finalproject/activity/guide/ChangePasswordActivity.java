@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton; // ✅ thêm import này
 import android.widget.Toast;
+
 import com.example.finalproject.R;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -15,6 +17,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     private EditText etOldPassword, etNewPassword, etConfirmPassword;
     private Button btnChangePassword;
+    private ImageButton btnBack; // ✅ khai báo ở đây
     private FirebaseAuth mAuth;
 
     @Override
@@ -22,13 +25,20 @@ public class ChangePasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
 
+        // ✅ ánh xạ view
+        btnBack = findViewById(R.id.btnBack);
         etOldPassword = findViewById(R.id.etOldPassword);
         etNewPassword = findViewById(R.id.etNewPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnChangePassword = findViewById(R.id.btnChangePassword);
 
+        // ✅ Firebase
         mAuth = FirebaseAuth.getInstance();
 
+        // ✅ Nút back
+        btnBack.setOnClickListener(v -> onBackPressed());
+
+        // ✅ Nút đổi mật khẩu
         btnChangePassword.setOnClickListener(v -> changePassword());
     }
 
@@ -53,24 +63,21 @@ public class ChangePasswordActivity extends AppCompatActivity {
             return;
         }
 
-        try {
-            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), oldPass);
-            user.reauthenticate(credential).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    user.updatePassword(newPass).addOnCompleteListener(updateTask -> {
-                        if (updateTask.isSuccessful()) {
-                            Toast.makeText(this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            Toast.makeText(this, "Lỗi: " + updateTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(this, "Mật khẩu hiện tại không đúng", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        // ✅ Thực hiện xác thực và đổi mật khẩu
+        AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), oldPass);
+        user.reauthenticate(credential).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                user.updatePassword(newPass).addOnCompleteListener(updateTask -> {
+                    if (updateTask.isSuccessful()) {
+                        Toast.makeText(this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                        finish(); // Quay lại trang trước
+                    } else {
+                        Toast.makeText(this, "Lỗi: " + updateTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Mật khẩu hiện tại không đúng", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
