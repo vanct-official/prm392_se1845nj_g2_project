@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,10 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.finalproject.CustomerActivity;
 import com.example.finalproject.LoginActivity;
 import com.example.finalproject.R;
-import com.example.finalproject.activity.CustomerFavoriteToursActivity;
+import com.example.finalproject.activity.ChangePasswordActivity;
+import com.example.finalproject.activity.PersonalInfoActivity;
+import com.example.finalproject.activity.customer.CustomerFavoriteToursActivity;
 import com.example.finalproject.activity.customer.PaymentHistoryActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -95,13 +95,13 @@ public class ProfileFragment extends Fragment {
 
         // 🔹 Các nút còn lại (ví dụ sau này có thể mở activity khác)
         btnPersonalInfo.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), com.example.finalproject.activity.guide.GuidePersonalInfoActivity.class);
+            Intent intent = new Intent(getActivity(), PersonalInfoActivity.class);
             startActivity(intent);
         });
 
 
         btnChangePassword.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), com.example.finalproject.activity.guide.ChangePasswordActivity.class);
+            Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
             startActivity(intent);
         });
 

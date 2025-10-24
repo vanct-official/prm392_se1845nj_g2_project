@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ====== STYLE CHUNG CHO DỰ ÁN ====== -->
     <style name="TextStyle.Title">
@@ -24,7 +24,7 @@
 <!--        <item name="android:fontFamily">@font/poppins_regular</item>-->
         <item name="android:layout_marginBottom">4dp</item>
     </style>
-    <style name="Widget.MaterialComponents.Chip.Choice" parent="Widget.MaterialComponents.Chip.Choice">
+    <style name="Widget.MaterialComponents.Chip.Choice" parent="Widget.MaterialComponents.Chip.Choice" tools:ignore="ResourceCycle">
         <item name="chipStrokeColor">@color/purple_200</item>
         <item name="chipStrokeWidth">1dp</item>
         <item name="android:textColor">@color/black</item>
@@ -40,7 +40,5 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
-
-
 
 </resources>

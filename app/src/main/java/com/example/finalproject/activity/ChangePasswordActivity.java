@@ -1,4 +1,4 @@
-package com.example.finalproject.activity.guide;
+package com.example.finalproject.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
