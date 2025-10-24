@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+FILE: status_badge_background.xml
+LOCATION: res/drawable/
+PURPOSE: Drawable cho nền badge trạng thái giao dịch
+USAGE: Được gọi trong transaction_item.xml qua android:background="@drawable/status_badge_background"
+NOTE: Màu sắc có thể thay đổi tùy theo trạng thái:
+  - Thành công: #00AA00 (xanh)
+  - Chờ thanh toán: #FF9800 (cam)
+  - Hủy thanh toán: #FF0000 (đỏ)
+CURRENT COLOR: #FF9800 (cam - mặc định)
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#FF9800" />
+    <corners android:radius="4dp" />
+</shape>

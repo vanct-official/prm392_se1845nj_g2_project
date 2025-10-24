@@ -35,7 +35,7 @@ STRUCTURE:
 
     <!-- DANH SÁCH GIAO DỊCH: ListView hoặc RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerAdminPayments"
+        android:id="@+id/recyclerPayments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"
