@@ -1,4 +1,4 @@
-package com.example.finalproject.activity.guide;
+package com.example.finalproject.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,7 +31,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class GuidePersonalInfoActivity extends AppCompatActivity {
+public class PersonalInfoActivity extends AppCompatActivity {
 
     private ImageButton btnBack;
     private ImageView imgAvatar;

@@ -21,7 +21,7 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
-        <activity android:name=".activity.guide.ChangePasswordActivity"
+        <activity android:name=".activity.ChangePasswordActivity"
             android:exported="false"
             android:label="Đổi mật khẩu" />
 
@@ -31,7 +31,7 @@
         <activity
             android:name=".GuideActivity"
             android:exported="false" />
-        <activity android:name=".activity.guide.GuidePersonalInfoActivity" />
+        <activity android:name=".activity.PersonalInfoActivity" />
 
         <activity
             android:name=".AdminActivity"
