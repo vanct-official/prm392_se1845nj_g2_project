@@ -1,4 +1,4 @@
-package com.example.finalproject.adapter;
+package com.example.finalproject.adapter.customer;
 
 import android.content.Context;
 import android.util.Log; // Import để ghi log lỗi
@@ -23,7 +23,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
