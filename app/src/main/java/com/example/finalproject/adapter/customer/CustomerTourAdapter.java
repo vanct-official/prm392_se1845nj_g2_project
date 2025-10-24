@@ -62,39 +62,48 @@ public class CustomerTourAdapter extends RecyclerView.Adapter<CustomerTourAdapte
 
     @Override
     public void onBindViewHolder(@NonNull TourViewHolder holder, int position) {
-        DocumentSnapshot doc = tours.get(position); // Lấy document tour tại vị trí `position`
-        String tourId = doc.getId(); // Lấy ID của tour
+        // Lấy document tour
+        DocumentSnapshot doc = tours.get(position);
 
-        // --- Lấy dữ liệu từ Firestore Document ---
+        // Lấy danh sách hướng dẫn viên
+        List<String> guideIds = (List<String>) doc.get("guideIds");
+        String status = doc.getString("status");
+
+        // Lọc tour: chỉ hiển thị nếu status = "upcoming" và có ít nhất 1 hướng dẫn viên
+        if (!"upcoming".equalsIgnoreCase(status) || guideIds == null || guideIds.isEmpty()) {
+            // Ẩn item không hợp lệ
+            holder.itemView.setVisibility(View.GONE);
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+            return;
+        } else {
+            // Hiển thị item hợp lệ
+            holder.itemView.setVisibility(View.VISIBLE);
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+        }
+
+        // Lấy ID và dữ liệu tour
+        String tourId = doc.getId();
         String title = doc.getString("title");
         String description = doc.getString("description");
         String destination = doc.getString("destination");
-        // String duration = doc.getString("duration"); // ❌ Bỏ duration
         Double price = doc.getDouble("price");
-        List<String> images = (List<String>) doc.get("images"); // Danh sách URL ảnh
-        List<String> guideIds = (List<String>) doc.get("guideIds"); // Danh sách ID hướng dẫn viên
-        Timestamp startDate = doc.getTimestamp("start_date"); // Ngày bắt đầu (kiểu Timestamp)
+        Timestamp startDate = doc.getTimestamp("start_date");
+        List<String> images = (List<String>) doc.get("images");
 
-        // ❌ Đã xóa logic lấy averageRating và reviewCount
-
-
-        // --- Gán dữ liệu vào các View trong ViewHolder ---
+        // Gán dữ liệu vào ViewHolder
         holder.tvTourTitle.setText(title);
         holder.tvDescription.setText(description);
         holder.tvDestination.setText(destination);
-        // holder.tvDuration.setText(duration); // ❌ Bỏ duration
         holder.tvPrice.setText(NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(price != null ? price : 0));
-
-        // Hiển thị ngày bắt đầu đã được format
         if (startDate != null) {
-            holder.tvStartDate.setText(sdf.format(startDate.toDate())); // Chuyển Timestamp thành Date rồi format
+            holder.tvStartDate.setText(sdf.format(startDate.toDate()));
         } else {
-            holder.tvStartDate.setText("Chưa xác định"); // Hiển thị nếu không có ngày
+            holder.tvStartDate.setText("Chưa xác định");
         }
 
-        // ❌ Đã xóa logic gán dữ liệu cho tvRatingList
-
-        // --- Nạp danh sách ảnh vào ImageSlider ---
+        // Nạp ảnh vào ImageSlider
         List<SlideModel> slideModels = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
             for (String url : images) {
@@ -103,12 +112,13 @@ public class CustomerTourAdapter extends RecyclerView.Adapter<CustomerTourAdapte
         } else {
             slideModels.add(new SlideModel(R.drawable.ic_image_placeholder, ScaleTypes.CENTER_CROP));
         }
-        holder.imageSlider.setImageList(slideModels); // Đặt danh sách ảnh cho slider
+        holder.imageSlider.setImageList(slideModels);
 
-        // --- Tải và hiển thị tên hướng dẫn viên ---
+        // Hiển thị tên hướng dẫn viên
         if (guideIds != null && !guideIds.isEmpty()) {
-            holder.tvGuides.setText("Đang tải..."); // Hiển thị trạng thái chờ
-            FirebaseFirestore.getInstance().collection("users").whereIn(com.google.firebase.firestore.FieldPath.documentId(), guideIds)
+            holder.tvGuides.setText("Đang tải...");
+            FirebaseFirestore.getInstance().collection("users")
+                    .whereIn(com.google.firebase.firestore.FieldPath.documentId(), guideIds)
                     .get()
                     .addOnSuccessListener(querySnapshot -> {
                         List<String> guideNames = new ArrayList<>();
@@ -129,10 +139,9 @@ public class CustomerTourAdapter extends RecyclerView.Adapter<CustomerTourAdapte
             holder.tvGuides.setText("Chưa có");
         }
 
-        // --- Xử lý logic cho Wishlist (Yêu thích) ---
+        // Xử lý wishlist
         boolean isWishlisted = wishlistedTourIds.contains(tourId);
         holder.updateWishlistIcon(isWishlisted);
-
         holder.ivFavorite.setOnClickListener(v -> {
             boolean currentlyWishlisted = wishlistedTourIds.contains(tourId);
             holder.updateWishlistIcon(!currentlyWishlisted);
@@ -143,20 +152,22 @@ public class CustomerTourAdapter extends RecyclerView.Adapter<CustomerTourAdapte
             }
         });
 
-        // --- Xử lý sự kiện click cho các nút và toàn bộ thẻ ---
+        // Click mở chi tiết
         holder.btnDetails.setOnClickListener(v -> {
-            // Mở Activity mới: CustomerTourDetailActivity
             Intent intent = new Intent(context, CustomerTourDetailActivity.class);
-            intent.putExtra("tourId", doc.getId());
+            intent.putExtra("tourId", tourId);
             context.startActivity(intent);
         });
         holder.itemView.setOnClickListener(v -> {
-            // Mở Activity mới: CustomerTourDetailActivity
             Intent intent = new Intent(context, CustomerTourDetailActivity.class);
-            intent.putExtra("tourId", doc.getId());
+            intent.putExtra("tourId", tourId);
             context.startActivity(intent);
         });
-        holder.btnBook.setOnClickListener(v -> Toast.makeText(context, "Chức năng Đặt tour cho: " + title, Toast.LENGTH_SHORT).show());
+
+        // Click đặt tour
+        holder.btnBook.setOnClickListener(v ->
+                Toast.makeText(context, "Chức năng Đặt tour cho: " + title, Toast.LENGTH_SHORT).show()
+        );
     }
 
     /**
