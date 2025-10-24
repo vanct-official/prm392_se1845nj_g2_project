@@ -1,148 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="20dp"
     android:background="@drawable/bg_dialog_round">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- Tiêu đề chính -->
-        <LinearLayout
+        <EditText
+            android:id="@+id/edtSummary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:hint="Tóm tắt tour..."
+            android:background="@drawable/bg_input"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp" />
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:tint="#673AB7"
-                android:src="@drawable/ic_tour" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Báo cáo tour"
-                android:textColor="#673AB7"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
-
-        <!-- Ô nhập tóm tắt -->
-        <LinearLayout
+        <EditText
+            android:id="@+id/edtIssues"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
+            android:hint="Sự cố (nếu có)..."
+            android:background="@drawable/bg_input"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp" />
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                app:tint="#512DA8"
-                android:src="@drawable/ic_summary" />
-
-            <EditText
-                android:id="@+id/edtSummary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:hint="Tóm tắt tour (ví dụ: chuyến đi thuận lợi, khách hài lòng...)"
-                android:background="@drawable/bg_input"
-                android:padding="10dp"
-                android:maxLines="3" />
-        </LinearLayout>
-
-        <!-- Ô nhập sự cố -->
-        <LinearLayout
+        <EditText
+            android:id="@+id/edtParticipants"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
+            android:hint="Số lượng khách"
+            android:inputType="number"
+            android:background="@drawable/bg_input"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp" />
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                app:tint="#512DA8"
-                android:src="@drawable/ic_issue" />
-
-            <EditText
-                android:id="@+id/edtIssues"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:hint="Sự cố (nếu có, ví dụ: khách say xe, trễ giờ...)"
-                android:background="@drawable/bg_input"
-                android:padding="10dp"
-                android:maxLines="2" />
-        </LinearLayout>
-
-        <!-- Số lượng khách -->
-        <LinearLayout
+        <EditText
+            android:id="@+id/edtRating"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                app:tint="#512DA8"
-                android:src="@drawable/ic_people" />
-
-            <EditText
-                android:id="@+id/edtParticipants"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:hint="Số lượng khách tham gia"
-                android:inputType="number"
-                android:background="@drawable/bg_input"
-                android:padding="10dp" />
-        </LinearLayout>
-
-        <!-- Đánh giá -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                app:tint="#FFC107"
-                android:src="@drawable/ic_star" />
-
-            <EditText
-                android:id="@+id/edtRating"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:hint="Đánh giá tour (0 - 5)"
-                android:inputType="numberDecimal"
-                android:background="@drawable/bg_input"
-                android:padding="10dp" />
-        </LinearLayout>
-
-        <!-- Gợi ý nhẹ -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="💡 Vui lòng điền trung thực, giúp admin cải thiện chất lượng tour."
-            android:textColor="#666"
-            android:textSize="13sp"
-            android:layout_marginBottom="12dp"/>
+            android:hint="Đánh giá tour (0 - 5)"
+            android:inputType="numberDecimal"
+            android:background="@drawable/bg_input"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp" />
 
     </LinearLayout>
 </ScrollView>
+

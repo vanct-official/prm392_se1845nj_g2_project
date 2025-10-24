@@ -53,6 +53,15 @@ public class GuideHomeFragment extends Fragment {
 
         // ======== Nút GỬI BÁO CÁO TOUR =========
         btnSubmitReport.setOnClickListener(v -> submitTourReport());
+        Button btnReportHistory = view.findViewById(R.id.btnReportHistory);
+        btnReportHistory.setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new GuideReportHistoryFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
+
 
         return view;
     }

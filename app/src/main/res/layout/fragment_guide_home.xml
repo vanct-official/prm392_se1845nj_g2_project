@@ -181,25 +181,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- Nút: Lịch sử gửi báo cáo -->
             <Button
-                android:id="@+id/btnAddTour"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:id="@+id/btnReportHistory"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thêm tour mới"
-                android:backgroundTint="#673AB7"
-                android:textColor="#FFFFFF"
-                android:layout_margin="6dp"/>
+                android:text="Lịch sử gửi báo cáo"
+                android:textColor="@android:color/white"
+                android:drawableStart="@drawable/ic_history"
+                android:drawablePadding="8dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/bg_button_purple_gradient"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center_horizontal"
+                android:elevation="2dp" />
 
+            <!-- Nút: Gửi báo cáo tour -->
             <Button
                 android:id="@+id/btnSubmitReport"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gửi báo cáo tour"
-                android:backgroundTint="#4CAF50"
-                android:textColor="#FFFFFF"
-                android:layout_margin="6dp"/>
+                android:textColor="@android:color/white"
+                android:drawableStart="@drawable/ic_send"
+            android:drawablePadding="8dp"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:background="@drawable/bg_button_green_gradient"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_horizontal"
+            android:elevation="2dp" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

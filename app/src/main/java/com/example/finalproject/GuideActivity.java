@@ -1,7 +1,6 @@
 package com.example.finalproject;
 
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -15,7 +14,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class GuideActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNav;
-    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,18 +22,18 @@ public class GuideActivity extends AppCompatActivity {
 
         bottomNav = findViewById(R.id.bottom_nav_guide);
 
-        // --- Mặc định hiển thị HomeFragment khi mở Activity ---
+        // 🏠 Mặc định hiển thị Home fragment
         if (savedInstanceState == null) {
-            currentFragment = new GuideHomeFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container_guide, currentFragment)
+                    .replace(R.id.fragment_container, new GuideHomeFragment())
                     .commit();
         }
 
-        // --- Gán listener cho bottom navigation ---
+        // 🔄 Xử lý khi chọn menu
         bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
             Fragment selectedFragment = null;
+
+            int itemId = item.getItemId();
 
             if (itemId == R.id.nav_guide_home) {
                 selectedFragment = new GuideHomeFragment();
@@ -49,29 +47,21 @@ public class GuideActivity extends AppCompatActivity {
                 selectedFragment = new ProfileFragment();
             }
 
-            // --- Khi chọn tab mới ---
             if (selectedFragment != null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container_guide, selectedFragment)
-                        // thêm vào backstack để nút Back quay lại fragment trước
-                        .addToBackStack(null)
+                        .replace(R.id.fragment_container, selectedFragment)
                         .commit();
             }
             return true;
         });
-
-        // --- Chọn tab mặc định là Home ---
-        bottomNav.setSelectedItemId(R.id.nav_guide_home);
     }
 
-    // --- Xử lý nút Back vật lý ---
     @Override
     public void onBackPressed() {
+        // Nếu có fragment trong backstack thì quay lại fragment trước
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            // Nếu còn fragment trong backstack thì quay lại fragment trước
             getSupportFragmentManager().popBackStack();
         } else {
-            // Nếu không còn fragment nào, thì thoát activity như bình thường
             super.onBackPressed();
         }
     }

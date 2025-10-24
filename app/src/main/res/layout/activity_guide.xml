@@ -3,30 +3,28 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GuideActivity">
 
-    <!-- Container hiển thị Fragment -->
+    <!-- Vùng hiển thị fragment -->
     <FrameLayout
-        android:id="@+id/fragment_container_guide"
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="56dp"
+        android:layout_marginBottom="70dp"
+        android:background="#F8F6FB"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        /> <!-- padding để nội dung không bị che bởi BottomNavigationView -->
-
-    <!-- Footer BottomNavigationView -->
+    <!-- Thanh điều hướng dưới -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_guide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:background="?android:attr/windowBackground"
         app:menu="@menu/bottom_nav_guide"
         app:labelVisibilityMode="labeled"
         app:itemIconTint="@color/nav_item_color"
-        app:itemTextColor="@color/nav_item_color"
-        android:background="?android:attr/windowBackground"/>
-
+        app:itemTextColor="@color/nav_item_color" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
