@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -41,6 +42,26 @@
             android:background="@drawable/bg_profile_header"
             android:clipToOutline="true">
 
+=======
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F6FF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header tím -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:background="@drawable/bg_profile_header"
+            android:clipToOutline="true">
+
+>>>>>>> Stashed changes
             <!-- Avatar -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgAvatar"
@@ -91,11 +112,15 @@
         </RelativeLayout>
 
         <!-- Danh sách chức năng -->
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
             android:paddingBottom="24dp">
 
@@ -493,6 +518,8 @@
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 =======
+=======
+>>>>>>> Stashed changes
             android:background="@android:color/white"
             android:layout_margin="16dp"
             android:padding="8dp"
@@ -552,4 +579,7 @@
 
     </LinearLayout>
 </ScrollView>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
