@@ -36,6 +36,8 @@
     <color name="text_secondary">#666666</color>
     <color name="text_tertiary">#999999</color>
     <color name="text_hint">#CCCCCC</color>
+    <color name="teal_700">#018786</color>
+
 
     <!-- Status Colors -->
     <color name="error_red">#E53935</color>
