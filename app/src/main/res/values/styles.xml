@@ -36,6 +36,7 @@
         <item name="android:textColor">@color/chip_text_selector</item>
     </style>
 
+<<<<<<< Updated upstream
     <style name="ProfileOptionButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -48,8 +49,16 @@
     </style>
 
     <style name="CircleImageView">
+=======
+    <style name="CircleImage">
+>>>>>>> Stashed changes
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 </resources>
