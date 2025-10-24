@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.finalproject.LoginActivity;
+import com.example.finalproject.activity.customer.CustomerFavoriteToursActivity;
 import com.example.finalproject.R;
 import com.example.finalproject.activity.ChangePasswordActivity;
 import com.example.finalproject.activity.PersonalInfoActivity;
