@@ -4,16 +4,6 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        android:fillColor="#7B42F6"
-        android:pathData="M12,17a2,2 0,1 0,0 -4,2,2 0,0 0,0 4zM18,8h-1V6a5,5 0,0 0,-10 0v2H6a2,2 0,0 0,-2 2v10a2,2 0,0 0,2 2h12a2,2 0,0 0,2 -2V10a2,2 0,0 0,-2 -2zM8,6a4,4 0,0 1,8 0v2H8V6zM18,20H6V10h12v10z"/>
-=======
         android:fillColor="#7B1FA2"
         android:pathData="M12,17a2,2 0 1,0 0,-4 2,2 0 0,0 0,4zm6,-7h-1V7a5,5 0 0,0 -10,0v3H6a2,2 0 0,0 -2,2v8a2,2 0 0,0 2,2h12a2,2 0 0,0 2,-2v-8a2,2 0 0,0 -2,-2zM8,7a4,4 0 0,1 8,0v3H8V7zm10,13H6v-8h12v8z" />
->>>>>>> Stashed changes
-=======
-        android:fillColor="#7B1FA2"
-        android:pathData="M12,17a2,2 0 1,0 0,-4 2,2 0 0,0 0,4zm6,-7h-1V7a5,5 0 0,0 -10,0v3H6a2,2 0 0,0 -2,2v8a2,2 0 0,0 2,2h12a2,2 0 0,0 2,-2v-8a2,2 0 0,0 -2,-2zM8,7a4,4 0 0,1 8,0v3H8V7zm10,13H6v-8h12v8z" />
->>>>>>> Stashed changes
 </vector>
