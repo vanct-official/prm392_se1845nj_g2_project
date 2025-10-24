@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< Updated upstream
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -22,81 +21,10 @@
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-=======
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F8F6FF">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <!-- Header tím -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:background="@drawable/bg_profile_header"
-            android:clipToOutline="true">
-
-            <!-- Avatar -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imgAvatar"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_marginTop="60dp"
-                android:layout_marginStart="24dp"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/CircleImage"
-                android:src="@drawable/ic_user_placeholder" />
-
-            <!-- Tên -->
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/imgAvatar"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="70dp"
-                android:text="Tên người dùng"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <!-- Email -->
-            <TextView
-                android:id="@+id/tvEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/imgAvatar"
-                android:layout_below="@id/tvName"
-                android:layout_marginStart="16dp"
-                android:text="example@gmail.com"
-                android:textColor="#EDE7F6"
-                android:textSize="14sp" />
-
-            <!-- Ngày sinh -->
-            <TextView
-                android:id="@+id/tvDob"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/imgAvatar"
-                android:layout_below="@id/tvEmail"
-                android:layout_marginStart="16dp"
-                android:text="01/01/2000"
-                android:textColor="#EDE7F6"
-                android:textSize="14sp" />
-        </RelativeLayout>
-
-        <!-- Danh sách chức năng -->
->>>>>>> Stashed changes
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-<<<<<<< Updated upstream
             android:paddingBottom="24dp">
 
             <!-- Improved header with Material Design 3 card -->
@@ -492,64 +420,3 @@
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-=======
-            android:background="@android:color/white"
-            android:layout_margin="16dp"
-            android:padding="8dp"
-            android:elevation="3dp"
-            android:clipToOutline="true">
-
-            <include
-                layout="@layout/item_profile_option"
-                android:id="@+id/btnPersonalInfo"
-                android:tag="Thông tin cá nhân" />
-
-            <include
-                layout="@layout/item_profile_option"
-                android:id="@+id/btnChangePassword"
-                android:tag="Đổi mật khẩu" />
-
-            <include
-                layout="@layout/item_profile_option"
-                android:id="@+id/btnMyTours"
-                android:tag="Tour của tôi" />
-
-            <!-- ✅ Tour yêu thích -->
-            <include
-                layout="@layout/item_profile_option"
-                android:id="@+id/btnGoToFavorites"
-                android:tag="Tour yêu thích" />
-
-            <include
-                layout="@layout/item_profile_option"
-                android:id="@+id/btnSupport"
-                android:tag="Trợ giúp &amp; Hỗ trợ" />
-        </LinearLayout>
-
-        <!-- Nút đăng xuất -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="8dp"
-            android:text="Đăng xuất"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#D32F2F"
-            app:cornerRadius="25dp"
-            android:textStyle="bold" />
-
-        <!-- Phiên bản -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Version 1.0.0  |  Powered by TourVN"
-            android:textColor="@color/gray"
-            android:textSize="12sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp" />
-
-    </LinearLayout>
-</ScrollView>
->>>>>>> Stashed changes

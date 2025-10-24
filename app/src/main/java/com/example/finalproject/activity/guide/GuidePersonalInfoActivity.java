@@ -24,9 +24,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class GuidePersonalInfoActivity extends AppCompatActivity {
@@ -105,30 +108,46 @@ public class GuidePersonalInfoActivity extends AppCompatActivity {
 
                 // ✅ Handle DOB
                 Object dobObj = documentSnapshot.get("dob");
-                String dobText = "";
+                Timestamp dobTimestamp = null;
+
                 if (dobObj instanceof Timestamp) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    dobText = sdf.format(((Timestamp) dobObj).toDate());
+                    dobTimestamp = (Timestamp) dobObj;
                 } else if (dobObj instanceof String) {
-                    dobText = (String) dobObj;
+                    try {
+                        // giả sử định dạng yyyy-MM-dd
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        Date date = sdf.parse((String) dobObj);
+                        dobTimestamp = new Timestamp(date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        dobTimestamp = null; // fallback
+                    }
                 }
-                tvDob.setText(dobText);
 
-                // ✅ Handle Gender (Boolean or String)
+
+                // ✅ Handle Gender as Boolean (fallback if String)
                 Object genderObj = documentSnapshot.get("gender");
-                String genderValue = "";
+                boolean isMale = true; // Mặc định là Nam
+
                 if (genderObj instanceof Boolean) {
-                    boolean isMale = (Boolean) genderObj;
-                    genderValue = isMale ? "Nam" : "Nữ";
+                    isMale = (Boolean) genderObj;
                 } else if (genderObj != null) {
-                    genderValue = genderObj.toString();
+                    // nếu là String, convert sang boolean
+                    String genderStr = genderObj.toString().trim().toLowerCase();
+                    if (genderStr.equals("male") || genderStr.equals("nam") || genderStr.equals("true")) {
+                        isMale = true;
+                    } else if (genderStr.equals("female") || genderStr.equals("nữ") || genderStr.equals("false")) {
+                        isMale = false;
+                    }
                 }
 
-                if (genderValue.equalsIgnoreCase("Nam")) {
+// Set chip dựa trên boolean
+                if (isMale) {
                     chipGenderGroup.check(R.id.chipMale);
-                } else if (genderValue.equalsIgnoreCase("Nữ")) {
+                } else {
                     chipGenderGroup.check(R.id.chipFemale);
                 }
+
 
                 // ✅ Avatar
                 String avatarUrl = documentSnapshot.getString("avatarUrl");
