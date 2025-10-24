@@ -53,6 +53,7 @@ public class AdminInvitationsFragment extends Fragment {
         loadInvitations();
     }
 
+    // Trong AdminInvitationsFragment
     private void loadInvitations() {
         db.collection("tour_invitations")
                 .get()
@@ -64,16 +65,26 @@ public class AdminInvitationsFragment extends Fragment {
                         String tourId = doc.getString("tourId");
                         String status = doc.getString("status");
 
-                        // Tạo map dữ liệu tạm
+                        // Map status sang tiếng Việt
+                        String statusVN;
+                        if ("pending".equalsIgnoreCase(status)) {
+                            statusVN = "Chưa đồng ý";
+                        } else if ("declined".equalsIgnoreCase(status)) {
+                            statusVN = "Đã từ chối";
+                        } else {
+                            statusVN = "Không xác định";
+                        }
+
                         Map<String, Object> data = new HashMap<>();
-                        data.put("status", status);
+                        data.put("status", statusVN);  // dùng tiếng Việt để hiển thị
                         data.put("guideName", "Đang tải...");
                         data.put("tourName", "Đang tải...");
+                        data.put("avatarUrl", "");
                         invitationList.add(data);
 
                         int currentIndex = invitationList.size() - 1;
 
-                        // 🔹 Lấy tên hướng dẫn viên
+                        // Lấy tên & avatar hướng dẫn viên
                         if (guideId != null) {
                             db.collection("users").document(guideId)
                                     .get()
@@ -83,30 +94,23 @@ public class AdminInvitationsFragment extends Fragment {
                                             if ("guide".equalsIgnoreCase(role)) {
                                                 String lastName = userDoc.getString("lastname");
                                                 String firstName = userDoc.getString("firstname");
-
-                                                // Ghép tên theo định dạng: lastName + " " + firstName
                                                 String guideName = ((lastName != null ? lastName : "") + " " +
                                                         (firstName != null ? firstName : "")).trim();
+                                                String avatarUrl = userDoc.getString("avatarUrl");
 
-                                                invitationList.get(currentIndex).put("guideName", guideName);
+                                                Map<String, Object> currentData = invitationList.get(currentIndex);
+                                                currentData.put("guideName", guideName);
+                                                currentData.put("avatarUrl", avatarUrl != null ? avatarUrl : "");
                                                 adapter.notifyItemChanged(currentIndex);
                                             } else {
-                                                // Nếu không phải guide thì để trống hoặc ghi chú
                                                 invitationList.get(currentIndex).put("guideName", "Không phải hướng dẫn viên");
                                                 adapter.notifyItemChanged(currentIndex);
                                             }
-                                        } else {
-                                            invitationList.get(currentIndex).put("guideName", "Không tìm thấy hướng dẫn viên");
-                                            adapter.notifyItemChanged(currentIndex);
                                         }
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        invitationList.get(currentIndex).put("guideName", "Lỗi tải tên hướng dẫn viên");
-                                        adapter.notifyItemChanged(currentIndex);
                                     });
                         }
 
-                        // 🔹 Lấy tên tour
+                        // Lấy tên tour
                         if (tourId != null) {
                             db.collection("tours").document(tourId)
                                     .get()
@@ -120,10 +124,10 @@ public class AdminInvitationsFragment extends Fragment {
                         }
                     }
 
-                    adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "❌ Lỗi tải lời mời: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );
     }
+
 }

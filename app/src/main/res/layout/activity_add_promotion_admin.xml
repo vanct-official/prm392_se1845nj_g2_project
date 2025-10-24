@@ -24,8 +24,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="Thêm khuyến mãi mới"
-                android:textColor="#1E293B"
-                android:textSize="24sp"
+                android:textColor="#6087D0"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView

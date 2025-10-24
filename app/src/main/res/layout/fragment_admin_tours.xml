@@ -18,11 +18,11 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
             android:text="QUẢN LÝ TOUR DU LỊCH"
-            android:textStyle="bold"
+            android:textColor="#287292"
             android:textSize="18sp"
-            android:textColor="#1E293B"
-            android:fontFamily="sans-serif-medium" />
+            android:textStyle="bold" />
 
         <!-- Nút thêm tour -->
         <TextView

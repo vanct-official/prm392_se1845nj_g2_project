@@ -9,11 +9,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="📋 Danh sách báo cáo tour"
+        android:textColor="#69AB1F"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#1E293B"
-        android:layout_marginBottom="8dp" />
+        android:textStyle="bold" />
 
     <!-- Ô tìm kiếm -->
     <EditText
