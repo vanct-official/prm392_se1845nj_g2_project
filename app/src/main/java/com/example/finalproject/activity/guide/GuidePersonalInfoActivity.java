@@ -128,8 +128,6 @@ public class GuidePersonalInfoActivity extends AppCompatActivity {
                     chipGenderGroup.check(R.id.chipMale);
                 } else if (genderValue.equalsIgnoreCase("Nữ")) {
                     chipGenderGroup.check(R.id.chipFemale);
-                } else {
-                    chipGenderGroup.check(R.id.chipOther);
                 }
 
                 // ✅ Avatar
@@ -208,16 +206,31 @@ public class GuidePersonalInfoActivity extends AppCompatActivity {
         updates.put("lastname", lastName);
         updates.put("username", username);
         updates.put("phone", phone);
-        updates.put("dob", dob);
-        updates.put("gender", gender);
+
+        // ✅ Convert dob → Timestamp
+        try {
+            java.util.Date parsedDate = new SimpleDateFormat("dd/MM/yyyy").parse(dob);
+            updates.put("dob", new Timestamp(parsedDate));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // ✅ Convert gender → Boolean
+        if (gender.equalsIgnoreCase("Nam")) {
+            updates.put("gender", true);
+        } else if (gender.equalsIgnoreCase("Nữ")) {
+            updates.put("gender", false);
+        }
+
         if (cloudUrl != null) updates.put("avatarUrl", cloudUrl);
 
         userRef.update(updates)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-                    finish(); // quay về hồ sơ
+                    finish();
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
 }
