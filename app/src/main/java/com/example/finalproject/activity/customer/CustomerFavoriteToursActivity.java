@@ -1,4 +1,4 @@
-package com.example.finalproject.activity; // Đảm bảo đúng package
+package com.example.finalproject.activity.customer; // Đảm bảo đúng package
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,12 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.adapter.CustomerTourAdapter; // Tái sử dụng Adapter
+import com.example.finalproject.adapter.customer.CustomerTourAdapter; // Tái sử dụng Adapter
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;

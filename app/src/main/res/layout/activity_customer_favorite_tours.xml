@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F8FAFC"
-    tools:context=".activity.CustomerFavoriteToursActivity">
+    tools:context=".activity.customer.CustomerFavoriteToursActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarFavoriteTours"

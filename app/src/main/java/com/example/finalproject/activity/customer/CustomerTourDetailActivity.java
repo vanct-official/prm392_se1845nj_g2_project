@@ -1,4 +1,4 @@
-package com.example.finalproject.activity;
+package com.example.finalproject.activity.customer;
 
 import android.content.Intent; // Import Intent nếu chưa có
 import android.os.Bundle;
@@ -24,7 +24,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

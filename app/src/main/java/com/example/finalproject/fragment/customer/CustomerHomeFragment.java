@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
-import com.example.finalproject.activity.CustomerTourDetailActivity; // Đảm bảo import đúng Activity
-import com.example.finalproject.adapter.CustomerTourAdapter;
+import com.example.finalproject.activity.customer.CustomerTourDetailActivity; // Đảm bảo import đúng Activity
+import com.example.finalproject.adapter.customer.CustomerTourAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;

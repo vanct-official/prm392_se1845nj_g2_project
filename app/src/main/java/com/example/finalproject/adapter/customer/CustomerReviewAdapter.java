@@ -1,4 +1,4 @@
-package com.example.finalproject.adapter; // Đảm bảo đúng package
+package com.example.finalproject.adapter.customer; // Đảm bảo đúng package
 
 import android.content.Context;
 import android.view.LayoutInflater;

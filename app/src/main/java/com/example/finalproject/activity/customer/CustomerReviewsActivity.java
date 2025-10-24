@@ -1,4 +1,4 @@
-package com.example.finalproject.activity;
+package com.example.finalproject.activity.customer;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.finalproject.R;
-import com.example.finalproject.adapter.CustomerReviewAdapter;
+import com.example.finalproject.adapter.customer.CustomerReviewAdapter;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;

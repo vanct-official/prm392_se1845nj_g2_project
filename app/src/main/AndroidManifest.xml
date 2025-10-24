@@ -37,13 +37,13 @@
             android:name=".AdminActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.CustomerTourDetailActivity"
+            android:name=".activity.customer.CustomerTourDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.CustomerReviewsActivity"
+            android:name=".activity.customer.CustomerReviewsActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.CustomerFavoriteToursActivity"
+            android:name=".activity.customer.CustomerFavoriteToursActivity"
             android:exported="false" />
 
         <activity
