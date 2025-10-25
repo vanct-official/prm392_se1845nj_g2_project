@@ -74,6 +74,15 @@
                 android:layout_marginBottom="12dp" />
 
             <TextView
+                android:id="@+id/tvRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⭐ Chưa có đánh giá"
+                android:textColor="#F59E0B"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
                 android:id="@+id/tvPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -82,16 +91,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
-
-            <TextView
-                android:id="@+id/tvAverageRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⭐ 0.0"
-                android:textColor="#F59E0B"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
