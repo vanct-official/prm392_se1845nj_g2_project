@@ -92,6 +92,31 @@ public class CustomerTourAdapter extends RecyclerView.Adapter<CustomerTourAdapte
         Timestamp startDate = doc.getTimestamp("start_date");
         List<String> images = (List<String>) doc.get("images");
 
+        // --- Tính trung bình rating ---
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("reviews")
+                .whereEqualTo("tourId", tourId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    double totalRating = 0;
+                    int count = querySnapshot.size();
+
+                    for (DocumentSnapshot reviewDoc : querySnapshot.getDocuments()) {
+                        Number rating = (Number) reviewDoc.get("rating");
+                        if (rating != null) {
+                            totalRating += rating.doubleValue();
+                        }
+                    }
+
+                    double averageRating = count > 0 ? totalRating / count : 0;
+                    holder.tvAverageRating.setText(
+                            String.format(Locale.getDefault(), "⭐ %.1f (%d)", averageRating, count)
+                    );
+                })
+                .addOnFailureListener(e -> {
+                    holder.tvAverageRating.setText("⭐ --");
+                });
+
         // Gán dữ liệu vào ViewHolder
         holder.tvTourTitle.setText(title);
         holder.tvDescription.setText(description);
@@ -256,6 +281,8 @@ public class CustomerTourAdapter extends RecyclerView.Adapter<CustomerTourAdapte
         TextView tvTourTitle, tvDescription, tvPrice, tvDestination, tvStartDate, tvGuides;
         // ❌ Đã xóa tvRatingList
         Button btnDetails, btnBook;
+        TextView tvAverageRating;
+
 
         public TourViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -270,6 +297,7 @@ public class CustomerTourAdapter extends RecyclerView.Adapter<CustomerTourAdapte
             tvStartDate = itemView.findViewById(R.id.tvStartDate);
             btnDetails = itemView.findViewById(R.id.btnDetails);
             btnBook = itemView.findViewById(R.id.btnBook);
+            tvAverageRating = itemView.findViewById(R.id.tvAverageRating);
         }
 
         public void updateWishlistIcon(boolean isWishlisted) {
