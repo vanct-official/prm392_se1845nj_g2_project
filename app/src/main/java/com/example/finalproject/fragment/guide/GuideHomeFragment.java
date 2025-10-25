@@ -118,8 +118,22 @@ public class GuideHomeFragment extends Fragment {
                             String tourId = tourDoc.getId();
                             String tourName = tourDoc.getString("description");
 
-                            // Hiển thị hộp thoại nhập thông tin báo cáo
-                            showReportDialog(tourId, tourName);
+                            // ✅ Kiểm tra nếu đã gửi báo cáo rồi
+                            db.collection("reports")
+                                    .whereEqualTo("userId", currentGuideId)
+                                    .whereEqualTo("tourId", tourId)
+                                    .get()
+                                    .addOnSuccessListener(reportSnapshot -> {
+                                        if (reportSnapshot.isEmpty()) {
+                                            // Chưa gửi -> Cho phép gửi
+                                            showReportDialog(tourId, tourName);
+                                        } else {
+                                            // Đã gửi -> Thông báo
+                                            Toast.makeText(getContext(),
+                                                    "Bạn đã gửi báo cáo cho tour này rồi.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                         }
                     }
 
@@ -134,6 +148,7 @@ public class GuideHomeFragment extends Fragment {
                                 "Lỗi khi tải tour: " + e.getMessage(),
                                 Toast.LENGTH_SHORT).show());
     }
+
 
     /**
      * Hiển thị dialog nhập báo cáo tour
@@ -157,9 +172,21 @@ public class GuideHomeFragment extends Fragment {
                     try {
                         participants = Integer.parseInt(edtParticipants.getText().toString().trim());
                     } catch (Exception ignored) {}
+
                     try {
                         rating = Double.parseDouble(edtRating.getText().toString().trim());
-                    } catch (Exception ignored) {}
+                        if (rating < 1 || rating > 5) {
+                            Toast.makeText(getContext(),
+                                    "Số sao phải nằm trong khoảng 1 đến 5.",
+                                    Toast.LENGTH_SHORT).show();
+                            return; // Dừng gửi
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(getContext(),
+                                "Vui lòng nhập số sao hợp lệ (1 - 5).",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     // Gửi báo cáo lên Firestore
                     Map<String, Object> report = new HashMap<>();
@@ -191,5 +218,6 @@ public class GuideHomeFragment extends Fragment {
 
         dialog.show();
     }
+
 
 }
