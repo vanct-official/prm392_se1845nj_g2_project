@@ -1,5 +1,6 @@
 package com.example.finalproject.fragment;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,7 +20,6 @@ import com.example.finalproject.activity.customer.CustomerFavoriteToursActivity;
 import com.example.finalproject.R;
 import com.example.finalproject.activity.ChangePasswordActivity;
 import com.example.finalproject.activity.PersonalInfoActivity;
-import com.example.finalproject.activity.customer.CustomerFavoriteToursActivity;
 import com.example.finalproject.activity.customer.PaymentHistoryActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -74,13 +74,20 @@ public class ProfileFragment extends Fragment {
 
         loadUserData(); // 🔹 Lấy dữ liệu từ Firestore và hiển thị
 
-        // 🔹 Nút đăng xuất
+        // 🔹 Nút đăng xuất (hiển thị hộp thoại xác nhận)
         btnLogout.setOnClickListener(v -> {
-            mAuth.signOut();
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            requireActivity().finish();
+            new AlertDialog.Builder(getContext())
+                    .setTitle("LOGOUT")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("LOG OUT", (dialog, which) -> {
+                        mAuth.signOut();
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    })
+                    .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss())
+                    .show();
         });
 
         // 🔹 Nút danh sách tour yêu thích (chỉ cho khách hàng)
@@ -94,18 +101,16 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
-        // 🔹 Các nút còn lại (ví dụ sau này có thể mở activity khác)
+        // 🔹 Các nút còn lại
         btnPersonalInfo.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), PersonalInfoActivity.class);
             startActivity(intent);
         });
 
-
         btnChangePassword.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
             startActivity(intent);
         });
-
 
         btnTerms.setOnClickListener(v ->
                 Toast.makeText(getContext(), "Xem điều khoản dịch vụ", Toast.LENGTH_SHORT).show()
