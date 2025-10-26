@@ -30,6 +30,10 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="CircleImageStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 
     <style name="Widget.App.Chip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/chip_bg_selector</item>

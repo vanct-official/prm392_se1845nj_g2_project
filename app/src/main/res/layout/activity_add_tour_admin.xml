@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="Thêm tour mới"
-                android:textColor="#1E293B"
+                android:textColor="#429542"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 

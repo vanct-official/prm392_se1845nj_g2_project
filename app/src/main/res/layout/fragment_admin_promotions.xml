@@ -21,9 +21,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="QUẢN LÝ KHUYẾN MÃI"
-            android:textStyle="bold"
+            android:textColor="#9823C7"
             android:textSize="18sp"
-            android:textColor="@color/black" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvAddPromotion"

@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.coordinatorlayout)
+    implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.google.android.material:material:1.12.0")

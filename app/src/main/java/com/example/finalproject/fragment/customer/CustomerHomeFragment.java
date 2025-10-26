@@ -133,21 +133,19 @@ public class CustomerHomeFragment extends Fragment {
     private void loadTours() {
         progressBar.setVisibility(View.VISIBLE);
         db.collection("tours")
-                .whereEqualTo("status", "upcoming") // Chỉ lấy tour có status là "upcoming"
-                .orderBy("start_date", Query.Direction.DESCENDING) // Vẫn sắp xếp theo ngày bắt đầu mới nhất
+                .orderBy("start_date", Query.Direction.DESCENDING) // vẫn sắp xếp theo ngày
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    allTours.clear(); // Xóa danh sách tour cũ
+                    allTours.clear();
                     if (querySnapshot != null) {
-                        allTours.addAll(querySnapshot.getDocuments()); // Thêm tất cả tour mới tải về
+                        allTours.addAll(querySnapshot.getDocuments());
                     }
-                    filterTours(""); // Hiển thị toàn bộ danh sách đã lọc ban đầu (áp dụng bộ lọc rỗng)
-                    progressBar.setVisibility(View.GONE); // Ẩn ProgressBar
+                    filterTours(""); // Hiển thị toàn bộ tour
+                    progressBar.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> {
-                    // Nếu lỗi khi tải tour, báo lỗi cho người dùng
-                    Toast.makeText(getContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE); // Ẩn ProgressBar
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                 });
     }
 

@@ -4,6 +4,7 @@ import android.content.Intent; // Import Intent nếu chưa có
 import android.os.Bundle;
 // import android.util.Log; // Log import removed
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -168,22 +169,34 @@ public class CustomerTourDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(doc -> {
                     // Kiểm tra xem document có tồn tại không
                     if (doc != null && doc.exists()) {
-                        currentTourDoc = doc; // Lưu lại document để có thể dùng sau
-                        bindTourData(doc); // Gán dữ liệu lên giao diện
-                        // Cập nhật icon dựa trên trạng thái wishlist đã tải
+                        currentTourDoc = doc;
+                        bindTourData(doc);
                         updateToolbarFavoriteIcon(wishlistedTourIds.contains(tourId));
-                        loadReviews(); // Gọi hàm tải reviews sau khi tải xong tour
-                        // Gọi hàm tải tên HDV sau khi bind data tour
-                        List<String> guideIds = (List<String>) doc.get("guideIds"); // Lấy danh sách ID HDV từ tour
+                        loadReviews();
+
+                        // Lấy trạng thái và danh sách hướng dẫn viên
+                        String status = doc.getString("status");
+                        List<String> guideIds = (List<String>) doc.get("guideIds");
+
+                        // Hiển thị tên hướng dẫn viên (nếu có)
                         if (guideIds != null && !guideIds.isEmpty()) {
-                            loadGuideNames(guideIds); // Gọi hàm tải tên
+                            loadGuideNames(guideIds);
                         } else {
-                            tvGuideNameDetail.setText("Hướng dẫn viên: Chưa có"); // Hiển thị nếu không có HDV
+                            tvGuideNameDetail.setText("Hướng dẫn viên: Chưa có");
                         }
+
+                        // ✅ Ẩn nút "Đặt ngay" nếu tour đã hoàn thành, bị hủy, hoặc chưa có hướng dẫn viên
+                        if ("completed".equalsIgnoreCase(status)
+                                || "cancelled".equalsIgnoreCase(status)
+                                || guideIds == null || guideIds.isEmpty()) {
+                            btnBookNowCustomerDetail.setVisibility(View.GONE);
+                        } else {
+                            btnBookNowCustomerDetail.setVisibility(View.VISIBLE);
+                        }
+
                     } else {
-                        // Nếu không tìm thấy tour
                         Toast.makeText(this, "Không tìm thấy tour!", Toast.LENGTH_SHORT).show();
-                        finish(); // Đóng màn hình
+                        finish();
                     }
                 })
                 .addOnFailureListener(e -> {

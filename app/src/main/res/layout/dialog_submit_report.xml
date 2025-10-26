@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp"
+    android:background="@drawable/bg_dialog_round">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edtSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tóm tắt tour..."
+            android:background="@drawable/bg_input"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/edtIssues"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Sự cố (nếu có)..."
+            android:background="@drawable/bg_input"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/edtParticipants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số lượng khách"
+            android:inputType="number"
+            android:background="@drawable/bg_input"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/edtRating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Đánh giá tour (0 - 5)"
+            android:inputType="numberDecimal"
+            android:background="@drawable/bg_input"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+</ScrollView>
+

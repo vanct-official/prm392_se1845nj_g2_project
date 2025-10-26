@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#F8F6FF"
-    android:padding="16dp">
+    android:background="#F8F9FC">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <!-- 🔹 Lời chào -->
+        android:orientation="vertical"
+        android:padding="16dp">
         <TextView
             android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Xin chào, Lan 👋"
-            android:textSize="22sp"
+            android:text="Xin chào 👋"
+            android:textColor="#512DA8"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/purple_700"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="12dp"/>
 
-        <!-- 🔹 Thống kê nhanh -->
+        <!-- Tiêu đề -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thống kê cá nhân"
+            android:textStyle="bold"
+            android:textColor="#673AB7"
+            android:textSize="20sp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Grid 4 ô thống kê -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,171 +39,184 @@
             android:alignmentMode="alignMargins"
             android:useDefaultMargins="true">
 
-            <!-- Card chung style -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Tổng tour -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="#EDE7F6"
+                android:padding="16dp"
+                android:gravity="center"
+                android:layout_margin="6dp"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                android:backgroundTint="@color/white">
+                android:elevation="2dp"
+                android:layout_columnSpan="1">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                <TextView
+                    android:text="Tổng tour"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    <TextView
-                        android:id="@+id/tvTotal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/purple_700" />
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tvTotalTours"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tổng tour"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:textSize="20sp"
+                    android:textColor="#512DA8"/>
+            </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <!-- Đang diễn ra -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="#E8F5E9"
+                android:padding="16dp"
+                android:gravity="center"
+                android:layout_margin="6dp"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                android:backgroundTint="@color/white">
+                android:elevation="2dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                <TextView
+                    android:text="Đang diễn ra"
+                    android:textColor="#000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    <TextView
-                        android:id="@+id/tvOngoing"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/purple_700" />
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tvOngoingTours"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Đang diễn ra"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:textSize="20sp"
+                    android:textColor="#4CAF50"/>
+            </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <!-- Sắp diễn ra -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="#FFF3E0"
+                android:padding="16dp"
+                android:gravity="center"
+                android:layout_margin="6dp"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                android:backgroundTint="@color/white">
+                android:elevation="2dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                <TextView
+                    android:text="Sắp diễn ra"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    <TextView
-                        android:id="@+id/tvUpcoming"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/purple_700" />
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tvUpcomingTours"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sắp diễn ra"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:textColor="#FF9800"/>
+            </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <!-- Báo cáo đã nộp -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="#FCE4EC"
+                android:padding="16dp"
+                android:gravity="center"
+                android:layout_margin="6dp"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                android:backgroundTint="@color/white">
+                android:elevation="2dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                <TextView
+                    android:text="Báo cáo đã nộp"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    <TextView
-                        android:id="@+id/tvReports"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/purple_700" />
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tvReports"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Báo cáo đã nộp"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:textColor="#E91E63"/>
+            </LinearLayout>
         </GridLayout>
 
-        <!-- 🔹 Tiêu đề danh sách tour -->
+        <!-- Thao tác nhanh -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tour sắp tới"
-            android:textSize="18sp"
+            android:text="⚡ Thao tác nhanh"
             android:textStyle="bold"
-            android:textColor="@color/purple_700"
-            android:layout_marginTop="28dp"
-            android:layout_marginBottom="12dp" />
+            android:textColor="#212121"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
 
-        <!-- 🔹 RecyclerView -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvUpcoming"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:clipToPadding="false"
-            android:paddingBottom="20dp" />
-
-        <!-- 🔹 Khi không có tour -->
-        <TextView
-            android:id="@+id/tvEmpty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
             android:gravity="center"
-            android:text="Không có tour sắp tới"
-            android:textColor="@color/gray"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"
-            android:visibility="gone" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <!-- Nút: Lịch sử gửi báo cáo -->
+            <Button
+                android:id="@+id/btnReportHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lịch sử gửi báo cáo"
+                android:textColor="@android:color/white"
+                android:drawableStart="@drawable/ic_history"
+                android:drawablePadding="8dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/bg_button_purple_gradient"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center_horizontal"
+                android:elevation="2dp" />
+
+            <!-- Nút: Gửi báo cáo tour -->
+            <Button
+                android:id="@+id/btnSubmitReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gửi báo cáo tour"
+                android:textColor="@android:color/white"
+                android:drawableStart="@drawable/ic_send"
+            android:drawablePadding="8dp"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:background="@drawable/bg_button_green_gradient"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_horizontal"
+            android:elevation="2dp" />
+
+        </LinearLayout>
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</ScrollView>
