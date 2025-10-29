@@ -9,6 +9,11 @@ public class Booking {
     private String status;
     private Timestamp bookingDate;
 
+    private Timestamp createAt;
+
+    // ✅ Field tạm để hiển thị tiêu đề tour mà không ghi đè tourId
+    private transient String tourTitle;
+
     public Booking() {}
 
     public String getId() { return id; }
@@ -21,4 +26,10 @@ public class Booking {
     public void setStatus(String status) { this.status = status; }
     public Timestamp getBookingDate() { return bookingDate; }
     public void setBookingDate(Timestamp bookingDate) { this.bookingDate = bookingDate; }
+
+    public Timestamp getCreateAt() { return createAt; }
+    public void setCreateAt(Timestamp createAt) { this.createAt = createAt; }
+
+    public String getTourTitle() { return tourTitle; }
+    public void setTourTitle(String tourTitle) { this.tourTitle = tourTitle; }
 }
