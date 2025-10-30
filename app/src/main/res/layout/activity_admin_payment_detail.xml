@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white">
 
-    <!-- HEADER: Xanh dương với tiêu đề -->
+    <!-- HEADER -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -40,7 +41,7 @@
             android:contentDescription="More options" />
     </LinearLayout>
 
-    <!-- CONTENT: Phần nội dung chính -->
+    <!-- CONTENT -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -137,6 +138,32 @@
 
                 <TextView
                     android:id="@+id/txtPaymentId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="#251011-0003088"
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Mã giao dịch -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tên khách hàng"
+                    android:textSize="14sp"
+                    android:textColor="#666666" />
+
+                <TextView
+                    android:id="@+id/txtUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="#251011-0003088"
@@ -272,67 +299,64 @@
                     android:textColor="#000000" />
             </LinearLayout>
 
-            <!-- Trạng thái hoàn tiền -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Trạng thái hoàn tiền"
-                    android:textSize="14sp"
-                    android:textColor="#666666" />
-
-                <TextView
-                    android:id="@+id/txtRefundStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Chưa hoàn tiền"
-                    android:textSize="14sp"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
-            </LinearLayout>
+            <!-- Thông tin hoàn tiền -->
             <TextView
-                android:id="@+id/txtRefundStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Trạng thái hoàn tiền"
+                android:text="Thông tin hoàn tiền"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:paddingTop="8dp" />
+                android:textColor="#0D47A1"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
 
-            <TextView
-                android:id="@+id/txtRefundInfo"
+            <LinearLayout
+                android:id="@+id/layoutRefundInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:orientation="vertical"
+                android:background="#F5F5F5"
+                android:padding="12dp"
                 android:visibility="gone"
-                android:padding="8dp"
-                android:textColor="@android:color/darker_gray" />
+                android:layout_marginBottom="24dp">
 
-            <Button
-                android:id="@+id/btnRefund"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Gửi yêu cầu hoàn tiền"
-                android:layout_marginTop="12dp" />
+                <TextView
+                    android:id="@+id/txtRefundInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Chưa có thông tin hoàn tiền"
+                    android:textSize="14sp"
+                    android:textColor="#333333" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- FOOTER: Nút action xanh dương -->
-    <Button
-        android:id="@+id/btnRefund"
+    <!-- FOOTER: Switch cho phép hoàn tiền -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:text="Yêu cầu hoàn tiền"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:background="#1976D2"
-        android:layout_margin="0dp" />
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:gravity="center_vertical"
+        android:background="#E3F2FD">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cho phép hoàn tiền"
+            android:textSize="16sp"
+            android:textColor="#0D47A1"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchRefund"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:showText="false"
+            android:thumbTint="#1976D2"
+            android:trackTint="#90CAF9" />
+    </LinearLayout>
 </LinearLayout>

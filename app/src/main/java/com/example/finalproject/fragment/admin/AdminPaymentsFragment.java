@@ -66,11 +66,14 @@ public class AdminPaymentsFragment extends Fragment {
                     paymentList.clear();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Payment payment = doc.toObject(Payment.class);
-                        paymentList.add(payment);
+                        if (payment != null) {
+                            payment.setId(doc.getId()); // ✅ Gán Firestore document ID
+                            paymentList.add(payment);
+                        }
                     }
 
                     // Khởi tạo adapter sau khi có cả payment và userMap
-                    adapter = new AdminPaymentAdapter(paymentList, userMap);
+                    adapter = new AdminPaymentAdapter(requireContext(), paymentList, userMap);
                     recyclerAdminPayments.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 })

@@ -1,5 +1,7 @@
 package com.example.finalproject.adapter.admin;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.finalproject.R;
+import com.example.finalproject.activity.admin.AdminPaymentDetailActivity;
 import com.example.finalproject.entity.Payment;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -19,8 +22,10 @@ public class AdminPaymentAdapter extends RecyclerView.Adapter<AdminPaymentAdapte
 
     private List<Payment> paymentList;
     private Map<String, String> userMap; // ✅ nhớ khai báo biến này
+    private Context context;
 
-    public AdminPaymentAdapter(List<Payment> paymentList, Map<String, String> userMap) {
+    public AdminPaymentAdapter(Context context, List<Payment> paymentList, Map<String, String> userMap) {
+        this.context = context;
         this.paymentList = paymentList;
         this.userMap = userMap;
     }
@@ -36,6 +41,7 @@ public class AdminPaymentAdapter extends RecyclerView.Adapter<AdminPaymentAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Payment payment = paymentList.get(position);
+        String userName = userMap.get(payment.getUserId());
 
         // Định dạng tiền tệ Việt Nam
         Locale localeVN = new Locale("vi", "VN");
@@ -62,6 +68,21 @@ public class AdminPaymentAdapter extends RecyclerView.Adapter<AdminPaymentAdapte
             holder.txtStatus.setBackgroundResource(R.drawable.status_badge_failed);
             holder.txtStatus.setTextColor(Color.parseColor("#FFFFFF")); // Đỏ
         }
+
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, AdminPaymentDetailActivity.class);
+            intent.putExtra("id", payment.getId());
+            intent.putExtra("bookingId", payment.getBookingId());
+            intent.putExtra("userName", userName);
+            intent.putExtra("method", payment.getMethod());
+            intent.putExtra("note", payment.getNote());
+            intent.putExtra("status", payment.getStatus());
+            intent.putExtra("transaction_ref", payment.getTransactionId());
+            intent.putExtra("timestamp", payment.getPaymentTime() != null ? payment.getPaymentTime().getSeconds() : 0);
+            intent.putExtra("amount", payment.getAmount());
+            context.startActivity(intent);
+        });
     }
 
     @Override

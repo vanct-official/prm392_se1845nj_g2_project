@@ -228,8 +228,6 @@ public class ChatActivity extends AppCompatActivity {
         }).start();
     }
 
-
-
     private void saveMessageToFirestore(String chatId, String text, String imageUrl) {
         Map<String, Object> msg = new HashMap<>();
         msg.put("senderId", currentUserId);
@@ -258,7 +256,6 @@ public class ChatActivity extends AppCompatActivity {
             saveMessageToFirestore(chatId, text, null);
         }
     }
-
 
     private void createNewChat(Runnable afterCreate) {
         if (otherUserId == null) return;
