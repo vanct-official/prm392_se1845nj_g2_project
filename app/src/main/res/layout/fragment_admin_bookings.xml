@@ -6,7 +6,7 @@
     android:padding="16dp"
     android:background="#F1F5F9">
 
-    <!-- Search bar giả -->
+
     <EditText
         android:id="@+id/edtSearchBooking"
         android:layout_width="match_parent"

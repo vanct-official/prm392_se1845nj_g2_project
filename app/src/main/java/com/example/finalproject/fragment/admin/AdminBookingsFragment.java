@@ -6,10 +6,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,10 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
+import com.example.finalproject.adapter.admin.AdminBookingAdapter;
+import com.example.finalproject.entity.Booking;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,33 +30,27 @@ public class AdminBookingsFragment extends Fragment {
 
     private RecyclerView rvBookings;
     private EditText edtSearchBooking;
-    private BookingAdapter adapter;
+    private AdminBookingAdapter adapter;
     private final List<Booking> bookingList = new ArrayList<>();
     private final List<Booking> filteredList = new ArrayList<>();
+    private FirebaseFirestore db;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_admin_bookings, container, false);
 
-        View view = inflater.inflate(R.layout.fragment_admin_bookings_demo, container, false);
         rvBookings = view.findViewById(R.id.rvBookings);
         edtSearchBooking = view.findViewById(R.id.edtSearchBooking);
 
-        // Setup RecyclerView
         rvBookings.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new BookingAdapter(filteredList);
+        adapter = new AdminBookingAdapter(filteredList, getContext());
         rvBookings.setAdapter(adapter);
 
-        // Tạo fake data
-        createFakeBookings();
+        db = FirebaseFirestore.getInstance();
+        loadBookings();
 
-        // Ban đầu filtered = full list
-        filteredList.clear();
-        filteredList.addAll(bookingList);
-        adapter.notifyDataSetChanged();
-
-        // Search filter (live)
         edtSearchBooking.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -68,142 +62,79 @@ public class AdminBookingsFragment extends Fragment {
         return view;
     }
 
-    // Tạo dữ liệu mẫu
-    private void createFakeBookings() {
-        bookingList.clear();
-        // thời gian hiện tại + mô tả
-        String now = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
-        bookingList.add(new Booking("Nguyễn Văn A", "Hành trình Hà Nội - Hạ Long", now, BookingStatus.PENDING));
-        bookingList.add(new Booking("Trần Thị B", "Sapa 3N2Đ", "26/10/2025 08:00", BookingStatus.CONFIRMED));
-        bookingList.add(new Booking("Lê Văn C", "Ninh Bình - Tràng An", "27/10/2025 09:30", BookingStatus.CANCELLED));
-        bookingList.add(new Booking("Phạm Thị D", "Phú Quốc 4N3Đ", "28/10/2025 07:00", BookingStatus.PENDING));
-        bookingList.add(new Booking("Hoàng Văn E", "Đà Nẵng - Hội An", "30/10/2025 14:00", BookingStatus.CONFIRMED));
+    /** 🔹 Lấy danh sách booking từ Firestore + join users & tours */
+    private void loadBookings() {
+        db.collection("bookings").get()
+                .addOnSuccessListener(querySnapshot -> {
+                    bookingList.clear();
+                    List<Booking> tempList = new ArrayList<>();
+
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        Booking b = doc.toObject(Booking.class);
+                        b.setId(doc.getId());
+                        tempList.add(b);
+                    }
+
+                    if (tempList.isEmpty()) {
+                        adapter.notifyDataSetChanged();
+                        return;
+                    }
+
+                    for (Booking b : tempList) {
+                        db.collection("users").document(b.getUserId()).get()
+                                .addOnSuccessListener(userDoc -> {
+                                    if (userDoc.exists()) {
+                                        String first = userDoc.getString("firstname");
+                                        String last = userDoc.getString("lastname");
+                                        b.setUserId(first + " " + last);
+                                    }
+
+                                    // ✅ Không ghi đè tourId — chỉ set tourTitle để hiển thị
+                                    db.collection("tours").document(b.getTourId()).get()
+                                            .addOnSuccessListener(tourDoc -> {
+                                                if (tourDoc.exists()) {
+                                                    b.setTourTitle(tourDoc.getString("title"));
+                                                }
+
+                                                bookingList.add(b);
+                                                filteredList.clear();
+                                                filteredList.addAll(bookingList);
+                                                adapter.notifyDataSetChanged();
+                                            })
+                                            .addOnFailureListener(e ->
+                                                    Toast.makeText(getContext(), "Lỗi lấy tour: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(getContext(), "Lỗi lấy user: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // Lọc theo tên khách hoặc tên tour
+    /** 🔹 Lọc danh sách booking theo từ khóa */
     private void filterBookings(String query) {
         filteredList.clear();
         if (query == null || query.trim().isEmpty()) {
             filteredList.addAll(bookingList);
         } else {
             String q = query.toLowerCase(Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
             for (Booking b : bookingList) {
-                if (b.customerName.toLowerCase(Locale.getDefault()).contains(q)
-                        || b.tourName.toLowerCase(Locale.getDefault()).contains(q)) {
+                String dateString = "";
+                if (b.getCreateAt() != null) {
+                    dateString = sdf.format(b.getCreateAt().toDate());
+                }
+
+                if ((b.getUserId() != null && b.getUserId().toLowerCase().contains(q))
+                        || (b.getTourTitle() != null && b.getTourTitle().toLowerCase().contains(q))
+                        || (b.getStatus() != null && b.getStatus().toLowerCase().contains(q))
+                        || dateString.toLowerCase().contains(q)) {
                     filteredList.add(b);
                 }
             }
         }
         adapter.notifyDataSetChanged();
-    }
-
-    // --- Model + Adapter ---
-    private static class Booking {
-        String customerName;
-        String tourName;
-        String dateTime;
-        BookingStatus status;
-
-        Booking(String customerName, String tourName, String dateTime, BookingStatus status) {
-            this.customerName = customerName;
-            this.tourName = tourName;
-            this.dateTime = dateTime;
-            this.status = status;
-        }
-    }
-
-    private enum BookingStatus {
-        PENDING, CONFIRMED, CANCELLED
-    }
-
-    private class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingViewHolder> {
-
-        private final List<Booking> items;
-
-        BookingAdapter(List<Booking> items) {
-            this.items = items;
-        }
-
-        @NonNull
-        @Override
-        public BookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_admin_booking_demo, parent, false);
-            return new BookingViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull BookingViewHolder holder, int position) {
-            Booking b = items.get(position);
-            holder.tvCustomerName.setText(b.customerName);
-            holder.tvTourName.setText(b.tourName);
-            holder.tvDate.setText("🕒 " + b.dateTime);
-
-            // Trạng thái hiển thị màu sắc khác nhau
-            switch (b.status) {
-                case CONFIRMED:
-                    holder.tvStatus.setText("Trạng thái: Đã xác nhận");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_confirmed, null));
-                    holder.btnConfirm.setVisibility(View.GONE);
-                    holder.btnCancel.setVisibility(View.VISIBLE);
-                    break;
-                case CANCELLED:
-                    holder.tvStatus.setText("Trạng thái: Đã huỷ");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_cancelled, null));
-                    holder.btnConfirm.setVisibility(View.VISIBLE);
-                    holder.btnCancel.setVisibility(View.GONE);
-                    break;
-                case PENDING:
-                default:
-                    holder.tvStatus.setText("Trạng thái: Chờ xử lý");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_pending, null));
-                    holder.btnConfirm.setVisibility(View.VISIBLE);
-                    holder.btnCancel.setVisibility(View.VISIBLE);
-                    break;
-            }
-
-            // Avatar giả (dùng drawable placeholder nếu có)
-            holder.ivAvatar.setImageResource(R.drawable.ic_account);
-
-            // Nút hành động giả
-            holder.btnConfirm.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Xác nhận booking của " + b.customerName, Toast.LENGTH_SHORT).show();
-                // cập nhật view giả (không thay đổi dữ liệu gốc trừ khi muốn)
-                b.status = BookingStatus.CONFIRMED;
-                notifyItemChanged(position);
-            });
-
-            holder.btnCancel.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Huỷ booking của " + b.customerName, Toast.LENGTH_SHORT).show();
-                b.status = BookingStatus.CANCELLED;
-                notifyItemChanged(position);
-            });
-
-            // Khi bấm item mở chi tiết (demo)
-            holder.itemView.setOnClickListener(v -> {
-                Toast.makeText(getContext(), b.customerName + " — " + b.tourName, Toast.LENGTH_SHORT).show();
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return items.size();
-        }
-
-        class BookingViewHolder extends RecyclerView.ViewHolder {
-            ImageView ivAvatar;
-            TextView tvCustomerName, tvTourName, tvDate, tvStatus;
-            Button btnConfirm, btnCancel;
-
-            BookingViewHolder(@NonNull View itemView) {
-                super(itemView);
-                ivAvatar = itemView.findViewById(R.id.ivAvatar);
-                tvCustomerName = itemView.findViewById(R.id.tvBookingName);
-                tvTourName = itemView.findViewById(R.id.tvBookingTour);
-                tvDate = itemView.findViewById(R.id.tvBookingDate);
-                tvStatus = itemView.findViewById(R.id.tvBookingStatus);
-                btnConfirm = itemView.findViewById(R.id.btnConfirm);
-                btnCancel = itemView.findViewById(R.id.btnCancel);
-            }
-        }
     }
 }
