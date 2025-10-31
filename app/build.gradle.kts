@@ -17,6 +17,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // 🔹 Cấu hình ký APK phát hành
+    signingConfigs {
+        create("release") {
+            storeFile = file("keystore/touriovn_ks.jks") // đường dẫn tới file .jks
+            storePassword = "TourioVN123"
+            keyAlias = "touriovn_key"
+            keyPassword = "TourioVN123"
+        }
+    }
+
+    // 🔹 Áp dụng cấu hình ký vào build release
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -24,6 +35,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release") // 🔹 thêm dòng này
         }
     }
 

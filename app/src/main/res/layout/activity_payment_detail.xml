@@ -297,13 +297,6 @@
                     android:textColor="#000000"
                     android:textStyle="bold" />
             </LinearLayout>
-            <TextView
-                android:id="@+id/txtRefundStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Trạng thái hoàn tiền"
-                android:textStyle="bold"
-                android:paddingTop="8dp" />
 
             <TextView
                 android:id="@+id/txtRefundInfo"
@@ -323,16 +316,4 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <!-- FOOTER: Nút action xanh dương -->
-    <Button
-        android:id="@+id/btnRefund"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="Yêu cầu hoàn tiền"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:background="#1976D2"
-        android:layout_margin="0dp" />
 </LinearLayout>
