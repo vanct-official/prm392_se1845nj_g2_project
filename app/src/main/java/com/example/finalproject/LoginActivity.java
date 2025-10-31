@@ -107,6 +107,12 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(intent);
         });
+        MaterialButton btnRegister = findViewById(R.id.btnRegister);
+        btnRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
 
     }
 
@@ -196,12 +202,26 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Nếu bạn lưu password dạng hash trong Firestore, thì hash password trước khi so sánh
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser firebaseUser = auth.getCurrentUser();
-                        if (firebaseUser != null) checkUserInFirestore(firebaseUser);
+
+                        if (firebaseUser != null) {
+                            // 🟡 Kiểm tra xem user đã xác thực email chưa
+                            if (!firebaseUser.isEmailVerified()) {
+                                firebaseUser.sendEmailVerification(); // Gửi lại email xác thực nếu cần
+                                Toast.makeText(this,
+                                        "Vui lòng xác nhận email trước khi đăng nhập.\nMột email xác thực đã được gửi đến " + firebaseUser.getEmail(),
+                                        Toast.LENGTH_LONG).show();
+                                FirebaseAuth.getInstance().signOut();
+                                return;
+                            }
+
+                            // ✅ Nếu đã xác minh email, kiểm tra thông tin Firestore
+                            checkUserInFirestore(firebaseUser);
+                        }
+
                     } else {
                         Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show();
                     }

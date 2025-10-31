@@ -1,5 +1,3 @@
-// java
-// File: `app/src/main/java/com/example/finalproject/MainActivity.java`
 package com.example.finalproject;
 
 import android.content.Intent;
@@ -7,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.finalproject.entity.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,18 +19,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Không setContentView vì MainActivity chỉ check login và redirect
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-            // Debug: kiểm tra kiểu dữ liệu của trường dob trong collection users
+        // Debug: kiểm tra kiểu dữ liệu của dob, tránh crash
         db.collection("users").get().addOnSuccessListener(query -> {
             for (DocumentSnapshot doc : query.getDocuments()) {
                 Object dob = doc.get("dob");
-                Log.d("DOB_CHECK", doc.getId() + " -> " + dob + " (" + dob.getClass().getSimpleName() + ")");
+                if (dob != null) {
+                    Log.d("DOB_CHECK", doc.getId() + " -> " + dob + " (" + dob.getClass().getSimpleName() + ")");
+                } else {
+                    Log.d("DOB_CHECK", doc.getId() + " -> null (chưa có DOB)");
+                }
             }
         });
-
 
         checkLogin();
     }
@@ -41,44 +40,52 @@ public class MainActivity extends AppCompatActivity {
     private void checkLogin() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // User đã login → lấy thông tin role từ Firestore
+            // Kiểm tra nếu email chưa verify thì không cho vào app
+            if (!currentUser.isEmailVerified()) {
+                Toast.makeText(this, "Vui lòng xác thực email trước khi đăng nhập!", Toast.LENGTH_LONG).show();
+                mAuth.signOut();
+                goToLogin();
+                return;
+            }
+
+            // Nếu email đã xác thực → lấy thông tin user trong Firestore
             fetchUserRole(currentUser.getUid());
         } else {
-            // Chưa login → mở LoginActivity
             goToLogin();
         }
     }
 
     private void fetchUserRole(String uid) {
-        DocumentReference userRef = db.collection("users").document(uid);
-        userRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                User user = documentSnapshot.toObject(User.class);
-                if (user != null && user.getRole() != null) {
-                    Boolean isActive = user.getIsActive(); // tránh null
-                    if (isActive != null && isActive) {
-                        redirectByRole(user.getRole());
+        db.collection("users").document(uid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        User user = documentSnapshot.toObject(User.class);
+                        if (user != null && user.getRole() != null) {
+                            Boolean isActive = user.getIsActive();
+                            if (isActive != null && isActive) {
+                                redirectByRole(user.getRole());
+                            } else {
+                                Toast.makeText(this, "Tài khoản đã bị khóa", Toast.LENGTH_SHORT).show();
+                                mAuth.signOut();
+                                goToLogin();
+                            }
+                        } else {
+                            goToLogin();
+                        }
                     } else {
-                        Toast.makeText(this, "Account is locked or inactive", Toast.LENGTH_SHORT).show();
-                        mAuth.signOut();
                         goToLogin();
                     }
-                } else {
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("MainActivity", "Lỗi lấy dữ liệu user: ", e);
                     goToLogin();
-                }
-
-            } else {
-                goToLogin();
-            }
-        }).addOnFailureListener(e -> {
-            Log.e("MainActivity", "Error fetching user role", e);
-            goToLogin();
-        });
+                });
     }
 
     private void redirectByRole(String role) {
         Intent intent;
-        switch (role) {
+        switch (role.toLowerCase()) {
             case "admin":
                 intent = new Intent(this, AdminActivity.class);
                 break;
@@ -87,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:
                 intent = new Intent(this, CustomerActivity.class);
+                break;
         }
         startActivity(intent);
         finish();

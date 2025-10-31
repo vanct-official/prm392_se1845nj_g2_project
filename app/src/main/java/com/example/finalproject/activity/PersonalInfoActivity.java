@@ -35,7 +35,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
     private ImageButton btnBack;
     private ImageView imgAvatar;
-    private EditText edtFirstName, edtLastName, edtUsername, edtPhone, tvEmail, tvDob;
+    private EditText edtFirstName, edtLastName, edtPhone, tvEmail, tvDob;
     private ChipGroup chipGenderGroup;
     private Button btnSave;
 
@@ -77,7 +77,6 @@ public class PersonalInfoActivity extends AppCompatActivity {
         imgAvatar = findViewById(R.id.imgAvatar);
         edtFirstName = findViewById(R.id.edtFirstName);
         edtLastName = findViewById(R.id.edtLastName);
-        edtUsername = findViewById(R.id.edtUsername);
         edtPhone = findViewById(R.id.edtPhone);
         tvEmail = findViewById(R.id.tvEmail);
         tvDob = findViewById(R.id.tvDob);
@@ -101,7 +100,6 @@ public class PersonalInfoActivity extends AppCompatActivity {
             if (documentSnapshot.exists()) {
                 edtFirstName.setText(documentSnapshot.getString("firstname"));
                 edtLastName.setText(documentSnapshot.getString("lastname"));
-                edtUsername.setText(documentSnapshot.getString("username"));
                 tvEmail.setText(documentSnapshot.getString("email"));
                 edtPhone.setText(documentSnapshot.getString("phone"));
 
@@ -207,11 +205,10 @@ public class PersonalInfoActivity extends AppCompatActivity {
     private void saveUserData() {
         String firstName = edtFirstName.getText().toString().trim();
         String lastName = edtLastName.getText().toString().trim();
-        String username = edtUsername.getText().toString().trim();
         String phone = edtPhone.getText().toString().trim();
         String dob = tvDob.getText().toString().trim();
 
-        if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -222,7 +219,6 @@ public class PersonalInfoActivity extends AppCompatActivity {
         Map<String, Object> updates = new HashMap<>();
         updates.put("firstname", firstName);
         updates.put("lastname", lastName);
-        updates.put("username", username);
         updates.put("phone", phone);
 
         // ✅ Convert dob → Timestamp

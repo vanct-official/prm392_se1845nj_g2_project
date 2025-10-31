@@ -126,41 +126,63 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
                 .get()
                 .addOnSuccessListener(document -> {
                     if (document.exists()) {
+                        // Lấy dữ liệu từ Firestore
                         String firstname = document.getString("firstname");
                         String lastname = document.getString("lastname");
                         String email = document.getString("email");
+                        String role = document.getString("role");
                         String avatarUrl = document.getString("avatarUrl");
                         Boolean isActive = document.getBoolean("isActive");
 
-                        tvAdminName.setText(firstname + " " + lastname);
-                        tvAdminEmail.setText(email);
+                        // ✅ Hiển thị tên đầy đủ
+                        String fullName = "";
+                        if (firstname != null) fullName += firstname + " ";
+                        if (lastname != null) fullName += lastname;
 
-                        // Trạng thái online/offline
+                        tvAdminName.setText(fullName.trim().isEmpty() ? "Admin" : fullName.trim());
+                        tvAdminEmail.setText(email != null ? email : "Chưa có email");
+
+                        // ✅ Hiển thị trạng thái
                         if (Boolean.TRUE.equals(isActive)) {
-                            tvStatus.setText("Online");
+                            tvStatus.setText("Hoạt động");
                             tvStatus.setTextColor(Color.parseColor("#4CAF50"));
                         } else {
-                            tvStatus.setText("Offline");
+                            tvStatus.setText("Không hoạt động");
                             tvStatus.setTextColor(Color.parseColor("#9E9E9E"));
                         }
 
-                        // Avatar
+                        // ✅ Hiển thị role (bổ sung nếu muốn)
+                        TextView tvRole = headerView.findViewById(R.id.tvRole);
+                        if (tvRole != null && role != null) {
+                            tvRole.setText(role.equals("admin") ? "Quản trị viên" : role);
+                            tvRole.setVisibility(View.VISIBLE);
+                        }
+
+                        // ✅ Hiển thị ảnh đại diện
                         if (avatarUrl != null && !avatarUrl.isEmpty()) {
                             Glide.with(this)
                                     .load(avatarUrl)
                                     .placeholder(R.drawable.ic_circle)
+                                    .error(R.drawable.ic_circle)
                                     .circleCrop()
                                     .into(ivAdminAvatar);
                         } else {
                             ivAdminAvatar.setImageResource(R.drawable.ic_circle);
                         }
+                    } else {
+                        tvAdminName.setText("Admin");
+                        tvAdminEmail.setText("Không tìm thấy dữ liệu");
+                        tvStatus.setText("Offline");
+                        tvStatus.setTextColor(Color.GRAY);
+                        ivAdminAvatar.setImageResource(R.drawable.ic_circle);
                     }
                 })
                 .addOnFailureListener(e -> {
                     tvAdminName.setText("Admin");
-                    tvAdminEmail.setText("Không thể tải thông tin");
+                    tvAdminEmail.setText("Lỗi tải dữ liệu");
                     tvStatus.setText("Offline");
                     tvStatus.setTextColor(Color.GRAY);
+                    ivAdminAvatar.setImageResource(R.drawable.ic_circle);
                 });
 
         // 📌 Khi bấm avatar → mở ProfileFragment

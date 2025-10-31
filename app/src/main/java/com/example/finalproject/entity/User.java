@@ -13,7 +13,6 @@ public class User {
     private String lastname;
     private String email;
     private String phone;
-    private String passwordHash;
     private Timestamp dob;
     private boolean gender;
     private boolean isActive;
@@ -28,7 +27,7 @@ public class User {
     }
 
     public User(String userid, String username, String firstname, String lastname, String email,
-                String phone, String passwordHash, Timestamp dob, boolean gender, boolean isActive,
+                String phone, Timestamp dob, boolean gender, boolean isActive,
                 boolean isEmailVerify, String role, String imageUrl, Timestamp createdAt, Timestamp updatedAt) {
         this.userid = userid;
         this.username = username;
@@ -36,7 +35,6 @@ public class User {
         this.lastname = lastname;
         this.email = email;
         this.phone = phone;
-        this.passwordHash = passwordHash;
         this.dob = dob;
         this.gender = gender;
         this.isActive = isActive;
@@ -103,16 +101,6 @@ public class User {
     @PropertyName("phone")
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    @PropertyName("passwordHash")
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    @PropertyName("passwordHash")
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
     }
 
     @PropertyName("dob")

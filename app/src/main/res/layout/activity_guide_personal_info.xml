@@ -20,9 +20,10 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@android:color/transparent"
+            android:contentDescription="Back"
             android:src="@drawable/ic_arrow_back"
             app:tint="@color/black"
-            android:contentDescription="Back" />
+            tools:ignore="TouchTargetSizeCheck" />
 
 
         <!-- Avatar -->
@@ -76,15 +77,6 @@
             android:layout_marginTop="10dp" />
 
         <!-- Username -->
-        <EditText
-            android:id="@+id/edtUsername"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tên đăng nhập"
-            android:inputType="text"
-            android:background="@drawable/bg_field"
-            android:padding="12dp"
-            android:layout_marginTop="10dp" />
 
         <!-- Email (disabled) -->
         <EditText
