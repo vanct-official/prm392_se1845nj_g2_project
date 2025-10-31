@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalProject">
-
+        <activity
+            android:name=".activity.admin.AdminPaymentDetailActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.customer.PaymentHistoryActivity"
             android:exported="false" />
@@ -21,10 +23,10 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
-        <activity android:name=".activity.ChangePasswordActivity"
+        <activity
+            android:name=".activity.ChangePasswordActivity"
             android:exported="false"
             android:label="Đổi mật khẩu" />
-
         <activity
             android:name=".CustomerActivity"
             android:exported="false" />
@@ -32,7 +34,6 @@
             android:name=".GuideActivity"
             android:exported="false" />
         <activity android:name=".activity.PersonalInfoActivity" />
-
         <activity
             android:name=".AdminActivity"
             android:exported="false" />
@@ -45,7 +46,6 @@
         <activity
             android:name=".activity.customer.CustomerFavoriteToursActivity"
             android:exported="false" />
-
         <activity
             android:name=".activity.admin.AdminUserDetailActivity"
             android:exported="false" />
@@ -55,7 +55,6 @@
             android:name=".activity.customer.PaymentDetailActivity"
             android:parentActivityName=".activity.customer.PaymentHistoryActivity"
             tools:ignore="DuplicateActivity" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -65,8 +64,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity android:name=".activity.admin.AdminAddPromotionActivity" />
         <activity android:name=".activity.admin.AdminPromotionDetailActivity" />
         <activity android:name=".activity.admin.AdminEditPromotionActivity" />

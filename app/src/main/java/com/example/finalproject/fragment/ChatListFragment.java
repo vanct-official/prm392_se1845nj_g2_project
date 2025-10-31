@@ -37,29 +37,21 @@ import java.util.Map;
 
 public class ChatListFragment extends Fragment {
     private static final String TAG = "ChatListFragment";
-
     private EditText edtSearchUser;
     private ImageButton btnClearSearch;
-
-
     private RecyclerView recyclerView;
     private ChatListAdapter adapter;
-
     // chatList: all chats returned from Firestore
     private List<Chat> chatList = new ArrayList<>();
-
     // displayList: filtered list shown in adapter
     private List<Chat> displayList = new ArrayList<>();
-
     private FirebaseFirestore db;
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private String currentUserId;
     // cache userId -> name to avoid repeated Firestore hits
     private Map<String, String> userNameCache = new HashMap<>();
-
     // cache userId -> role to avoid repeated Firestore hits
     private Map<String, String> userRoleCache = new HashMap<>();
-
     // current role filter (null means "all")
     private String currentRoleFilter = null;
 

@@ -26,6 +26,15 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+            // Debug: kiểm tra kiểu dữ liệu của trường dob trong collection users
+        db.collection("users").get().addOnSuccessListener(query -> {
+            for (DocumentSnapshot doc : query.getDocuments()) {
+                Object dob = doc.get("dob");
+                Log.d("DOB_CHECK", doc.getId() + " -> " + dob + " (" + dob.getClass().getSimpleName() + ")");
+            }
+        });
+
+
         checkLogin();
     }
 

@@ -2,23 +2,29 @@ package com.example.finalproject.activity.customer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finalproject.R;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class PaymentDetailActivity extends AppCompatActivity {
 
-    private TextView txtPaymentId, txtAmount, txtBookingId, txtMethod, txtNote, txtStatus, txtTransactionRef, txtDate;
+    private TextView txtPaymentId, txtAmount, txtBookingId, txtMethod, txtNote,
+            txtStatus, txtTransactionRef, txtDate, txtRefundStatus, txtRefundInfo;
     private Button btnRefund;
+    private FirebaseFirestore db;
+    private String paymentId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,10 +40,43 @@ public class PaymentDetailActivity extends AppCompatActivity {
         txtStatus = findViewById(R.id.txtStatus);
         txtTransactionRef = findViewById(R.id.txtTransactionRef);
         txtDate = findViewById(R.id.txtDate);
+        txtRefundStatus = findViewById(R.id.txtRefundStatus);
+        txtRefundInfo = findViewById(R.id.txtRefundInfo);
         btnRefund = findViewById(R.id.btnRefund);
-
         ImageView btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> onBackPressed());
+
+        db = FirebaseFirestore.getInstance();
+
+        // Nhận dữ liệu từ Intent
+        paymentId = getIntent().getStringExtra("id");
+        double amount = getIntent().getDoubleExtra("amount", 0);
+        String bookingId = getIntent().getStringExtra("bookingId");
+        String method = getIntent().getStringExtra("method");
+        String note = getIntent().getStringExtra("note");
+        String status = getIntent().getStringExtra("status");
+        String transactionRef = getIntent().getStringExtra("transaction_ref");
+        Timestamp timestamp = getIntent().getParcelableExtra("timestamp");
+        boolean refund = getIntent().getBooleanExtra("refund", false);
+
+        // Định dạng tiền tệ Việt Nam
+        Locale localeVN = new Locale("vi", "VN");
+        NumberFormat formatVN = NumberFormat.getCurrencyInstance(localeVN);
+        txtAmount.setText(formatVN.format(amount));
+
+        // Hiển thị thông tin thanh toán
+        txtPaymentId.setText(paymentId != null ? paymentId : "N/A");
+        txtBookingId.setText(bookingId != null ? bookingId : "N/A");
+        txtMethod.setText(method != null ? method : "N/A");
+        txtNote.setText(note != null ? note : "Không có ghi chú");
+        txtStatus.setText(status != null ? status : "Không xác định");
+        txtTransactionRef.setText(transactionRef != null ? transactionRef : "Không có mã giao dịch");
+
+        if (timestamp != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            txtDate.setText(sdf.format(timestamp.toDate()));
+        } else {
+            txtDate.setText("Không có dữ liệu");
+        }
 
         btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(PaymentDetailActivity.this, PaymentHistoryActivity.class);
@@ -46,67 +85,83 @@ public class PaymentDetailActivity extends AppCompatActivity {
             finish();
         });
 
-
-        // Nhận dữ liệu từ Intent
-        String id = getIntent().getStringExtra("id");
-        double amount = getIntent().getDoubleExtra("amount", 0);
-        String bookingId = getIntent().getStringExtra("bookingId");
-        String method = getIntent().getStringExtra("method");
-        String note = getIntent().getStringExtra("note");
-        String status = getIntent().getStringExtra("status");
-        String transactionRef = getIntent().getStringExtra("transaction_ref");
-        long timestamp = getIntent().getLongExtra("timestamp", 0);
-        boolean refund = getIntent().getBooleanExtra("refund", false);
-
-        // Định dạng tiền Việt Nam
-        Locale localeVN = new Locale("vi", "VN");
-        NumberFormat formatVN = NumberFormat.getCurrencyInstance(localeVN);
-        String amountFormatted = formatVN.format(amount);
-
-        // Hiển thị dữ liệu
-        txtPaymentId.setText(id);
-        txtAmount.setText(amountFormatted);
-        txtBookingId.setText(bookingId);
-        txtMethod.setText(method);
-        txtNote.setText(note);
-        txtStatus.setText(status);
-        txtTransactionRef.setText(transactionRef);
-
-        if (timestamp > 0) {
-            Timestamp ts = new Timestamp(timestamp, 0);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            txtDate.setText(sdf.format(ts.toDate()));
-        } else {
-            txtDate.setText("Không có dữ liệu");
-        }
-
-        // 🔥 Ẩn hoặc hiện nút Refund tùy theo giá trị refund
-        if (!refund) {
-            btnRefund.setVisibility(android.view.View.GONE);
-        } else {
-            btnRefund.setVisibility(android.view.View.VISIBLE);
-            btnRefund.setOnClickListener(v -> showRefundDialog());
-        }
+        // Load refund information
+        loadRefundInfo(paymentId, refund);
     }
 
-    private void showRefundDialog() {
+    private void loadRefundInfo(String paymentId, boolean refundEnabled) {
+        db.collection("payments").document(paymentId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) return;
+
+                    Boolean refundRequested = doc.getBoolean("refundRequested");
+                    Map<String, Object> refundInfo = (Map<String, Object>) doc.get("refund_information");
+
+                    if (refundInfo != null) {
+                        String status = (String) refundInfo.get("status");
+                        String bankName = (String) refundInfo.get("bank_name");
+                        String accountNumber = (String) refundInfo.get("account_number");
+                        String accountName = (String) refundInfo.get("account_name");
+                        String reason = (String) refundInfo.get("reason");
+
+                        txtRefundStatus.setText(status != null ? status : "Đang xử lý");
+                        txtRefundInfo.setText(
+                                "Ngân hàng: " + bankName + "\n" +
+                                        "Số TK: " + accountNumber + "\n" +
+                                        "Chủ TK: " + accountName + "\n" +
+                                        "Lý do: " + (reason != null ? reason : "Không có")
+                        );
+                        txtRefundInfo.setVisibility(View.VISIBLE);
+
+                        if ("pending".equals(status)) {
+                            btnRefund.setText("Chỉnh sửa thông tin hoàn tiền");
+                            btnRefund.setVisibility(View.VISIBLE);
+                            btnRefund.setOnClickListener(v ->
+                                    showRefundDialog(paymentId, bankName, accountNumber, accountName, reason)
+                            );
+                        } else {
+                            btnRefund.setVisibility(View.GONE);
+                        }
+
+                    } else if (refundEnabled) {
+                        txtRefundStatus.setText("Chưa có yêu cầu hoàn tiền");
+                        txtRefundInfo.setVisibility(View.GONE);
+                        btnRefund.setVisibility(View.VISIBLE);
+                        btnRefund.setText("Gửi yêu cầu hoàn tiền");
+                        btnRefund.setOnClickListener(v ->
+                                showRefundDialog(paymentId, null, null, null, null)
+                        );
+                    } else {
+                        txtRefundStatus.setText("Không áp dụng hoàn tiền");
+                        txtRefundInfo.setVisibility(View.GONE);
+                        btnRefund.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void showRefundDialog(String paymentId, String bankNameOld, String accNumOld, String accHolderOld, String reasonOld) {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         builder.setCancelable(true);
-
-        // Gắn layout custom
-        final android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_refund_form, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_refund_form, null);
         builder.setView(dialogView);
 
         android.app.AlertDialog dialog = builder.create();
         dialog.show();
 
-        // Ánh xạ các view trong dialog
-        android.widget.EditText edtBankName = dialogView.findViewById(R.id.edtBankName);
-        android.widget.EditText edtAccountNumber = dialogView.findViewById(R.id.edtAccountNumber);
-        android.widget.EditText edtAccountHolder = dialogView.findViewById(R.id.edtAccountHolder);
-        android.widget.EditText edtReason = dialogView.findViewById(R.id.edtReason);
-        android.widget.Button btnCancel = dialogView.findViewById(R.id.btnCancel);
-        android.widget.Button btnConfirm = dialogView.findViewById(R.id.btnConfirm);
+        EditText edtBankName = dialogView.findViewById(R.id.edtBankName);
+        EditText edtAccountNumber = dialogView.findViewById(R.id.edtAccountNumber);
+        EditText edtAccountHolder = dialogView.findViewById(R.id.edtAccountHolder);
+        EditText edtReason = dialogView.findViewById(R.id.edtReason);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        Button btnConfirm = dialogView.findViewById(R.id.btnConfirm);
+
+        if (bankNameOld != null) edtBankName.setText(bankNameOld);
+        if (accNumOld != null) edtAccountNumber.setText(accNumOld);
+        if (accHolderOld != null) edtAccountHolder.setText(accHolderOld);
+        if (reasonOld != null) edtReason.setText(reasonOld);
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
 
@@ -117,16 +172,34 @@ public class PaymentDetailActivity extends AppCompatActivity {
             String reason = edtReason.getText().toString().trim();
 
             if (bankName.isEmpty() || accountNumber.isEmpty() || accountHolder.isEmpty()) {
-                android.widget.Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", android.widget.Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // TODO: Gửi request hoàn tiền
-            android.widget.Toast.makeText(this,
-                    "Đã gửi yêu cầu hoàn tiền cho " + accountHolder,
-                    android.widget.Toast.LENGTH_LONG).show();
+            Map<String, Object> refundInfo = new HashMap<>();
+            refundInfo.put("bank_name", bankName);
+            refundInfo.put("account_number", accountNumber);
+            refundInfo.put("account_name", accountHolder);
+            refundInfo.put("reason", reason);
+            refundInfo.put("status", "pending");
+            refundInfo.put("requestTime", Timestamp.now());
 
-            dialog.dismiss();
+            Map<String, Object> updateData = new HashMap<>();
+            updateData.put("refundRequested", true);
+            updateData.put("refund", true);
+            updateData.put("refund_information", refundInfo);
+
+            db.collection("payments").document(paymentId)
+                    .update(updateData)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Gửi yêu cầu hoàn tiền thành công!", Toast.LENGTH_LONG).show();
+                        txtRefundStatus.setText("pending");
+                        loadRefundInfo(paymentId, true);
+                        dialog.dismiss();
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Lỗi khi gửi yêu cầu: " + e.getMessage(),
+                                    Toast.LENGTH_SHORT).show());
         });
     }
 }

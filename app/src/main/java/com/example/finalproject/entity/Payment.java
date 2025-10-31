@@ -3,6 +3,8 @@ package com.example.finalproject.entity;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.PropertyName;
 
+import java.io.Serializable;
+
 public class Payment {
     private String id;        // ID của thanh toán (Firestore docId)
     private String bookingId;        // Liên kết với booking
@@ -14,7 +16,7 @@ public class Payment {
     private String transactionId;// ngày thanh toán
     private String note;             // Ghi chú nếu có (VD: "đã cọc 30%")
     private boolean refund;
-    private RefundInfo refund_information;
+    private RefundInformation refund_information; // ✅ thêm dòng này
 
 
     // 🔹 Constructor rỗng (Firestore cần)
@@ -23,7 +25,7 @@ public class Payment {
 
     // 🔹 Constructor đầy đủ
 
-    public Payment(String id, String bookingId, String userId, double amount, String method, String status, Timestamp paymentTime, String transactionId, String note, boolean refund, RefundInfo refund_information) {
+    public Payment(String id, String bookingId, String userId, double amount, String method, String status, Timestamp paymentTime, String transactionId, String note, boolean refund, RefundInformation refund_information) {
         this.id = id;
         this.bookingId = bookingId;
         this.userId = userId;
@@ -139,12 +141,37 @@ public class Payment {
         this.refund = refund;
     }
 
-    @PropertyName("refund_information")
-    public RefundInfo getRefund_information() {
+    public RefundInformation getRefund_information() {
         return refund_information;
     }
-    @PropertyName("refund_information")
-    public void setRefund_information(RefundInfo refund_information) {
+
+    public void setRefund_information(RefundInformation refund_information) {
         this.refund_information = refund_information;
+    }
+
+    // ✅ Lớp con để chứa refund info
+    public static class RefundInformation implements Serializable {
+        private String account_name;
+        private String account_number;
+        private String bank_name;
+        private String reason;
+        private String status;
+
+        public RefundInformation() {}
+
+        // getters & setters
+        public String getAccount_name() { return account_name; }
+        public void setAccount_name(String account_name) { this.account_name = account_name; }
+
+        public String getAccount_number() { return account_number; }
+        public void setAccount_number(String account_number) { this.account_number = account_number; }
+
+        public String getBank_name() { return bank_name; }
+        public void setBank_name(String bank_name) { this.bank_name = bank_name; }
+
+        public String getReason() { return reason; }
+        public void setReason(String reason) { this.reason = reason; }
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
     }
 }
