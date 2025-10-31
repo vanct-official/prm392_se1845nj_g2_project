@@ -50,7 +50,6 @@
             android:name=".activity.admin.AdminUserDetailActivity"
             android:exported="false" />
 
-
         <activity
             android:name=".activity.customer.PaymentDetailActivity"
             android:parentActivityName=".activity.customer.PaymentHistoryActivity"
@@ -71,6 +70,7 @@
         <activity android:name=".activity.admin.AdminTourDetailActivity" />
         <activity android:name=".activity.admin.AdminEditTourActivity" />
         <activity android:name=".activity.guide.GuideTourInvitationsActivity" />
+        <activity android:name=".ForgotPasswordActivity" />
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private MaterialButton btnLoginEmail, btnLoginGoogle;
     private ImageView togglePasswordVisibility;
     private boolean isPasswordVisible = false;
+    private TextView forgotPassword;
 
     // Launcher cho Google Sign-In
     private final ActivityResultLauncher<Intent> googleSignInLauncher =
@@ -82,6 +84,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLoginEmail = findViewById(R.id.btnLogin);
         btnLoginGoogle = findViewById(R.id.btnGoogleSignIn);
         togglePasswordVisibility = findViewById(R.id.togglePasswordVisibility);
+        forgotPassword = findViewById(R.id.forgotPassword); // 🟢 Thêm dòng này
+
     }
 
     /** 🔹 Cấu hình Google Sign-In */
@@ -99,6 +103,46 @@ public class LoginActivity extends AppCompatActivity {
         btnLoginEmail.setOnClickListener(v -> signInWithEmail());
 
         togglePasswordVisibility.setOnClickListener(v -> togglePasswordVisibility());
+        forgotPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
+        });
+
+    }
+
+    /** 🔁 Hiển thị dialog quên mật khẩu */
+    private void showForgotPasswordDialog() {
+        EditText inputEmail = new EditText(this);
+        inputEmail.setHint("Nhập email của bạn");
+        inputEmail.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        inputEmail.setPadding(48, 32, 48, 32);
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Khôi phục mật khẩu")
+                .setMessage("Chúng tôi sẽ gửi link đặt lại mật khẩu đến email của bạn.")
+                .setView(inputEmail)
+                .setPositiveButton("Gửi", (dialog, which) -> {
+                    String email = inputEmail.getText().toString().trim();
+                    if (email.isEmpty()) {
+                        Toast.makeText(this, "Vui lòng nhập email hợp lệ", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    sendResetPasswordEmail(email);
+                })
+                .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    /** ✉️ Gửi email reset mật khẩu qua Firebase */
+    private void sendResetPasswordEmail(String email) {
+        auth.sendPasswordResetEmail(email)
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(this, "Link đặt lại mật khẩu đã được gửi đến " + email, Toast.LENGTH_LONG).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Reset password error: " + e.getMessage());
+                    Toast.makeText(this, "Không thể gửi email: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     /** 🔄 Toggle password visibility */
@@ -281,6 +325,5 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
 
 }
