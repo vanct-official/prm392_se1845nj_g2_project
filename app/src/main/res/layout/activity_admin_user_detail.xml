@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#F1F5F9"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 🔹 Thanh tiêu đề -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/btnBackUserDetail"
+            android:src="@drawable/ic_arrow_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:text="Chi tiết người dùng"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- 🔹 Nội dung -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Tên -->
+        <TextView
+            android:id="@+id/tvUserName"
+            android:text="Lan Viên"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:textColor="#0F172A"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Email -->
+        <TextView
+            android:text="Email:"
+            android:textStyle="bold"
+            android:textColor="#475569"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tvUserEmail"
+            android:text="guide1@gmail.com"
+            android:textSize="14sp"
+            android:textColor="#334155"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- SĐT -->
+        <TextView
+            android:text="Số điện thoại:"
+            android:textStyle="bold"
+            android:textColor="#475569"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tvUserPhone"
+            android:text="07543678968"
+            android:textSize="14sp"
+            android:textColor="#334155"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Vai trò -->
+        <TextView
+            android:text="Vai trò:"
+            android:textStyle="bold"
+            android:textColor="#475569"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tvUserRole"
+            android:text="Hướng dẫn viên"
+            android:textSize="14sp"
+            android:textColor="#334155"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Trạng thái -->
+        <TextView
+            android:text="Trạng thái:"
+            android:textStyle="bold"
+            android:textColor="#475569"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tvUserStatus"
+            android:text="Hoạt động"
+            android:textSize="14sp"
+            android:textColor="#334155"
+            android:layout_marginBottom="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Nút -->
+        <Button
+            android:id="@+id/btnToggleActive"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Vô hiệu hóa"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/status_cancelled"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_marginHorizontal="4dp"
+            android:background="@null"
+            android:clipToOutline="false"
+            android:stateListAnimator="@null"
+            android:elevation="0dp" />
+    </LinearLayout>
+</LinearLayout>

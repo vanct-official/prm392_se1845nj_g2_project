@@ -65,5 +65,6 @@
     <color name="status_confirmed">#16A34A</color>
     <color name="status_pending">#2563EB</color>
     <color name="status_cancelled">#DC2626</color>
+    <color name="gray_disabled">#CBD5E1</color>
 
 </resources>

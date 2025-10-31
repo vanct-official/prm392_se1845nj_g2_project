@@ -47,6 +47,11 @@
             android:exported="false" />
 
         <activity
+            android:name=".activity.admin.AdminUserDetailActivity"
+            android:exported="false" />
+
+
+        <activity
             android:name=".activity.customer.PaymentDetailActivity"
             android:parentActivityName=".activity.customer.PaymentHistoryActivity"
             tools:ignore="DuplicateActivity" />
