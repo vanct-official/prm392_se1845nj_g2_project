@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/badge_guide"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,42 +17,42 @@
             android:id="@+id/tvRegisterTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="44dp"
             android:text="Tạo tài khoản mới"
             android:textColor="#FFFFFF"
-            android:textSize="28sp"
+            android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="48dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Ảnh đại diện -->
         <ImageView
             android:id="@+id/imgAvatar"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_add_photo"
-            android:background="@drawable/circle_bg_white"
-            android:scaleType="centerCrop"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="24dp"
-            android:padding="16dp"
+            android:background="@drawable/circle_white_border"
             android:clickable="true"
             android:focusable="true"
-            app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_add_photo"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle" />
 
         <!-- Họ -->
         <EditText
             android:id="@+id/etLastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_white_bg"
             android:hint="Họ"
             android:inputType="textPersonName"
-            android:layout_marginTop="32dp"
             android:padding="12dp"
-            android:background="@drawable/rounded_white_bg"
-            app:layout_constraintTop_toBottomOf="@id/imgAvatar" />
+            app:layout_constraintTop_toBottomOf="@id/imgAvatar"
+            tools:layout_editor_absoluteX="24dp" />
 
         <!-- Tên -->
         <EditText
@@ -116,47 +117,60 @@
             app:layout_constraintTop_toBottomOf="@id/etPhone" />
 
         <!-- Giới tính -->
-        <LinearLayout
+        <RadioGroup
             android:id="@+id/genderGroup"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/etDob"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/etDob">
 
             <RadioButton
                 android:id="@+id/rbMale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/CustomRadioButton"
                 android:text="Nam"
-                android:textColor="#FFFFFF"
                 android:checked="true" />
 
             <RadioButton
                 android:id="@+id/rbFemale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/CustomRadioButton"
                 android:text="Nữ"
-                android:textColor="#FFFFFF"
                 android:layout_marginStart="24dp" />
-        </LinearLayout>
+        </RadioGroup>
 
         <!-- Nút Đăng ký -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:text="Tạo tài khoản"
             android:textAllCaps="false"
+            android:textColor="#4F46E5"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#4F46E5"
             app:backgroundTint="#FFFFFF"
             app:cornerRadius="14dp"
             app:elevation="8dp"
-            app:layout_constraintTop_toBottomOf="@id/genderGroup" />
+            app:layout_constraintTop_toBottomOf="@id/genderGroup"
+            tools:layout_editor_absoluteX="24dp" />
+
+        <!-- 🔹 Nút quay lại đăng nhập -->
+        <TextView
+            android:id="@+id/tvBackToLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="Quay lại đăng nhập"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnRegister" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.finalproject"
-        minSdk = 24 // đủ để chạy Firebase ổn định
+        minSdk = 26 // đủ để chạy Firebase ổn định
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

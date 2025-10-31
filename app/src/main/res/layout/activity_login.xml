@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/badge_guide"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,8 +17,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="48dp"
-            android:src="@drawable/touriovn"
             android:elevation="8dp"
+            android:src="@drawable/touriovn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -29,12 +29,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:textAlignment="center"
-            android:text="Chào mừng quý khách\nđến với TourioVN!"
-            android:textColor="#FFFFFF"
-            android:textSize="32sp"
-            android:textStyle="bold"
             android:letterSpacing="0.02"
+            android:text="Chào mừng quý khách\nđến với TourioVN!"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/logo" />
@@ -44,10 +44,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:alpha="0.9"
             android:text="Khám phá những chuyến du lịch tuyệt vời"
             android:textColor="#E0E7FF"
             android:textSize="15sp"
-            android:alpha="0.9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/welcomeText" />
@@ -58,18 +58,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
             app:cardElevation="12dp"
-            app:cardBackgroundColor="#FFFFFF"
-            app:strokeColor="@android:color/transparent"
-            app:layout_constraintTop_toBottomOf="@id/subtitleText">
+            app:layout_constraintTop_toBottomOf="@id/subtitleText"
+            app:strokeColor="@android:color/transparent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
+                android:padding="6dp">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -84,13 +84,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
+                    android:fontFamily="sans-serif-medium"
                     android:hint="Email hoặc tên đăng nhập"
                     android:inputType="textEmailAddress"
                     android:padding="12dp"
                     android:textColor="#1F2937"
                     android:textColorHint="#D1D5DB"
-                    android:textSize="16sp"
-                    android:fontFamily="sans-serif-medium" />
+                    android:textSize="16sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -100,18 +100,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
             app:cardElevation="12dp"
-            app:cardBackgroundColor="#FFFFFF"
-            app:strokeColor="@android:color/transparent"
-            app:layout_constraintTop_toBottomOf="@id/emailCard">
+            app:layout_constraintTop_toBottomOf="@id/emailCard"
+            app:strokeColor="@android:color/transparent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
+                android:padding="6dp">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -127,13 +127,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
+                    android:fontFamily="sans-serif-medium"
                     android:hint="Mật khẩu"
                     android:inputType="textPassword"
                     android:padding="12dp"
                     android:textColor="#1F2937"
                     android:textColorHint="#D1D5DB"
-                    android:textSize="16sp"
-                    android:fontFamily="sans-serif-medium" />
+                    android:textSize="16sp" />
 
                 <!-- Added password visibility toggle button -->
                 <ImageView
@@ -141,14 +141,14 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginStart="8dp"
-                    android:src="@android:drawable/ic_menu_view"
-                    android:contentDescription="Toggle password visibility"
-                    android:scaleType="centerInside"
-                    android:padding="4dp"
-                    app:tint="#9CA3AF"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
-                    android:focusable="true" />
+                    android:contentDescription="Toggle password visibility"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:scaleType="centerInside"
+                    android:src="@android:drawable/ic_menu_view"
+                    app:tint="#9CA3AF" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -158,14 +158,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
             android:text="Quên mật khẩu?"
             android:textColor="#E0E7FF"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:background="?attr/selectableItemBackground"
-            android:padding="8dp"
-            android:clickable="true"
-            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/passwordCard" />
 
@@ -175,12 +175,12 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="28dp"
+            android:letterSpacing="0.01"
             android:text="Đăng nhập"
             android:textAllCaps="false"
+            android:textColor="#4F46E5"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:letterSpacing="0.01"
-            android:textColor="#4F46E5"
             app:backgroundTint="#FFFFFF"
             app:cornerRadius="14dp"
             app:elevation="8dp"
@@ -201,24 +201,24 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
-                android:background="#E0E7FF"
-                android:alpha="0.5" />
+                android:alpha="0.5"
+                android:background="#E0E7FF" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
+                android:alpha="0.8"
                 android:text="Hoặc tiếp tục với"
                 android:textColor="#E0E7FF"
-                android:textSize="13sp"
-                android:alpha="0.8" />
+                android:textSize="13sp" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
-                android:background="#E0E7FF"
-                android:alpha="0.5" />
+                android:alpha="0.5"
+                android:background="#E0E7FF" />
         </LinearLayout>
 
         <!-- Google Sign In Button -->
@@ -237,9 +237,9 @@
             app:iconGravity="textStart"
             app:iconPadding="12dp"
             app:iconTint="@null"
+            app:layout_constraintTop_toBottomOf="@id/divider"
             app:strokeColor="#E0E7FF"
-            app:strokeWidth="2dp"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+            app:strokeWidth="2dp" />
 
         <!-- Register Button -->
         <com.google.android.material.button.MaterialButton
@@ -250,9 +250,9 @@
             android:layout_marginTop="12dp"
             android:text="Tạo tài khoản mới"
             android:textAllCaps="false"
+            android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
             app:cornerRadius="14dp"
             app:layout_constraintTop_toBottomOf="@id/btnGoogleSignIn" />
 
@@ -263,11 +263,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="32dp"
+            android:alpha="0.7"
             android:gravity="center"
             android:text="Bằng cách tiếp tục, bạn đồng ý với\nĐiều khoản dịch vụ và Chính sách bảo mật"
             android:textColor="#E0E7FF"
             android:textSize="12sp"
-            android:alpha="0.7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

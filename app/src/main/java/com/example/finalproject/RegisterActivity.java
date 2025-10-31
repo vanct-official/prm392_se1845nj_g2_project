@@ -11,6 +11,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -55,6 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Cloudinary cloudinary;
 
     private Date selectedDobDate;
+    private TextView tvBackToLogin;
 
     private static final String PASSWORD_PATTERN =
             "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
@@ -80,6 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
         rbFemale = findViewById(R.id.rbFemale);
         imgAvatar = findViewById(R.id.imgAvatar);
         btnRegister = findViewById(R.id.btnRegister);
+        tvBackToLogin = findViewById(R.id.tvBackToLogin);
     }
 
     private void initFirebase() {
@@ -92,6 +95,11 @@ public class RegisterActivity extends AppCompatActivity {
         imgAvatar.setOnClickListener(v -> openGallery());
         etDob.setOnClickListener(v -> openDatePicker());
         btnRegister.setOnClickListener(v -> registerUser());
+        tvBackToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // đóng màn hình đăng ký để tránh quay lại bằng nút back
+        });
     }
 
     /** Mở thư viện ảnh */
@@ -138,19 +146,30 @@ public class RegisterActivity extends AppCompatActivity {
         String phone = etPhone.getText().toString().trim();
         boolean gender = rbMale.isChecked();
 
+        // 🔹 Kiểm tra rỗng
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
                 password.isEmpty() || phone.isEmpty() || selectedDobDate == null) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // 🔹 Kiểm tra định dạng email
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // 🔹 Kiểm tra độ mạnh của mật khẩu (ít nhất 8 ký tự, gồm chữ, số và ký tự đặc biệt)
         if (!isValidPassword(password)) {
-            Toast.makeText(this, "Mật khẩu phải ≥8 ký tự, gồm chữ, số và ký tự đặc biệt", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,
+                    "Mật khẩu phải ≥8 ký tự, gồm chữ, số và ký tự đặc biệt",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // 🔹 Kiểm tra số điện thoại (phải đúng 10 chữ số)
+        if (!phone.matches("^\\d{10}$")) {
+            Toast.makeText(this, "Số điện thoại phải gồm đúng 10 chữ số", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -165,7 +184,15 @@ public class RegisterActivity extends AppCompatActivity {
                     if (firebaseUser != null) {
                         firebaseUser.sendEmailVerification();
 
-                        uploadAvatarAndSaveUser(firebaseUser, firstName, lastName, gender, phone, selectedDobDate, progress);
+                        uploadAvatarAndSaveUser(
+                                firebaseUser,
+                                firstName,
+                                lastName,
+                                gender,
+                                phone,
+                                selectedDobDate,
+                                progress
+                        );
                     }
                 })
                 .addOnFailureListener(e -> {
