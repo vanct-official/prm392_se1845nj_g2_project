@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.finalproject.activity.authen.LoginActivity;
 import com.example.finalproject.entity.User;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;

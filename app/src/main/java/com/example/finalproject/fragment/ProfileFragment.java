@@ -15,11 +15,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.finalproject.LoginActivity;
+import com.example.finalproject.activity.authen.LoginActivity;
 import com.example.finalproject.activity.customer.CustomerFavoriteToursActivity;
 import com.example.finalproject.R;
-import com.example.finalproject.activity.ChangePasswordActivity;
-import com.example.finalproject.activity.PersonalInfoActivity;
+import com.example.finalproject.activity.authen.ChangePasswordActivity;
+import com.example.finalproject.activity.authen.EditProfileActivity;
 import com.example.finalproject.activity.customer.PaymentHistoryActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -77,16 +77,16 @@ public class ProfileFragment extends Fragment {
         // 🔹 Nút đăng xuất (hiển thị hộp thoại xác nhận)
         btnLogout.setOnClickListener(v -> {
             new AlertDialog.Builder(getContext())
-                    .setTitle("LOGOUT")
-                    .setMessage("Are you sure you want to log out?")
-                    .setPositiveButton("LOG OUT", (dialog, which) -> {
+                    .setTitle("Đăng xuất")
+                    .setMessage("Bạn đã ra chưa?")
+                    .setPositiveButton("Chưa", (dialog, which) -> {
                         mAuth.signOut();
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         requireActivity().finish();
                     })
-                    .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton("Rồi", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
@@ -103,7 +103,7 @@ public class ProfileFragment extends Fragment {
 
         // 🔹 Các nút còn lại
         btnPersonalInfo.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), PersonalInfoActivity.class);
+            Intent intent = new Intent(getActivity(), EditProfileActivity.class);
             startActivity(intent);
         });
 

@@ -1,4 +1,4 @@
-package com.example.finalproject;
+package com.example.finalproject.activity.authen;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.finalproject.AdminActivity;
+import com.example.finalproject.CustomerActivity;
+import com.example.finalproject.GuideActivity;
+import com.example.finalproject.R;
 import com.example.finalproject.entity.User;
 import com.google.android.gms.auth.api.signin.*;
 import com.google.android.gms.common.api.ApiException;

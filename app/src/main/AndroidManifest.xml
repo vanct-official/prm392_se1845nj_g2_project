@@ -29,10 +29,10 @@
             android:name=".ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.authen.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.ChangePasswordActivity"
+            android:name=".activity.authen.ChangePasswordActivity"
             android:exported="false"
             android:label="Đổi mật khẩu" />
         <activity
@@ -41,7 +41,7 @@
         <activity
             android:name=".GuideActivity"
             android:exported="false" />
-        <activity android:name=".activity.PersonalInfoActivity" />
+        <activity android:name=".activity.authen.EditProfileActivity" />
         <activity
             android:name=".AdminActivity"
             android:exported="false" />
@@ -77,8 +77,8 @@
         <activity android:name=".activity.admin.AdminTourDetailActivity" />
         <activity android:name=".activity.admin.AdminEditTourActivity" />
         <activity android:name=".activity.guide.GuideTourInvitationsActivity" />
-        <activity android:name=".ForgotPasswordActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".activity.authen.ForgotPasswordActivity" />
+        <activity android:name=".activity.authen.RegisterActivity" />
     </application>
 
 </manifest>

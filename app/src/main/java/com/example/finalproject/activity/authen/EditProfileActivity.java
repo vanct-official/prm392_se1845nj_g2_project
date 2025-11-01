@@ -1,4 +1,4 @@
-package com.example.finalproject.activity;
+package com.example.finalproject.activity.authen;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -14,6 +14,8 @@ import com.bumptech.glide.Glide;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.finalproject.R;
+import com.example.finalproject.utils.CloudinaryManager;
+import com.example.finalproject.utils.FileUtils;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.Timestamp;
@@ -23,7 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +32,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class PersonalInfoActivity extends AppCompatActivity {
+public class EditProfileActivity extends AppCompatActivity {
 
     private ImageButton btnBack;
     private ImageView imgAvatar;
@@ -46,8 +47,8 @@ public class PersonalInfoActivity extends AppCompatActivity {
     private String cloudUrl = null;
     private String gender = "";
 
+    // ✅ Lấy Cloudinary instance từ CloudinaryManager
     private Cloudinary cloudinary;
-    private static final String CLOUD_NAME = "dvysaf9on";
     private static final String UPLOAD_PRESET = "xuandai";
 
     @Override
@@ -58,10 +59,8 @@ public class PersonalInfoActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        // Init Cloudinary
-        cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", CLOUD_NAME
-        ));
+        // ✅ Dùng CloudinaryManager thay vì tạo mới
+        cloudinary = CloudinaryManager.getInstance();
 
         initUI();
         loadUserData();
@@ -103,50 +102,19 @@ public class PersonalInfoActivity extends AppCompatActivity {
                 tvEmail.setText(documentSnapshot.getString("email"));
                 edtPhone.setText(documentSnapshot.getString("phone"));
 
-                // ✅ Handle DOB
                 Object dobObj = documentSnapshot.get("dob");
-                Timestamp dobTimestamp = null;
-
                 if (dobObj instanceof Timestamp) {
-                    dobTimestamp = (Timestamp) dobObj;
-                } else if (dobObj instanceof String) {
-                    try {
-                        // giả sử định dạng yyyy-MM-dd
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                        Date date = sdf.parse((String) dobObj);
-                        dobTimestamp = new Timestamp(date);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        dobTimestamp = null; // fallback
-                    }
+                    Date date = ((Timestamp) dobObj).toDate();
+                    tvDob.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date));
                 }
 
-
-                // ✅ Handle Gender as Boolean (fallback if String)
                 Object genderObj = documentSnapshot.get("gender");
-                boolean isMale = true; // Mặc định là Nam
-
+                boolean isMale = true;
                 if (genderObj instanceof Boolean) {
                     isMale = (Boolean) genderObj;
-                } else if (genderObj != null) {
-                    // nếu là String, convert sang boolean
-                    String genderStr = genderObj.toString().trim().toLowerCase();
-                    if (genderStr.equals("male") || genderStr.equals("nam") || genderStr.equals("true")) {
-                        isMale = true;
-                    } else if (genderStr.equals("female") || genderStr.equals("nữ") || genderStr.equals("false")) {
-                        isMale = false;
-                    }
                 }
+                chipGenderGroup.check(isMale ? R.id.chipMale : R.id.chipFemale);
 
-// Set chip dựa trên boolean
-                if (isMale) {
-                    chipGenderGroup.check(R.id.chipMale);
-                } else {
-                    chipGenderGroup.check(R.id.chipFemale);
-                }
-
-
-                // ✅ Avatar
                 String avatarUrl = documentSnapshot.getString("avatarUrl");
                 if (avatarUrl != null && !avatarUrl.isEmpty()) {
                     Glide.with(this).load(avatarUrl).into(imgAvatar);
@@ -175,15 +143,31 @@ public class PersonalInfoActivity extends AppCompatActivity {
     private void uploadImageToCloudinary() {
         new Thread(() -> {
             try {
+                String filePath = FileUtils.getPath(this, selectedImageUri);
+                if (filePath == null) {
+                    runOnUiThread(() ->
+                            Toast.makeText(this, "Không thể lấy đường dẫn ảnh", Toast.LENGTH_SHORT).show());
+                    return;
+                }
+
+                // ✅ Dùng CloudinaryManager
+                Cloudinary cloudinary = CloudinaryManager.getInstance();
+
+                // ❌ Bỏ upload_preset, upload trực tiếp (signed upload)
                 Map uploadResult = cloudinary.uploader().upload(
-                        getContentResolver().openInputStream(selectedImageUri),
-                        ObjectUtils.asMap("upload_preset", UPLOAD_PRESET)
+                        filePath,
+                        ObjectUtils.emptyMap()
                 );
+
                 cloudUrl = uploadResult.get("secure_url").toString();
+
+                runOnUiThread(() ->
+                        Toast.makeText(this, "Tải ảnh lên thành công!", Toast.LENGTH_SHORT).show());
+
             } catch (Exception e) {
                 e.printStackTrace();
                 runOnUiThread(() ->
-                        Toast.makeText(this, "Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this, "Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
         }).start();
     }
@@ -221,15 +205,13 @@ public class PersonalInfoActivity extends AppCompatActivity {
         updates.put("lastname", lastName);
         updates.put("phone", phone);
 
-        // ✅ Convert dob → Timestamp
         try {
-            java.util.Date parsedDate = new SimpleDateFormat("dd/MM/yyyy").parse(dob);
+            Date parsedDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(dob);
             updates.put("dob", new Timestamp(parsedDate));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // ✅ Convert gender → Boolean
         if (gender.equalsIgnoreCase("Nam")) {
             updates.put("gender", true);
         } else if (gender.equalsIgnoreCase("Nữ")) {
@@ -246,5 +228,4 @@ public class PersonalInfoActivity extends AppCompatActivity {
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-
 }

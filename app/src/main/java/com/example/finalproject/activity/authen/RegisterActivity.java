@@ -1,4 +1,4 @@
-package com.example.finalproject;
+package com.example.finalproject.activity.authen;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.finalproject.entity.User;
+import com.example.finalproject.R;
 import com.example.finalproject.utils.CloudinaryManager;
 import com.example.finalproject.utils.FileUtils;
 import com.google.android.material.button.MaterialButton;
@@ -42,21 +42,18 @@ import java.util.Map;
  * Thêm trường: phone (String) và dob (Timestamp)
  */
 public class RegisterActivity extends AppCompatActivity {
-
     private static final String TAG = "RegisterActivity";
-
     private EditText etFirstName, etLastName, etEmail, etPassword, etPhone, etDob;
     private RadioButton rbMale, rbFemale;
     private ImageView imgAvatar;
     private MaterialButton btnRegister;
-
     private Uri selectedImageUri;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private Cloudinary cloudinary;
-
     private Date selectedDobDate;
-    private TextView tvBackToLogin;
+    private TextView tvBackToLogin;private ImageView ivTogglePassword;
+    private boolean isPasswordVisible = false;
 
     private static final String PASSWORD_PATTERN =
             "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
@@ -83,6 +80,8 @@ public class RegisterActivity extends AppCompatActivity {
         imgAvatar = findViewById(R.id.imgAvatar);
         btnRegister = findViewById(R.id.btnRegister);
         tvBackToLogin = findViewById(R.id.tvBackToLogin);
+        ivTogglePassword = findViewById(R.id.ivTogglePassword);
+
     }
 
     private void initFirebase() {
@@ -100,6 +99,8 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(intent);
             finish(); // đóng màn hình đăng ký để tránh quay lại bằng nút back
         });
+        // 👁 Thêm dòng này để bật/tắt ẩn hiện mật khẩu
+        ivTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
     }
 
     /** Mở thư viện ảnh */
@@ -252,4 +253,20 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Ẩn mật khẩu
+            etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            ivTogglePassword.setImageResource(R.drawable.ic_eye_closed);
+        } else {
+            // Hiện mật khẩu
+            etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            ivTogglePassword.setImageResource(R.drawable.ic_eye_open);
+        }
+        // Giữ nguyên vị trí con trỏ
+        etPassword.setSelection(etPassword.getText().length());
+        isPasswordVisible = !isPasswordVisible;
+    }
+
 }
