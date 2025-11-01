@@ -79,14 +79,14 @@ public class ProfileFragment extends Fragment {
             new AlertDialog.Builder(getContext())
                     .setTitle("Đăng xuất")
                     .setMessage("Bạn đã ra chưa?")
-                    .setPositiveButton("Chưa", (dialog, which) -> {
+                    .setPositiveButton("Rồi", (dialog, which) -> {
                         mAuth.signOut();
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         requireActivity().finish();
                     })
-                    .setNegativeButton("Rồi", (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton("Chưa", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
