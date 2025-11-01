@@ -21,14 +21,20 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapter.BookingViewHolder> {
 
     private final List<Booking> items;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Context context;
+
+    // ✅ Cache để tránh query trùng (hiệu năng cao hơn)
+    private final Map<String, String> userCache = new HashMap<>();
+    private final Map<String, String> tourCache = new HashMap<>();
 
     public AdminBookingAdapter(List<Booking> items, Context context) {
         this.items = items;
@@ -47,23 +53,55 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
     public void onBindViewHolder(@NonNull BookingViewHolder holder, int position) {
         Booking b = items.get(position);
 
-        // ✅ Hiển thị user và tour
-        holder.tvCustomerName.setText("Khách: " + (b.getUserId() != null ? b.getUserId() : "N/A"));
-        holder.tvTourName.setText("Tour: " + (b.getTourTitle() != null ? b.getTourTitle() : b.getTourId()));
+        // 🧩 1. Hiển thị tên khách (user)
+        if (userCache.containsKey(b.getUserId())) {
+            holder.tvCustomerName.setText("Khách: " + userCache.get(b.getUserId()));
+        } else {
+            db.collection("users").document(b.getUserId()).get()
+                    .addOnSuccessListener(doc -> {
+                        if (doc.exists()) {
+                            String first = doc.getString("firstname");
+                            String last = doc.getString("lastname");
+                            String fullName = (first != null ? first : "") + " " + (last != null ? last : "");
+                            userCache.put(b.getUserId(), fullName.trim());
+                            holder.tvCustomerName.setText("Khách: " + fullName.trim());
+                        } else {
+                            holder.tvCustomerName.setText("Khách: N/A");
+                        }
+                    })
+                    .addOnFailureListener(e -> holder.tvCustomerName.setText("Khách: N/A"));
+        }
 
-        // ✅ Hiển thị thời gian tạo booking
+        // 🧩 2. Hiển thị tên tour
+        if (tourCache.containsKey(b.getTourId())) {
+            holder.tvTourName.setText("Tour: " + tourCache.get(b.getTourId()));
+        } else {
+            db.collection("tours").document(b.getTourId()).get()
+                    .addOnSuccessListener(doc -> {
+                        if (doc.exists()) {
+                            String title = doc.getString("title");
+                            tourCache.put(b.getTourId(), title != null ? title : b.getTourId());
+                            holder.tvTourName.setText("Tour: " + (title != null ? title : b.getTourId()));
+                        } else {
+                            holder.tvTourName.setText("Tour: " + b.getTourId());
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        holder.tvTourName.setText("Tour: " + b.getTourId());
+                        Log.e("BookingAdapter", "Error loading tour title", e);
+                    });
+        }
+
+        // 🧩 3. Hiển thị thời gian tạo booking
         String dateStr = "N/A";
         try {
-            if (b.getCreateAt() != null) {
+            if (b.getCreateAt() != null)
                 dateStr = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                         .format(b.getCreateAt().toDate());
-            }
-        } catch (Exception e) {
-            dateStr = "N/A";
-        }
+        } catch (Exception ignored) {}
         holder.tvDate.setText("🕒 " + dateStr);
 
-        // ✅ Hiển thị trạng thái
+        // 🧩 4. Hiển thị trạng thái
         String status = b.getStatus() != null ? b.getStatus() : "pending";
         String statusLabel;
         int colorRes;
@@ -93,11 +131,11 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
         holder.tvStatus.setTextColor(holder.itemView.getResources().getColor(colorRes, null));
         holder.ivAvatar.setImageResource(R.drawable.ic_account);
 
-        // ✅ Cập nhật trạng thái
+        // 🧩 5. Cập nhật trạng thái
         holder.btnConfirm.setOnClickListener(v -> updateStatus(b.getId(), "confirmed", position));
         holder.btnCancel.setOnClickListener(v -> updateStatus(b.getId(), "rejected", position));
 
-        // ✅ Nút Chi tiết
+        // 🧩 6. Nút Chi tiết
         holder.btnDetail.setOnClickListener(v -> {
             String tourId = b.getTourId();
             if (tourId == null || tourId.trim().isEmpty()) {
@@ -105,8 +143,6 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
                 Log.e("BookingDebug", "tourId null hoặc rỗng cho bookingId: " + b.getId());
                 return;
             }
-
-            Log.d("BookingDebug", "TourId truyền sang: " + tourId + " | BookingId: " + b.getId());
 
             Intent intent = new Intent(v.getContext(), AdminTourDetailActivity.class);
             intent.putExtra("tourId", tourId.trim());
@@ -119,6 +155,7 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
         return items.size();
     }
 
+    // 🧩 Hàm cập nhật trạng thái
     private void updateStatus(String bookingId, String newStatus, int position) {
         DocumentReference ref = db.collection("bookings").document(bookingId);
         ref.update("status", newStatus)

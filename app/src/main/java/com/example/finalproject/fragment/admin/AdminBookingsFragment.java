@@ -3,6 +3,7 @@ package com.example.finalproject.fragment.admin;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,38 +65,48 @@ public class AdminBookingsFragment extends Fragment {
 
     /** 🔹 Lấy danh sách booking từ Firestore + join users & tours */
     private void loadBookings() {
-        db.collection("bookings").get()
+        db.collection("bookings")
+                .get()
                 .addOnSuccessListener(querySnapshot -> {
                     bookingList.clear();
-                    List<Booking> tempList = new ArrayList<>();
+                    filteredList.clear();
 
-                    for (QueryDocumentSnapshot doc : querySnapshot) {
-                        Booking b = doc.toObject(Booking.class);
-                        b.setId(doc.getId());
-                        tempList.add(b);
-                    }
-
-                    if (tempList.isEmpty()) {
+                    if (querySnapshot.isEmpty()) {
                         adapter.notifyDataSetChanged();
                         return;
                     }
 
-                    for (Booking b : tempList) {
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        Booking b = doc.toObject(Booking.class);
+                        b.setId(doc.getId());
+
+                        // ✅ Lấy thông tin user để hiển thị
                         db.collection("users").document(b.getUserId()).get()
                                 .addOnSuccessListener(userDoc -> {
+                                    String customerName;
                                     if (userDoc.exists()) {
                                         String first = userDoc.getString("firstname");
                                         String last = userDoc.getString("lastname");
-                                        b.setUserId(first + " " + last);
+                                        customerName = (first != null ? first : "") + " " + (last != null ? last : "");
+                                    } else {
+                                        customerName = "N/A";
                                     }
 
-                                    // ✅ Không ghi đè tourId — chỉ set tourTitle để hiển thị
+                                    // ✅ Lấy tên tour từ tourId
                                     db.collection("tours").document(b.getTourId()).get()
                                             .addOnSuccessListener(tourDoc -> {
+                                                String tourTitle = "N/A";
                                                 if (tourDoc.exists()) {
-                                                    b.setTourTitle(tourDoc.getString("title"));
+                                                    tourTitle = tourDoc.getString("title");
                                                 }
 
+                                                // ✅ Tạo dòng log / hiển thị kết hợp mà không thay đổi Booking model
+                                                Log.d("BookingInfo",
+                                                        "BookingId: " + b.getId() +
+                                                                " | Customer: " + customerName +
+                                                                " | Tour: " + tourTitle);
+
+                                                // ✅ Add vào danh sách hiển thị
                                                 bookingList.add(b);
                                                 filteredList.clear();
                                                 filteredList.addAll(bookingList);
@@ -109,7 +120,7 @@ public class AdminBookingsFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        Toast.makeText(getContext(), "Lỗi tải booking: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     /** 🔹 Lọc danh sách booking theo từ khóa */
@@ -127,14 +138,17 @@ public class AdminBookingsFragment extends Fragment {
                     dateString = sdf.format(b.getCreateAt().toDate());
                 }
 
+                // ✅ Chỉ còn userId, tourId, status, date để lọc
                 if ((b.getUserId() != null && b.getUserId().toLowerCase().contains(q))
-                        || (b.getTourTitle() != null && b.getTourTitle().toLowerCase().contains(q))
+                        || (b.getTourId() != null && b.getTourId().toLowerCase().contains(q))
                         || (b.getStatus() != null && b.getStatus().toLowerCase().contains(q))
                         || dateString.toLowerCase().contains(q)) {
                     filteredList.add(b);
                 }
             }
         }
+
         adapter.notifyDataSetChanged();
     }
+
 }

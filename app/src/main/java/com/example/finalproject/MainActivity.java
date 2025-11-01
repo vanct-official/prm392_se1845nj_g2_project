@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.finalproject.entity.User;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
@@ -25,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
         // Debug: kiểm tra kiểu dữ liệu của dob, tránh crash
         db.collection("users").get().addOnSuccessListener(query -> {
             for (DocumentSnapshot doc : query.getDocuments()) {
-                Object dob = doc.get("dob");
+                Timestamp dob = doc.getTimestamp("dob");
                 if (dob != null) {
-                    Log.d("DOB_CHECK", doc.getId() + " -> " + dob + " (" + dob.getClass().getSimpleName() + ")");
+                    Log.d("DOB_CHECK", doc.getId() + " -> " + dob.toDate());
                 } else {
                     Log.d("DOB_CHECK", doc.getId() + " -> null (chưa có DOB)");
                 }

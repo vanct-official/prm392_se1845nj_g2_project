@@ -435,10 +435,21 @@ public class CustomerTourDetailActivity extends AppCompatActivity {
     private void setupButtonClickListeners() {
         // Nút "Đặt ngay"
         btnBookNowCustomerDetail.setOnClickListener(v -> {
-            // Tạm thời hiển thị thông báo
-            Toast.makeText(this, "Chức năng Đặt ngay đang được phát triển!", Toast.LENGTH_SHORT).show();
-            // TODO: Triển khai logic điều hướng sang màn hình đặt tour
+            Intent intent = new Intent(this, BookingActivity.class);
+            intent.putExtra("tourId", tourId);
+            intent.putExtra("tourTitle", currentTourDoc.getString("title"));
+            intent.putExtra("tourPrice", currentTourDoc.getDouble("price"));
+
+            // ✅ truyền milliseconds thay vì Timestamp
+            Timestamp startDate = currentTourDoc.getTimestamp("start_date");
+            if (startDate != null) {
+                intent.putExtra("startDateMillis", startDate.toDate().getTime());
+            }
+            
+            startActivity(intent);
+
         });
+
 
         // Thẻ "Đánh giá từ khách hàng"
         cardViewReviewsCustomer.setOnClickListener(v -> {

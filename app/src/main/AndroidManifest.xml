@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!-- ✅ Quyền nên đặt ở đây, bên ngoài <application> -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalProject">
+        <activity
+            android:name=".activity.customer.BookingDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.customer.BookingActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.admin.AdminPaymentDetailActivity"
             android:exported="false" />
@@ -50,7 +57,6 @@
         <activity
             android:name=".activity.admin.AdminUserDetailActivity"
             android:exported="false" />
-
         <activity
             android:name=".activity.customer.PaymentDetailActivity"
             android:parentActivityName=".activity.customer.PaymentHistoryActivity"
@@ -73,7 +79,6 @@
         <activity android:name=".activity.guide.GuideTourInvitationsActivity" />
         <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".RegisterActivity" />
-
     </application>
 
 </manifest>
