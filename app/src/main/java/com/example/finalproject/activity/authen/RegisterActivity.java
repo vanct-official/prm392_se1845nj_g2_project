@@ -10,7 +10,6 @@ import android.util.Patterns;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +22,7 @@ import com.example.finalproject.R;
 import com.example.finalproject.utils.CloudinaryManager;
 import com.example.finalproject.utils.FileUtils;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,23 +37,20 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Màn hình đăng ký tài khoản.
- * Thêm trường: phone (String) và dob (Timestamp)
- */
 public class RegisterActivity extends AppCompatActivity {
+
     private static final String TAG = "RegisterActivity";
     private EditText etFirstName, etLastName, etEmail, etPassword, etPhone, etDob;
-    private RadioButton rbMale, rbFemale;
+    private MaterialButtonToggleGroup toggleGender;
+    private MaterialButton btnMale, btnFemale;
     private ImageView imgAvatar;
     private MaterialButton btnRegister;
+    private TextView tvBackToLogin;
     private Uri selectedImageUri;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private Cloudinary cloudinary;
     private Date selectedDobDate;
-    private TextView tvBackToLogin;private ImageView ivTogglePassword;
-    private boolean isPasswordVisible = false;
 
     private static final String PASSWORD_PATTERN =
             "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
@@ -75,13 +72,14 @@ public class RegisterActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etPhone = findViewById(R.id.etPhone);
         etDob = findViewById(R.id.etDob);
-        rbMale = findViewById(R.id.rbMale);
-        rbFemale = findViewById(R.id.rbFemale);
         imgAvatar = findViewById(R.id.imgAvatar);
         btnRegister = findViewById(R.id.btnRegister);
         tvBackToLogin = findViewById(R.id.tvBackToLogin);
-        ivTogglePassword = findViewById(R.id.ivTogglePassword);
 
+        // Phần giới tính
+        toggleGender = findViewById(R.id.toggleGender);
+        btnMale = findViewById(R.id.btnMale);
+        btnFemale = findViewById(R.id.btnFemale);
     }
 
     private void initFirebase() {
@@ -97,20 +95,18 @@ public class RegisterActivity extends AppCompatActivity {
         tvBackToLogin.setOnClickListener(v -> {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // đóng màn hình đăng ký để tránh quay lại bằng nút back
+            finish();
         });
-        // 👁 Thêm dòng này để bật/tắt ẩn hiện mật khẩu
-        ivTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
     }
 
-    /** Mở thư viện ảnh */
+    /** Mở thư viện ảnh chọn avatar */
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         startActivityForResult(intent, 101);
     }
 
-    /** Mở DatePickerDialog chọn ngày sinh */
+    /** Chọn ngày sinh */
     private void openDatePicker() {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -139,28 +135,27 @@ public class RegisterActivity extends AppCompatActivity {
         return password.matches(PASSWORD_PATTERN);
     }
 
+    /** Đăng ký tài khoản */
     private void registerUser() {
         String firstName = etFirstName.getText().toString().trim();
         String lastName = etLastName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String phone = etPhone.getText().toString().trim();
-        boolean gender = rbMale.isChecked();
 
-        // 🔹 Kiểm tra rỗng
+        boolean gender = toggleGender.getCheckedButtonId() == R.id.btnMale;
+
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
                 password.isEmpty() || phone.isEmpty() || selectedDobDate == null) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 🔹 Kiểm tra định dạng email
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 🔹 Kiểm tra độ mạnh của mật khẩu (ít nhất 8 ký tự, gồm chữ, số và ký tự đặc biệt)
         if (!isValidPassword(password)) {
             Toast.makeText(this,
                     "Mật khẩu phải ≥8 ký tự, gồm chữ, số và ký tự đặc biệt",
@@ -168,7 +163,6 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔹 Kiểm tra số điện thoại (phải đúng 10 chữ số)
         if (!phone.matches("^\\d{10}$")) {
             Toast.makeText(this, "Số điện thoại phải gồm đúng 10 chữ số", Toast.LENGTH_SHORT).show();
             return;
@@ -184,16 +178,7 @@ public class RegisterActivity extends AppCompatActivity {
                     FirebaseUser firebaseUser = authResult.getUser();
                     if (firebaseUser != null) {
                         firebaseUser.sendEmailVerification();
-
-                        uploadAvatarAndSaveUser(
-                                firebaseUser,
-                                firstName,
-                                lastName,
-                                gender,
-                                phone,
-                                selectedDobDate,
-                                progress
-                        );
+                        uploadAvatarAndSaveUser(firebaseUser, firstName, lastName, gender, phone, selectedDobDate, progress);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -202,6 +187,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
+    /** Upload ảnh lên Cloudinary và lưu thông tin user vào Firestore */
     private void uploadAvatarAndSaveUser(FirebaseUser firebaseUser, String firstName, String lastName,
                                          boolean gender, String phone, Date dob, ProgressDialog progress) {
         new Thread(() -> {
@@ -253,20 +239,4 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }).start();
     }
-
-    private void togglePasswordVisibility() {
-        if (isPasswordVisible) {
-            // Ẩn mật khẩu
-            etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            ivTogglePassword.setImageResource(R.drawable.ic_eye_closed);
-        } else {
-            // Hiện mật khẩu
-            etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-            ivTogglePassword.setImageResource(R.drawable.ic_eye_open);
-        }
-        // Giữ nguyên vị trí con trỏ
-        etPassword.setSelection(etPassword.getText().length());
-        isPasswordVisible = !isPasswordVisible;
-    }
-
 }
