@@ -10,6 +10,9 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven(url = "https://jitpack.io") // ✅ cú pháp Kotlin DSL
+        flatDir {
+            dirs("libs") // thư mục chứa file .aar
+        }
     }
 }
 

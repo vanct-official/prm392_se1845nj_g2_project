@@ -88,4 +88,8 @@ dependencies {
 
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("androidx.gridlayout:gridlayout:1.0.0")
+    implementation(files("libs/zpdk-release-v3.1.aar"))
+
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("commons-codec:commons-codec:1.15")
 }

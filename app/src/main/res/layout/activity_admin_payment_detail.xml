@@ -332,6 +332,41 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- ACTION BUTTONS -->
+    <LinearLayout
+        android:id="@+id/layoutActionButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="16dp">
+
+        <Button
+            android:id="@+id/btnCancelPayment"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Hủy thanh toán"
+            android:backgroundTint="@color/status_cancelled"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btnConfirmPayment"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Xác nhận thành công"
+            android:backgroundTint="@color/primary_cyan"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+
     <!-- FOOTER: Switch cho phép hoàn tiền -->
     <LinearLayout
         android:layout_width="match_parent"

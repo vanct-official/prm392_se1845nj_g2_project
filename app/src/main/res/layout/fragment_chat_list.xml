@@ -162,16 +162,6 @@
                             app:chipBackgroundColor="@color/chip_bg_selector"
                             app:chipStrokeWidth="0dp" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipUnread"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Chưa đọc"
-                            app:chipIcon="@drawable/ic_mark_chat_unread"
-                            app:chipIconTint="#4CAF50"
-                            app:chipBackgroundColor="@color/chip_bg_selector"
-                            app:chipStrokeWidth="0dp" />
                     </com.google.android.material.chip.ChipGroup>
                 </HorizontalScrollView>
             </LinearLayout>

@@ -3,6 +3,7 @@ package com.example.finalproject.activity.admin;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,13 +21,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class AdminPaymentDetailActivity extends AppCompatActivity {
 
     private TextView txtPaymentId, txtAmount, txtBookingId, txtMethod, txtNote,
             txtStatus, txtTransactionRef, txtDate, txtUserName, txtRefundInfo;
     private SwitchCompat switchRefund;
+    private Button btnCancelPayment, btnConfirmPayment;
     private FirebaseFirestore db;
 
     @Override
@@ -46,6 +50,8 @@ public class AdminPaymentDetailActivity extends AppCompatActivity {
         txtDate = findViewById(R.id.txtDate);
         txtRefundInfo = findViewById(R.id.txtRefundInfo);
         switchRefund = findViewById(R.id.switchRefund);
+        btnCancelPayment = findViewById(R.id.btnCancelPayment);
+        btnConfirmPayment = findViewById(R.id.btnConfirmPayment);
         ImageView btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> onBackPressed());
 
@@ -58,6 +64,9 @@ public class AdminPaymentDetailActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        btnCancelPayment.setOnClickListener(v -> updatePaymentStatus("cancelled"));
+        btnConfirmPayment.setOnClickListener(v -> updatePaymentStatus("success"));
 
         // 🔹 Lấy dữ liệu từ Firestore
         db.collection("payments").document(paymentId).get()
@@ -89,7 +98,28 @@ public class AdminPaymentDetailActivity extends AppCompatActivity {
         txtMethod.setText(payment.getMethod());
         txtNote.setText(payment.getNote() != null ? payment.getNote() : "(Không có)");
         txtStatus.setText(payment.getStatus());
-        txtUserName.setText(payment.getUserId() != null ? payment.getUserId() : "(Không rõ)");
+
+        // 🔹 Hiển thị tên khách hàng từ bảng "users"
+        if (payment.getUserId() != null && !payment.getUserId().isEmpty()) {
+            db.collection("users").document(payment.getUserId())
+                    .get()
+                    .addOnSuccessListener(userDoc -> {
+                        if (userDoc.exists()) {
+                            String firstName = userDoc.getString("firstname");
+                            String lastName = userDoc.getString("lastname");
+                            String fullName = ((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "")).trim();
+                            txtUserName.setText(fullName.isEmpty() ? "(Không rõ)" : fullName);
+                        } else {
+                            txtUserName.setText("(Không tìm thấy người dùng)");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        txtUserName.setText("(Lỗi tải dữ liệu)");
+                    });
+        } else {
+            txtUserName.setText("(Không rõ)");
+        }
+
         txtTransactionRef.setText(payment.getTransactionId());
 
         Timestamp timestamp = payment.getPaymentTime();
@@ -98,6 +128,14 @@ public class AdminPaymentDetailActivity extends AppCompatActivity {
             txtDate.setText(sdf.format(timestamp.toDate()));
         } else {
             txtDate.setText("Không có dữ liệu");
+        }
+
+        String status = doc.getString("status");
+        if ("success".equals(status) || "cancelled".equals(status)) {
+            btnCancelPayment.setEnabled(false);
+            btnConfirmPayment.setEnabled(false);
+            btnCancelPayment.setAlpha(0.5f);
+            btnConfirmPayment.setAlpha(0.5f);
         }
 
         // 🔹 Trạng thái hoàn tiền
@@ -144,4 +182,42 @@ public class AdminPaymentDetailActivity extends AppCompatActivity {
                 });
 
     }
+    private void updatePaymentStatus(String newStatus) {
+        String paymentId = getIntent().getStringExtra("id"); // 🔹 dùng đúng key đã truyền từ Intent
+        if (paymentId == null || paymentId.isEmpty()) {
+            Toast.makeText(this, "Không tìm thấy ID thanh toán", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put("status", newStatus);
+        updateData.put("updatedAt", Timestamp.now());
+
+        db.collection("payments").document(paymentId)
+                .update(updateData)
+                .addOnSuccessListener(aVoid -> {
+                    String message;
+                    if ("success".equals(newStatus)) {
+                        message = "✅ Đã xác nhận thanh toán thành công!";
+                        txtStatus.setText("Thành công");
+                        txtStatus.setTextColor(getResources().getColor(R.color.success_green));
+                    } else {
+                        message = "🚫 Đã hủy thanh toán!";
+                        txtStatus.setText("Đã hủy");
+                        txtStatus.setTextColor(getResources().getColor(R.color.status_cancelled));
+                    }
+
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+                    // ✅ Khóa 2 nút sau khi cập nhật xong
+                    btnCancelPayment.setEnabled(false);
+                    btnConfirmPayment.setEnabled(false);
+                    btnCancelPayment.setAlpha(0.5f);
+                    btnConfirmPayment.setAlpha(0.5f);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "❌ Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
 }

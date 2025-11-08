@@ -14,7 +14,7 @@
         android:background="@drawable/bg_search_box"
         android:drawableStart="@android:drawable/ic_menu_search"
         android:drawablePadding="8dp"
-        android:hint="Tìm kiếm tour...Demo thôi nhá"
+        android:hint="Tìm kiếm tour"
         android:padding="12dp" />
 
     <androidx.recyclerview.widget.RecyclerView

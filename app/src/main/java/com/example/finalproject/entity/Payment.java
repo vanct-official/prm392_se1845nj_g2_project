@@ -17,6 +17,8 @@ public class Payment {
     private String note;             // Ghi chú nếu có (VD: "đã cọc 30%")
     private boolean refund;
     private RefundInformation refund_information; // ✅ thêm dòng này
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
 
     // 🔹 Constructor rỗng (Firestore cần)
@@ -25,7 +27,7 @@ public class Payment {
 
     // 🔹 Constructor đầy đủ
 
-    public Payment(String id, String bookingId, String userId, double amount, String method, String status, Timestamp paymentTime, String transactionId, String note, boolean refund, RefundInformation refund_information) {
+    public Payment(String id, String bookingId, String userId, double amount, String method, String status, Timestamp paymentTime, String transactionId, String note, boolean refund, RefundInformation refund_information, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.bookingId = bookingId;
         this.userId = userId;
@@ -37,6 +39,8 @@ public class Payment {
         this.note = note;
         this.refund = refund;
         this.refund_information = refund_information;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     // 🔹 Getters và Setters
@@ -147,6 +151,24 @@ public class Payment {
 
     public void setRefund_information(RefundInformation refund_information) {
         this.refund_information = refund_information;
+    }
+
+    @PropertyName("createdAt")
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+    @PropertyName("createdAt")
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @PropertyName("updatedAt")
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+    @PropertyName("updatedAt")
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     // ✅ Lớp con để chứa refund info

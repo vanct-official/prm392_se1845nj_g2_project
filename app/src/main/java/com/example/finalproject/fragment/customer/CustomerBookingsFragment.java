@@ -20,9 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalproject.R;
 import com.example.finalproject.activity.customer.BookingDetailActivity;
+import com.example.finalproject.adapter.customer.CustomerBookingAdapter;
 import com.example.finalproject.entity.Booking;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
@@ -34,7 +36,7 @@ public class CustomerBookingsFragment extends Fragment {
 
     private RecyclerView rvBookings;
     private EditText edtSearchBooking;
-    private BookingAdapter adapter;
+    private CustomerBookingAdapter adapter;
     private final List<Booking> bookingList = new ArrayList<>();
     private final List<Booking> filteredList = new ArrayList<>();
 
@@ -51,7 +53,7 @@ public class CustomerBookingsFragment extends Fragment {
         edtSearchBooking = view.findViewById(R.id.edtSearchCustomerBooking);
 
         rvBookings.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new BookingAdapter(filteredList);
+        adapter = new CustomerBookingAdapter(filteredList);
         rvBookings.setAdapter(adapter);
 
         loadBookings();
@@ -78,6 +80,7 @@ public class CustomerBookingsFragment extends Fragment {
 
         db.collection("bookings")
                 .whereEqualTo("userId", currentUserId)
+                .orderBy("createAt", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     bookingList.clear();
@@ -119,101 +122,5 @@ public class CustomerBookingsFragment extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
-    }
-
-    // ------------------ Adapter ------------------
-    private class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingViewHolder> {
-        List<Booking> items;
-
-        BookingAdapter(List<Booking> items) { this.items = items; }
-
-        @NonNull
-        @Override
-        public BookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_customer_booking_demo, parent, false);
-            return new BookingViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull BookingViewHolder holder, int position) {
-            Booking b = items.get(position);
-
-            // 🔹 Lấy tour title từ Firestore để hiển thị
-            db.collection("tours").document(b.getTourId()).get()
-                    .addOnSuccessListener(tourDoc -> {
-                        if (tourDoc.exists()) {
-                            String title = tourDoc.getString("title");
-                            holder.tvTourName.setText(title != null ? title : b.getTourId());
-                        } else {
-                            holder.tvTourName.setText(b.getTourId());
-                        }
-                    })
-                    .addOnFailureListener(e -> holder.tvTourName.setText(b.getTourId()));
-
-            // 🔹 Ngày tạo
-            String dateStr = "N/A";
-            try {
-                if (b.getCreateAt() != null) {
-                    dateStr = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                            .format(b.getCreateAt().toDate());
-                }
-            } catch (Exception ignored) {}
-            holder.tvDate.setText("🕒 " + dateStr);
-
-            // 🔹 Trạng thái
-            String status = b.getStatus() != null ? b.getStatus() : "pending";
-            switch (status) {
-                case "confirmed":
-                    holder.tvStatus.setText("Đã xác nhận");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_confirmed, null));
-                    break;
-                case "rejected":
-                    holder.tvStatus.setText("Đã từ chối");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_cancelled, null));
-                    break;
-                    case "cancelled":
-                    holder.tvStatus.setText("Đã hủy");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_cancelled, null));
-                    break;
-                case "successfully":
-                    holder.tvStatus.setText("Thành công");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_confirmed, null));
-                    break;
-                case "Ongoing":
-                    holder.tvStatus.setText("Đang diễn ra");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_pending, null));
-                    break;
-                default:
-                    holder.tvStatus.setText("Chờ xử lý");
-                    holder.tvStatus.setTextColor(getResources().getColor(R.color.status_pending, null));
-                    break;
-            }
-
-            holder.ivAvatar.setImageResource(R.drawable.ic_account);
-
-            holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), BookingDetailActivity.class);
-                intent.putExtra("bookingId", b.getId());
-                v.getContext().startActivity(intent);
-            });
-
-        }
-
-        @Override
-        public int getItemCount() { return items.size(); }
-
-        class BookingViewHolder extends RecyclerView.ViewHolder {
-            ImageView ivAvatar;
-            TextView tvTourName, tvDate, tvStatus;
-
-            BookingViewHolder(@NonNull View itemView) {
-                super(itemView);
-                ivAvatar = itemView.findViewById(R.id.ivAvatarCustomer);
-                tvTourName = itemView.findViewById(R.id.tvTourNameCustomer);
-                tvDate = itemView.findViewById(R.id.tvDateCustomer);
-                tvStatus = itemView.findViewById(R.id.tvStatusCustomer);
-            }
-        }
     }
 }

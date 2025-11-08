@@ -1,6 +1,7 @@
 package com.example.finalproject.activity.customer;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.finalproject.R;
 import com.example.finalproject.entity.Booking;
 import com.google.firebase.Timestamp;
@@ -25,10 +27,9 @@ public class BookingDetailActivity extends AppCompatActivity {
 
     private TextView tvTourTitle, tvBookingDate, tvBookingStatus, tvCustomerName,
             tvNumPeople, tvNotes, tvCreatedAt;
-    private Button btnCancelBooking;
-    private ImageView ivBack;
-
-    private String bookingId;
+    private Button btnCancelBooking, btnViewTourDetail;
+    private ImageView ivBack, ivTourImage;
+    private String bookingId, tourId;
     private Booking booking;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -38,6 +39,7 @@ public class BookingDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_booking_detail);
 
         ivBack = findViewById(R.id.ivBack);
+        ivTourImage = findViewById(R.id.ivTourImage);
         tvTourTitle = findViewById(R.id.tvTourTitle);
         tvBookingDate = findViewById(R.id.tvBookingDate);
         tvBookingStatus = findViewById(R.id.tvBookingStatus);
@@ -45,6 +47,7 @@ public class BookingDetailActivity extends AppCompatActivity {
         tvNumPeople = findViewById(R.id.tvNumPeople);
         tvNotes = findViewById(R.id.tvNotes);
         tvCreatedAt = findViewById(R.id.tvCreatedAt);
+        btnViewTourDetail = findViewById(R.id.btnViewTourDetail);
         btnCancelBooking = findViewById(R.id.btnCancelBooking);
 
         bookingId = getIntent().getStringExtra("bookingId");
@@ -109,9 +112,11 @@ public class BookingDetailActivity extends AppCompatActivity {
     private void handleTourInfo(DocumentSnapshot tourDoc) {
         if (!tourDoc.exists()) {
             tvTourTitle.setText("Không tìm thấy tour");
+            ivTourImage.setImageResource(R.drawable.bg_image_placeholder);
             return;
         }
 
+        tourId = tourDoc.getId();
         String title = tourDoc.getString("title");
         Timestamp startDate = tourDoc.getTimestamp("start_date");
 
@@ -124,7 +129,60 @@ public class BookingDetailActivity extends AppCompatActivity {
         } else {
             btnCancelBooking.setVisibility(View.GONE);
         }
+
+        // ✅ 1️⃣ Nếu có mảng ảnh trong document "tours"
+        if (tourDoc.contains("images")) {
+            java.util.List<String> images = (java.util.List<String>) tourDoc.get("images");
+            if (images != null && !images.isEmpty()) {
+                String firstImage = images.get(0);
+                Glide.with(this)
+                        .load(firstImage)
+                        .placeholder(R.drawable.bg_image_placeholder)
+                        .error(R.drawable.bg_image_placeholder)
+                        .into(ivTourImage);
+            } else {
+                ivTourImage.setImageResource(R.drawable.bg_image_placeholder);
+            }
+        }
+        // ✅ 2️⃣ Nếu ảnh lưu trong collection con "tour_images"
+        else {
+            db.collection("tours").document(tourId)
+                    .collection("images")
+                    .orderBy("order") // nếu bạn có field order, còn không thì có thể bỏ
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(query -> {
+                        if (!query.isEmpty()) {
+                            String imageUrl = query.getDocuments().get(0).getString("url");
+                            Glide.with(this)
+                                    .load(imageUrl)
+                                    .placeholder(R.drawable.bg_image_placeholder)
+                                    .error(R.drawable.bg_image_placeholder)
+                                    .into(ivTourImage);
+                        } else {
+                            ivTourImage.setImageResource(R.drawable.bg_image_placeholder);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        ivTourImage.setImageResource(R.drawable.bg_image_placeholder);
+                        Toast.makeText(this, "Lỗi tải ảnh tour: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
+
+        btnViewTourDetail.setOnClickListener(v -> openTourDetail());
     }
+
+    private void openTourDetail() {
+        if (tourId == null || tourId.trim().isEmpty()) {
+            Toast.makeText(this, "Không tìm thấy tour để xem chi tiết", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, CustomerTourDetailActivity.class);
+        intent.putExtra("tourId", tourId);
+        startActivity(intent);
+    }
+
 
     private void checkCancelEligibility(Timestamp startDate) {
         if (booking == null || startDate == null) {

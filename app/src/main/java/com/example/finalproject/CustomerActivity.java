@@ -21,8 +21,20 @@ public class CustomerActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_customer);
 
-        // Mặc định hiển thị HomeFragment
-        if (savedInstanceState == null) {
+        // 🔹 Kiểm tra intent để mở fragment cụ thể (sau khi thanh toán)
+        String openFragment = getIntent().getStringExtra("openFragment");
+        if (openFragment != null && openFragment.equals("bookingList")) {
+            // Mở fragment "Đơn đặt tour"
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container_customer, new CustomerBookingsFragment())
+                    .commit();
+
+            // Đồng thời chọn tab tương ứng trong BottomNavigationView
+            bottomNav.setSelectedItemId(R.id.nav_customer_bookings);
+        }
+        //🔹 Nếu không có intent đặc biệt, mở HomeFragment mặc định
+        else if (savedInstanceState == null) {
+            // Mặc định hiển thị HomeFragment
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_customer, new CustomerHomeFragment())
                     .commit();
