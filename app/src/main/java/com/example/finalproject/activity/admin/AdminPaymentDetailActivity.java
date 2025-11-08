@@ -107,7 +107,8 @@ public class AdminPaymentDetailActivity extends AppCompatActivity {
                         if (userDoc.exists()) {
                             String firstName = userDoc.getString("firstname");
                             String lastName = userDoc.getString("lastname");
-                            String fullName = ((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "")).trim();
+                            String phone = userDoc.getString("phone");
+                            String fullName = ((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "") + " - " + (phone != null ? phone : "")).trim();
                             txtUserName.setText(fullName.isEmpty() ? "(Không rõ)" : fullName);
                         } else {
                             txtUserName.setText("(Không tìm thấy người dùng)");
