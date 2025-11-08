@@ -78,7 +78,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PaymentV
             intent.putExtra("status", payment.getStatus());
             intent.putExtra("transaction_ref", payment.getTransactionId());
             intent.putExtra("userId", payment.getUserId());
-            intent.putExtra("timestamp", payment.getPaymentTime() != null ? payment.getPaymentTime().getSeconds() : 0);
+            intent.putExtra("paymentTimeMillis",
+                    payment.getPaymentTime() != null ? payment.getPaymentTime().toDate().getTime() : 0L);
             intent.putExtra("refund", payment.isRefund()); // ✅ dòng này rất quan trọng
             v.getContext().startActivity(intent);
         });

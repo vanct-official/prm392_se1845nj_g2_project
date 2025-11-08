@@ -55,7 +55,13 @@ public class PaymentDetailActivity extends AppCompatActivity {
         String note = getIntent().getStringExtra("note");
         String status = getIntent().getStringExtra("status");
         String transactionRef = getIntent().getStringExtra("transaction_ref");
-        Timestamp timestamp = getIntent().getParcelableExtra("timestamp");
+        // ✅ Nhận paymentTime dưới dạng millis
+        long paymentTimeMillis = getIntent().getLongExtra("paymentTimeMillis", 0);
+        Timestamp paymentTime = null;
+        if (paymentTimeMillis > 0) {
+            paymentTime = new Timestamp(new java.util.Date(paymentTimeMillis));
+        }
+
         boolean refund = getIntent().getBooleanExtra("refund", false);
 
         // Định dạng tiền tệ Việt Nam
@@ -71,9 +77,9 @@ public class PaymentDetailActivity extends AppCompatActivity {
         txtStatus.setText(status != null ? status : "Không xác định");
         txtTransactionRef.setText(transactionRef != null ? transactionRef : "Không có mã giao dịch");
 
-        if (timestamp != null) {
+        if (paymentTime != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            txtDate.setText(sdf.format(timestamp.toDate()));
+            txtDate.setText(sdf.format(paymentTime.toDate()));
         } else {
             txtDate.setText("Không có dữ liệu");
         }
