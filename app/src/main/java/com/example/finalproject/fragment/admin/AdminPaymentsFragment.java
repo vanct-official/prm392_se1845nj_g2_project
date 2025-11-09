@@ -15,6 +15,7 @@ import com.example.finalproject.adapter.admin.AdminPaymentAdapter;
 import com.example.finalproject.entity.Payment;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class AdminPaymentsFragment extends Fragment {
 
     private void loadPayments() {
         db.collection("payments")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     paymentList.clear();
