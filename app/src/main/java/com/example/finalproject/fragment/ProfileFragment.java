@@ -78,15 +78,15 @@ public class ProfileFragment extends Fragment {
         btnLogout.setOnClickListener(v -> {
             new AlertDialog.Builder(getContext())
                     .setTitle("Đăng xuất")
-                    .setMessage("Bạn đã ra chưa?")
-                    .setPositiveButton("Rồi", (dialog, which) -> {
+                    .setMessage("Bạn có chắc muốn đăng xuất?")
+                    .setPositiveButton("Có", (dialog, which) -> {
                         mAuth.signOut();
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         requireActivity().finish();
                     })
-                    .setNegativeButton("Chưa", (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton("Không", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
