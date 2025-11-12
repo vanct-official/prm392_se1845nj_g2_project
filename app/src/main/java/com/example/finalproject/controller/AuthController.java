@@ -31,6 +31,7 @@ public class AuthController {
      * Lấy email từ GoogleSignInAccount, query Firestore User collection
      * Chuyển sang Activity theo role
      */
+
     public void loginWithGoogle(GoogleSignInAccount account) {
         if (account == null || account.getEmail() == null) return;
 
